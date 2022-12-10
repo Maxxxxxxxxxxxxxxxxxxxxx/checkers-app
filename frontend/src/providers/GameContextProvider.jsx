@@ -12,7 +12,7 @@ export default function GameContextProvider({ children }) {
 
   const [focusedField, setFocusedField] = useState([]);
   const [destinationField, setDestinationField] = useState([]);
-  const [gameState, setGameState] = useState({});
+  const [gameState, setGameState] = useState();
 
   useEffect(() => {
     axios.get(`http://127.0.0.1:8000/games/${gameId}`)

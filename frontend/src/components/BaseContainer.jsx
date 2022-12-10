@@ -1,6 +1,6 @@
-import ThreadsContainer from "./ContainerViews/ForumView/ThreadsContainer";
-import GameApp from "./ContainerViews/GameApp/GameApp";
-import GameContextProvider from "./ContainerViews/GameApp/GameContextProvider";
+import ThreadsContainer from "../views/Forum/ThreadsContainer";
+import GameApp from "../views/Game/GameApp";
+import GameContextProvider from "../providers/GameContextProvider";
 
 export default function BaseContainer({ view }) {
   switch (view) {

@@ -1,7 +1,7 @@
 import './styles/App/App.css';
 import BaseView from './components/BaseView';
-import GameApp from './components/ContainerViews/GameApp/GameApp';
-import NotFoundPage from './components/NotFoundPage';
+import GameApp from './views/Game/GameApp';
+import NotFoundPage from './views/404/NotFoundPage';
 import { Routes, Route } from 'react-router-dom';
 
 function App() {

@@ -1,11 +1,9 @@
 import '@/styles/Gameview/Gameview.css';
 import Field from "./Field";
 import PlayerBar from './PlayerBar';
-import SideBar from '../../SideBar';
-import GameContextProvider from './GameContextProvider';
 import * as exampleGamestate from '@/../public/example.json';
 import { useEffect, useState } from 'react';
-import { useGameContext } from "./GameContextProvider";
+import { useGameContext } from "../../providers/GameContextProvider";
 
 import * as board from '@/board.json';
 
@@ -36,6 +34,7 @@ export default function GameApp({ }) {
 
   useEffect(() => {
     if (gameState) {
+      console.log(gameState)
       let fields = createBoardFields(gameState); 
       setFields(fields) 
     }
