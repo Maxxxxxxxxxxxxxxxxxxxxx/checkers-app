@@ -1,26 +1,38 @@
-import { useState, useContext } from 'react';
-import { useGameContext } from '@/providers/GameContextProvider';
+import { useState, useContext } from "react";
+import { useGameContext } from "@/providers/GameContextProvider";
 
-export default function Field({ x, y, pawn }) {
-  let { focusedField, clearFocus, setFocus, gameState } = useGameContext();
-
-  console.log(`focused field: ${focusedField}`);
+export default function Field({ x, y, color, index }) {
+  let { focusedPawn, clearSelection, setFocus, setDest } = useGameContext();
 
   let spritePath;
-  if (pawn === 'white') spritePath = '/pawn_white.svg';
-  else if (pawn === 'black') spritePath = '/pawn_black.svg';
+  if (color === "w") spritePath = "/pawn_white.svg";
+  else if (color === "b") spritePath = "/pawn_black.svg";
 
-  return (
-    spritePath 
-      ? 
-      <div className={`square ${x} ${y} ${ focusedField == [x,y] ? "square-highlighted" : "" }`}>
-        <img src={spritePath} alt="" className="sprite" onClick={() => setFocus(x,y)} />
-      </div> 
-      : 
-      <div className={`square ${x} ${y} ${ focusedField == [x,y] ? "square-highlighted" : "" }`}
-        onClick={() => console.log(x,y)}>
-        {/* <img src={spritePath} alt="" className="sprite" onClick={() => setFocus(x,y)} /> */}
-      </div> 
+  // TODO: handle put to backend, 
 
-  )
+  return spritePath ? (
+    <div
+      className={`square ${x} ${y}`}
+    >
+      <img
+        src={spritePath}
+        alt=""
+        className="sprite"
+        onClick={() => {
+          console.log(`focused pawn: ${x} ${y} ${color}`);
+          setFocus(color, index);
+        }}
+      />
+    </div>
+  ) : (
+    <div
+      className={`square ${x} ${y}`}
+      onClick={() => {
+        console.log(x, y);
+        setDest(x, y);
+        clearSelection();
+      }}
+    >
+    </div>
+  );
 }
