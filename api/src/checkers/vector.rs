@@ -1,8 +1,15 @@
+use rocket::serde::{Deserialize, Serialize};
+
+use std::ops::Add;
+use std::ops::Div;
+use std::ops::Mul;
+use std::ops::Sub;
+
 #[derive(Debug, Copy, Clone, Serialize, Deserialize)]
 #[serde(crate = "rocket::serde")]
 pub struct Vector {
-    x: i32,
-    y: i32,
+    pub x: i32,
+    pub y: i32,
 }
 
 impl Vector {

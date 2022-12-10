@@ -8,12 +8,17 @@ mod checkers;
 use checkers::Color;
 use checkers::GameState;
 use checkers::Vector;
+use checkers::Board;
 use rocket::serde::json;
 use rocket::serde::Serialize;
 use rocket::State;
 use std::ops::DerefMut;
 use std::sync::Arc;
 use std::sync::Mutex;
+use rocket::http::Method;
+use rocket::http::Header;
+use rocket::{Request, Response};
+use rocket::fairing::{Fairing, Info, Kind};
 
 type GamesMutex = Mutex<Vec<GameState>>;
 
@@ -31,7 +36,7 @@ fn game() -> String {
     format!("{}", stringified)
 }
 
-#[get("/game/all")]
+#[get("/games/all")]
 fn all_games(current_gamestates: &State<GamesMutex>) -> String {
     let unwrapped = current_gamestates.inner();
 
@@ -46,17 +51,33 @@ fn all_games(current_gamestates: &State<GamesMutex>) -> String {
     json::to_pretty_string(&array).unwrap()
 }
 
-#[put("/game/new")]
+#[get("/games/<id>")]
+fn find(current_gamestates: &State<GamesMutex>, id: String) -> Option<String> {
+    let unwrapped = current_gamestates.inner();
+
+    match unwrapped
+        .lock()
+        .unwrap()
+        .iter()
+        .find(|gamestate| gamestate.id == id)
+    {
+        Some(content) => Some(json::to_pretty_string(&content).unwrap()),
+        None => None
+    }
+}
+
+
+#[post("/games/new")]
 fn new_game(current_gamestates: &State<GamesMutex>) -> String {
     let game = GameState::new();
-    let id = game.id.clone();
+    let response = json::to_pretty_string(&game).unwrap();
 
     current_gamestates.lock().unwrap().push(game);
 
-    return id;
+    return response;
 }
 
-#[put("/game/<id>?move&<side>&<index>&<x>&<y>")]
+#[put("/games/game/<id>?move&<side>&<index>&<x>&<y>")]
 fn create_move(
     current_gamestates: &State<GamesMutex>,
     id: String,
@@ -89,31 +110,31 @@ fn create_move(
     }
 }
 
-#[launch]
-fn rocket() -> _ {
-    // temporary
-    let mut current_gamestates: GamesMutex = Mutex::new(<Vec<GameState>>::new());
-    rocket::build()
-        .manage(current_gamestates)
-        .mount("/", routes![game, new_game, all_games, create_move])
-    // .register("/", catchers![not_found])
+pub struct CORS;
+
+#[rocket::async_trait]
+impl Fairing for CORS {
+    fn info(&self) -> Info {
+        Info {
+            name: "Add CORS headers to responses",
+            kind: Kind::Response
+        }
+    }
+
+    async fn on_response<'r>(&self, _request: &'r Request<'_>, response: &mut Response<'r>) {
+        response.set_header(Header::new("Access-Control-Allow-Origin", "*"));
+        response.set_header(Header::new("Access-Control-Allow-Methods", "POST, GET, PATCH, OPTIONS"));
+        response.set_header(Header::new("Access-Control-Allow-Headers", "*"));
+        response.set_header(Header::new("Access-Control-Allow-Credentials", "true"));
+    }
 }
 
-// fn main() {
-//     let mut game = GameState::new();
-//     // dbg!(&game);
+#[launch]
+fn rocket() -> _ {
+    let mut current_gamestates: GamesMutex = Mutex::new(<Vec<GameState>>::new());
 
-//     dbg!(game.create_move(8, Color::Black, 0, 3));
-//     dbg!(&game);
-
-//     game.create_move(8, Color::Black, 1, 4);
-//     game.create_move(9, Color::White, 0, 3);
-
-//     dbg!(&game);
-//     // game.create_move(8, Color::Black, 1, 3);
-//     // dbg!(&game);
-//     // game.create_move(8, Color::Black, 1, 4);
-//     // dbg!(&game);
-//     // game.create_move(9, Color::White, 0, 3);
-//     // dbg!(&game);
-// }
+    rocket::build()
+        .manage(current_gamestates)
+        .mount("/", routes![game, new_game, all_games, create_move, find])
+        .attach(CORS)
+}

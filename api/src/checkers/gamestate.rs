@@ -1,3 +1,7 @@
+use rocket::serde::{Deserialize, Serialize};
+
+use super::*;
+
 #[derive(Serialize, Deserialize)]
 #[serde(crate = "rocket::serde")]
 pub struct GameState {
@@ -12,7 +16,47 @@ pub struct GameState {
 impl GameState {
     pub fn new() -> Self {
         GameState {
-            id: IDBuilder::new(),
+            id: IDBuilder::new()
+                .random()
+                .build(),
+            player_white_id: String::from("0001"),
+            player_black_id: String::from("0002"),
+            // board: Board::new(),
+            moves: Vec::<Move>::new(),
+            pawns_white: POSITIONS_BOTTOM
+                .iter()
+                .enumerate()
+                .map(|(index, point)| Pawn {
+                    is_queen: false,
+                    pos: Vector {
+                        x: point.0,
+                        y: point.1,
+                    },
+                    index,
+                    is_dead: false,
+                    side: Color::White,
+                })
+                .collect(),
+            pawns_black: POSITIONS_TOP
+                .iter()
+                .enumerate()
+                .map(|(index, point)| Pawn {
+                    is_queen: false,
+                    pos: Vector {
+                        x: point.0,
+                        y: point.1,
+                    },
+                    index,
+                    is_dead: false,
+                    side: Color::Black,
+                })
+                .collect(),
+        }
+    }
+
+    pub fn example() -> Self {
+        GameState {
+            id: String::from("1"),
             player_white_id: String::from("0001"),
             player_black_id: String::from("0002"),
             // board: Board::new(),

@@ -2,12 +2,12 @@
 
 use rocket::serde::{Deserialize, Serialize};
 
-pub use super::vector::Vector;
+use super::*;
 
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(crate = "rocket::serde")]
 pub struct Board {
-    fields: Vec<Vector>,
+    pub fields: Vec<Vector>,
 }
 
 impl Board {
