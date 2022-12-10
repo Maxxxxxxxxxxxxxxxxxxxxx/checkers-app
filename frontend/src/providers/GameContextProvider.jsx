@@ -15,8 +15,12 @@ export default function GameContextProvider({ children }) {
   const [gameState, setGameState] = useState();
 
   useEffect(() => {
+    console.log(gameState)
     axios.get(`http://127.0.0.1:8000/games/${gameId}`)
-      .then(r => { console.log(r.data); setGameState(r.data) })
+      .then(r => { 
+        console.log(r.data); 
+        setGameState(r.data);
+      });
   }, []);
 
   const clearFocus = () => setFocusedField([]);

@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import { useGameContext } from '../../providers/GameContextProvider';
+import { useGameContext } from '@/providers/GameContextProvider';
 
 export default function Field({ x, y, pawn }) {
   let { focusedField, clearFocus, setFocus, gameState } = useGameContext();

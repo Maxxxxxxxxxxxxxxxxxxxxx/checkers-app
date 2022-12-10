@@ -3,7 +3,8 @@ import Field from "./Field";
 import PlayerBar from './PlayerBar';
 import * as exampleGamestate from '@/../public/example.json';
 import { useEffect, useState } from 'react';
-import { useGameContext } from "../../providers/GameContextProvider";
+import { useGameContext } from "@/providers/GameContextProvider";
+import { Skeleton } from '@mui/material/index';
 
 import * as board from '@/board.json';
 
@@ -33,6 +34,10 @@ export default function GameApp({ }) {
   let [fields, setFields] = useState([]);
 
   useEffect(() => {
+    console.log("a")
+  })
+
+  useEffect(() => {
     if (gameState) {
       console.log(gameState)
       let fields = createBoardFields(gameState); 
@@ -41,12 +46,28 @@ export default function GameApp({ }) {
   }, [gameState])
 
   return (
-      <div className="game-view">
-        <PlayerBar isEnemy={true} playerId={`#${gameState.player_black_id}`} />
-        <div className="board">
-          { fields }
+      gameState ?
+        <div className="game-view">
+          <PlayerBar isEnemy={true} playerId={`#${gameState.player_black_id}`} />
+          <div className="board">
+            { fields }
+          </div>
+          <PlayerBar isEnemy={false} playerId={`#${gameState.player_white_id}`} />
         </div>
-        <PlayerBar isEnemy={false} playerId={`#${gameState.player_white_id}`} />
-      </div>
+        :
+        <div className="game-view">
+          <PlayerBar isEnemy={true} playerId={`#error`} />
+          <div className="board">
+            { fields }
+          </div>
+          <PlayerBar isEnemy={false} playerId={`#error`} />
+        </div>
+      // <div className="game-view">
+      //   <PlayerBar isEnemy={true} playerId={`#${gameState.player_black_id}`} />
+      //   <div className="board">
+      //     { fields }
+      //   </div>
+      //   <PlayerBar isEnemy={false} playerId={`#${gameState.player_white_id}`} />
+      // </div>
   )
 }
