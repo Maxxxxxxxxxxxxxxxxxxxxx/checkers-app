@@ -132,6 +132,14 @@ impl Fairing for CORS {
 #[launch]
 fn rocket() -> _ {
     let mut current_gamestates: GamesMutex = Mutex::new(<Vec<GameState>>::new());
+    
+    let mut example_gamestate = GameState::new();
+    example_gamestate.id = String::from("1");
+
+    current_gamestates
+        .lock()
+        .unwrap()
+        .push(example_gamestate);
 
     rocket::build()
         .manage(current_gamestates)
