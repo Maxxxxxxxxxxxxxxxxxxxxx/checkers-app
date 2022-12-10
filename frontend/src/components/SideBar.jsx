@@ -15,7 +15,7 @@ export default function SideBar() {
         <Navlink href={"/home"} message={"Home"}/>
       </div>
       <div className="loginSignup">
-        <Button variant="contained" onClick>Sign up</Button>
+        <Button variant="contained">Sign up</Button>
         <Button variant="contained">Sign in</Button>
       </div>
     </div>

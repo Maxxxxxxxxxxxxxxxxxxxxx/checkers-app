@@ -57,6 +57,11 @@
   border-radius: 1rem;
 }
 
+.square-highlight {
+  border: solid lightblue 3px;
+  border-radius: 1rem;
+}
+
 .player * {
   margin: 0;
 }

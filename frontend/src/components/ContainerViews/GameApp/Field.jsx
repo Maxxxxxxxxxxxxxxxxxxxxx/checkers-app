@@ -1,13 +1,26 @@
+import { useState, useContext } from 'react';
+import { useGameContext } from './GameContextProvider';
+
 export default function Field({ x, y, pawn }) {
-  if (pawn) {
-    var spritePath = pawn === 'white' 
-    ? '../../../public/pawn_white.svg'
-    : '../../../public/pawn_black.svg'
-  }
+  let { focusedField, clearFocus, setFocus, gameState } = useGameContext();
+
+  console.log(`focused field: ${focusedField}`);
+
+  let spritePath;
+  if (pawn === 'white') spritePath = '/pawn_white.svg';
+  else if (pawn === 'black') spritePath = '/pawn_black.svg';
+
   return (
-    <div className={`square ${x} ${y}`}>
-      {x} {y}
-      { spritePath ? <img src={spritePath} alt="" className="sprite" /> : undefined }
-    </div>
+    spritePath 
+      ? 
+      <div className={`square ${x} ${y} ${ focusedField == [x,y] ? "square-highlighted" : "" }`}>
+        <img src={spritePath} alt="" className="sprite" onClick={() => setFocus(x,y)} />
+      </div> 
+      : 
+      <div className={`square ${x} ${y} ${ focusedField == [x,y] ? "square-highlighted" : "" }`}
+        onClick={() => console.log(x,y)}>
+        {/* <img src={spritePath} alt="" className="sprite" onClick={() => setFocus(x,y)} /> */}
+      </div> 
+
   )
 }
