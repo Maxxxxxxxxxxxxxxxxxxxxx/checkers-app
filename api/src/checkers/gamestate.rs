@@ -17,9 +17,7 @@ pub struct GameState {
 impl GameState {
     pub fn new() -> Self {
         GameState {
-            id: IDBuilder::new()
-                .random()
-                .build(),
+            id: IDBuilder::new().random().build(),
             player_white_id: String::from("0001"),
             player_black_id: String::from("0002"),
             turn: Color::White,
@@ -198,7 +196,7 @@ impl GameState {
         y: i32,
     ) -> Result<(), ()> {
         if self.turn != side {
-            return Err(())
+            return Err(());
         }
 
         let pawn = match self.turn {
@@ -209,7 +207,7 @@ impl GameState {
             Color::White => self
                 .pawns_black
                 .iter()
-                .find(|pawn| pawn.index == pawn_index)
+                .find(|pawn| pawn.index == pawn_index),
         };
 
         match pawn {
@@ -236,7 +234,7 @@ impl std::fmt::Debug for GameState {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut owned = "".to_owned();
         let board = Board::new();
-        
+
         board.fields.iter().for_each(|vector| {
             let pawn_white = &self.pawns_white.iter().find(|pawn| &pawn.pos == vector);
             let pawn_black = &self.pawns_black.iter().find(|pawn| &pawn.pos == vector);
