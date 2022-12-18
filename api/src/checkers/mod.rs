@@ -3,6 +3,7 @@
 pub mod vector;
 pub mod board;
 pub mod gamestate;
+mod tests;
 
 use rand::Rng;
 use rocket::serde::{Deserialize, Serialize};
