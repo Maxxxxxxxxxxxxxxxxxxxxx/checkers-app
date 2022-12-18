@@ -7,6 +7,7 @@ use super::*;
 pub struct GameState {
     pub player_black_id: String,
     pub player_white_id: String,
+    pub turn: Color,
     pub id: String,
     pub moves: Vec<Move>,
     pub pawns_white: Vec<Pawn>,
@@ -21,6 +22,7 @@ impl GameState {
                 .build(),
             player_white_id: String::from("0001"),
             player_black_id: String::from("0002"),
+            turn: Color::White,
             // board: Board::new(),
             moves: Vec::<Move>::new(),
             pawns_white: POSITIONS_BOTTOM
@@ -59,6 +61,7 @@ impl GameState {
             id: String::from("1"),
             player_white_id: String::from("0001"),
             player_black_id: String::from("0002"),
+            turn: Color::White,
             // board: Board::new(),
             moves: Vec::<Move>::new(),
             pawns_white: POSITIONS_BOTTOM
@@ -194,55 +197,37 @@ impl GameState {
         x: i32,
         y: i32,
     ) -> Result<(), ()> {
-        match side {
-            Color::Black => {
-                let pawn = self
-                    .pawns_black
-                    .iter()
-                    .find(|pawn| pawn.index == pawn_index);
+        if self.turn != side {
+            return Err(())
+        }
 
-                match pawn {
-                    // if pawn exists
-                    Some(p) => {
-                        let new_move = Move {
-                            player: side,
-                            start: Vector {
-                                x: p.pos.x,
-                                y: p.pos.y,
-                            },
-                            dest: Vector { x, y },
-                        };
-                        // returns Err(()) if move invalid
-                        self.move_pawn(new_move)
-                    }
-                    // if pawn doesn't exist
-                    None => Err(()),
-                }
-            }
-            Color::White => {
-                let pawn = self
-                    .pawns_white
-                    .iter()
-                    .find(|pawn| pawn.index == pawn_index);
+        let pawn = match self.turn {
+            Color::Black => self
+                .pawns_black
+                .iter()
+                .find(|pawn| pawn.index == pawn_index),
+            Color::White => self
+                .pawns_black
+                .iter()
+                .find(|pawn| pawn.index == pawn_index)
+        };
 
-                match pawn {
-                    // if pawn exists
-                    Some(p) => {
-                        let new_move = Move {
-                            player: side,
-                            start: Vector {
-                                x: p.pos.x,
-                                y: p.pos.y,
-                            },
-                            dest: Vector { x, y },
-                        };
-                        // returns Err(()) if move invalid
-                        self.move_pawn(new_move)
-                    }
-                    // if pawn doesn't exist
-                    None => Err(()),
-                }
+        match pawn {
+            // if pawn exists
+            Some(p) => {
+                let new_move = Move {
+                    player: self.turn,
+                    start: Vector {
+                        x: p.pos.x,
+                        y: p.pos.y,
+                    },
+                    dest: Vector { x, y },
+                };
+                // returns Err(()) if move invalid
+                self.move_pawn(new_move)
             }
+            // if pawn doesn't exist
+            None => Err(()),
         }
     }
 }
