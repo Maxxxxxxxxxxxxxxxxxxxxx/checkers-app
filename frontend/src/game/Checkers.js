@@ -187,7 +187,7 @@ class GameState {
   //   }
   //   // TODO: isQueen case
   //   // ------------------
-  // };
+  };
 }
 
 let game = new GameState("b", "w");
