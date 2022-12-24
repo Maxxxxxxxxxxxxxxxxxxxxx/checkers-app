@@ -1,7 +1,7 @@
 use actix_web::{web, App, HttpRequest, HttpServer, Responder};
 
-mod game;
-mod endpoints;
+mod structs;
+mod game_controller;
 mod utils;
 mod db;
 
