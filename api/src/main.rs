@@ -1,22 +1,23 @@
-#[macro_use] extern crate nickel;
-#[macro_use] extern crate serde;
+use actix_web::{web, App, HttpRequest, HttpServer, Responder};
 
-use nickel::{Nickel, HttpRouter, JsonBody};
+mod game;
+mod endpoints;
+mod utils;
+mod db;
 
-#[derive(Serialize, Deserialize)]
-struct Person {
-    firstname: String,
-    lastname:  String,
+async fn greet(req: HttpRequest) -> impl Responder {
+    let name = req.match_info().get("name").unwrap_or("World");
+    format!("Hello {}!", &name)
 }
 
-fn main() {
-    let mut server = Nickel::new();
-
-    server.post("/post/", middleware! { |request, response|
-        let person = request.json_as::<Person>().unwrap();
-
-        format!("Hello {} {}", person.firstname, person.lastname)
-    });
-
-    server.listen("127.0.0.1:6767").unwrap();
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    HttpServer::new(|| {
+        App::new()
+            .route("/", web::get().to(greet))
+            .route("/{name}", web::get().to(greet))
+    })
+    .bind(("127.0.0.1", 8080))?
+    .run()
+    .await
 }

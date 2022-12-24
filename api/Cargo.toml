@@ -6,5 +6,6 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-nickel = "0.11.0"
+actix-web = "4.2.1"
+neo4rs = "0.5.9"
 serde = { version = "1.0.151", features = ["derive"] }
