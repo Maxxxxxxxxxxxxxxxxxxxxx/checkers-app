@@ -1,4 +1,5 @@
-use actix_web::{web, App, HttpRequest, HttpServer, Responder};
+use actix_web::{App, HttpServer};
+use actix_cors::Cors;
 
 mod db;
 mod game;
@@ -9,7 +10,10 @@ mod utils;
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
+        let cors = Cors::permissive(); // temporary
+
         App::new()
+            .wrap(cors)
             .service(game_controller::new_game)
             .service(game_controller::get_game)
             // .route("/", web::get().to(greet))

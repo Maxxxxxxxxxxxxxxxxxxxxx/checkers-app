@@ -1,36 +1,33 @@
-import { useState, useContext } from "react";
 import { useGameContext } from "@/providers/GameContextProvider";
 
-export default function Field({ x, y, color, index }) {
-  let { focusedPawn, clearSelection, setFocus, setDest } = useGameContext();
+export default function Field({ x, y }) {
+  let { gamestate } = useGameContext();
 
-  let spritePath;
-  if (color === "w") spritePath = "/pawn_white.svg";
-  else if (color === "b") spritePath = "/pawn_black.svg";
+  let pawn = gamestate 
+    ? gamestate.pawns.find(pawn => pawn.pos_x === x && pawn.pos_y === y)
+    : undefined;
 
-  // TODO: handle put to backend, 
-
-  return spritePath ? (
+  return pawn ? (
     <div
-      className={`square ${x} ${y}`}
+      className={`game__field game__field--occupied`}
     >
       <img
-        src={spritePath}
+        src={pawn.side === 'b' ? '/pawn_black.svg' : '/pawn_white.svg'}
         alt=""
         className="sprite"
         onClick={() => {
-          console.log(`focused pawn: ${x} ${y} ${color}`);
-          setFocus(color, index);
+          console.log(pawn);
+          // setFocus(color, index);
         }}
       />
     </div>
   ) : (
     <div
-      className={`square ${x} ${y}`}
+      className={`game__field game__field--empty`}
       onClick={() => {
         console.log(x, y);
-        setDest(x, y);
-        clearSelection();
+        // setDest(x, y);
+        // clearSelection();
       }}
     >
     </div>
