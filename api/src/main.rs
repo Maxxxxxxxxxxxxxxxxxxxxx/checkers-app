@@ -1,9 +1,10 @@
 use actix_web::{web, App, HttpRequest, HttpServer, Responder};
 
-mod structs;
-mod game_controller;
-mod utils;
 mod db;
+mod game;
+mod game_controller;
+mod structs;
+mod utils;
 
 async fn greet(req: HttpRequest) -> impl Responder {
     let name = req.match_info().get("name").unwrap_or("World");
@@ -14,8 +15,10 @@ async fn greet(req: HttpRequest) -> impl Responder {
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
         App::new()
-            .route("/", web::get().to(greet))
-            .route("/{name}", web::get().to(greet))
+            .service(game_controller::new_game)
+            .service(game_controller::get_game)
+            // .route("/", web::get().to(greet))
+            // .route("/{name}", web::get().to(greet))
     })
     .bind(("127.0.0.1", 8080))?
     .run()
