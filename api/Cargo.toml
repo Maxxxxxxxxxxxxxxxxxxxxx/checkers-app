@@ -9,3 +9,4 @@ edition = "2021"
 actix-web = "4.2.1"
 neo4rs = "0.5.9"
 serde = { version = "1.0.151", features = ["derive"] }
+uuid = { version = "1.2.2", features = ["v4"] }
