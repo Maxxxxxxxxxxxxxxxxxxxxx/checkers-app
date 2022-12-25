@@ -85,8 +85,10 @@ pub struct Pos {
 pub struct Move {
     pub index: i32,
     pub side: String,
-    pub previous: Pos,
-    pub new: Pos,
+    pub start_x: i32,
+    pub start_y: i32,
+    pub dest_x: i32,
+    pub dest_y: i32,
 }
 
 // POST bodies --------------------------------
@@ -105,6 +107,46 @@ pub struct MoveRequest {
 }
 
 // DB structs
+
+#[derive(Deserialize, Serialize)]
+pub struct MoveDBO {
+    pub start_x: i32,
+    pub start_y: i32,
+    pub dest_x: i32,
+    pub dest_y: i32,
+}
+
+impl TryFrom<Node> for MoveDBO {
+    type Error = ();
+    fn try_from(node: Node) -> Result<Self, Self::Error> {
+        let start_x: Option<i64> = node.get("start_x");
+        let start_y: Option<i64> = node.get("start_x");
+        let dest_x: Option<i64> = node.get("start_x");
+        let dest_y: Option<i64> = node.get("start_x");
+
+        match (start_x, start_y, dest_x, dest_y) {
+            (
+                Some(sx),
+                Some(sy),
+                Some(dx),
+                Some(dy),
+            ) => {
+                let start_x = sx as i32;
+                let start_y = sy as i32;
+                let dest_x = dx as i32;
+                let dest_y = dy as i32;
+                Ok(MoveDBO {
+                    start_x,
+                    start_y,
+                    dest_x,
+                    dest_y
+                })
+            },
+            _ => Err(())
+        }
+    }
+}
+
 
 #[derive(Deserialize, Serialize)]
 pub struct GameDBO {
