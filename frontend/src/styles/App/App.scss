@@ -1,0 +1,32 @@
+@import "./variables";
+
+$navbar-left-gap: 0.5rem;
+
+#root {
+  margin: 0 auto;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  background-color: #262421;
+}
+
+.base-view {
+  display: flex;
+  .base-container {
+    flex: 2;
+    padding: 1rem;
+    min-height: 100vh;
+    box-sizing: inherit;
+    padding-left: 200px;
+  }
+}
+  
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+  

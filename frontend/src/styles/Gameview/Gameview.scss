@@ -1,0 +1,77 @@
+@import '../variables';
+
+.game-view {
+  display: flex;
+  flex-direction: column;
+  max-width: fit-content;
+  margin: 10px;
+  .board {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    width: 500px;
+    height: 500px;
+    background-image: url("./board.svg");
+    background-size: contain;
+    border-radius: 5px;
+  }
+  .square {
+    display: flex;
+    align-items: center;
+    justify-items: center;
+    justify-content: center;
+  }
+  .square .sprite {
+    width: 70%;
+    height: 70%;
+    // padding: 0.5rem;
+    text-align: center;
+    border: 0px;
+    color: black;
+    &:hover {
+      cursor: grab;
+    }
+    &:focus {
+      border: lightblue 2px;
+      border-radius: 1rem;
+    }
+  }
+}
+
+.square-highlight {
+  border: solid lightblue 3px;
+  border-radius: 1rem;
+}
+
+.player * {
+  margin: 0;
+}
+
+.player a {
+  font-style: normal;
+  text-decoration: none;
+  color: $font-color;
+  font-weight: bolder;
+}
+
+.player {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  padding: 0.5rem;
+  background-color: $bg-lighter;
+  border-radius: 0.5rem;
+  max-width: 10rem;
+}
+
+.player .info {
+  display: flex;
+  flex-direction: column;
+}
+
+.player .avatar {
+  background-color: white;
+  height: 50px;
+  width: 50px;
+  border-radius: 100%;
+}

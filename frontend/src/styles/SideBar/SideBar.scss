@@ -1,0 +1,39 @@
+@import '../variables';
+
+.base-sidebar {
+  font-size: 1.5rem;
+  flex: 3;
+  background-color: $bg-darker;
+  position: fixed;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  min-width: 170px;
+  .logo {
+    padding: 1rem;
+    font-weight: bolder;
+  }
+  .button {
+    font-size: 1.2rem;
+    border-radius: 0.3rem;
+    border: none;
+    padding: 0.5rem;
+    margin: 0.2rem 0.5rem 0.4rem 0.5rem;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  .options {
+    display: flex;
+    flex-direction: column;
+    a {
+      text-decoration: none;
+      padding: 0.5rem 0 0.5rem 0.5rem;
+      color: $font-color;
+      &:hover {
+        background-color: rgb(20, 20, 20);
+      }
+    }
+  }
+}
