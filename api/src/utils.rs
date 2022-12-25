@@ -1,6 +1,6 @@
 use {
     actix_web::HttpResponse,
-    serde::{Serialize, Deserialize}
+    serde::{Deserialize, Serialize},
 };
 
 #[derive(Serialize, Debug, Deserialize)]
@@ -10,14 +10,16 @@ pub struct NotFoundMessage {
 
 impl NotFoundMessage {
     pub fn new(message: &str) -> Self {
-        Self { message: String::from(message) }
+        Self {
+            message: String::from(message),
+        }
     }
 }
 
 pub enum ResponseType<T> {
     Ok(T),
     Created(T),
-    NotFound(T)
+    NotFound(T),
 }
 
 impl<T: Serialize> ResponseType<T> {
