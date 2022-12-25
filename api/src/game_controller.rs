@@ -1,4 +1,3 @@
-use crate::structs::*;
 use crate::utils::*;
 use crate::db;
 use actix_web::HttpRequest;
@@ -8,21 +7,10 @@ use actix_web::{
     post,
 };
 
-#[get("/games")]
-pub async fn list_games() -> HttpResponse {
-    match db::connect().await {
-        Ok(graph) => {
-            /*
-                TODO: fetch games list from database
-            */
-            
-            unimplemented!()
-        },
-        Err(_) => ResponseType::NotFound(
-            NotFoundMessage::new("Failed to connect with db!")
-        ).get_response()
-    }
-}
+// #[get("/games")]
+// pub async fn list_games() -> HttpResponse {
+
+// }
 
 #[get("/games/{id}")]
 pub async fn get_game(req: HttpRequest) -> HttpResponse {
