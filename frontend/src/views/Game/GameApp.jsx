@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { useGameContext } from "@/providers/GameContextProvider";
 import { Skeleton } from "@mui/material/index";
 
-import * as board from "@/board.json";
+import * as board from "@/game/board.json";
 
 let createBoardFields = (gamestate) =>
   board.fields.map((field, index) => {

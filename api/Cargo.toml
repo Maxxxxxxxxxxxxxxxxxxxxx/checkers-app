@@ -1,15 +1,12 @@
 [package]
-name = "rust-checkers"
+name = "api"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-uuid = "1.2.1"
-rand = "0.8"
-mongodb = "2.3.1"
-
-[dependencies.rocket]
-rocket = "0.5.0-rc.2"
-features = ["json"]
+actix-web = "4.2.1"
+neo4rs = "0.5.9"
+serde = { version = "1.0.151", features = ["derive"] }
+uuid = { version = "1.2.2", features = ["v4"] }
