@@ -9,87 +9,13 @@ body {
   background-color: #262421;
 }
 
-.base-view {
-  display: -webkit-box;
-  display: -ms-flexbox;
+.view {
+  min-width: 768px;
+  min-height: 768px;
   display: flex;
-}
-
-.base-view .base-sidebar {
-  font-size: 1.5rem;
-  -webkit-box-flex: 3;
-      -ms-flex: 3;
-          flex: 3;
-  background-color: #1c1a18;
-  position: fixed;
-  height: 100%;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  width: -webkit-fit-content;
-  width: -moz-fit-content;
-  width: fit-content;
-  min-width: 170px;
-}
-
-.base-view .base-sidebar .logo {
-  padding: 1rem;
-  font-weight: bolder;
-}
-
-.base-view .base-sidebar .button {
-  font-size: 1.2rem;
-  border-radius: 0.3rem;
-  border: none;
-  padding: 0.5rem;
-  margin: 0.2rem 0.5rem 0.4rem 0.5rem;
-}
-
-.base-view .base-sidebar .button:hover {
-  cursor: pointer;
-}
-
-.base-view .base-sidebar .login {
-  background-color: #779952;
-}
-
-.base-view .base-sidebar .register {
-  margin-top: 1rem;
-}
-
-.base-view .base-sidebar .options {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-}
-
-.base-view .base-sidebar .options a {
-  text-decoration: none;
-  padding: 0.5rem 0 0.5rem 0.5rem;
-  color: rgba(255, 255, 255, 0.87);
-}
-
-.base-view .base-sidebar .options a:hover {
-  background-color: #141414;
-}
-
-.base-view .base-container {
-  -webkit-box-flex: 2;
-      -ms-flex: 2;
-          flex: 2;
-  padding: 1rem;
-  min-height: 100vh;
-  -webkit-box-sizing: inherit;
-          box-sizing: inherit;
-  padding-left: 200px;
+  align-items: center;
+  justify-content: center;
+  justify-items: center;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -97,5 +23,4 @@ body {
     -webkit-animation: logo-spin infinite 20s linear;
             animation: logo-spin infinite 20s linear;
   }
-}
-/*# sourceMappingURL=App.css.map */
+}/*# sourceMappingURL=App.css.map */
