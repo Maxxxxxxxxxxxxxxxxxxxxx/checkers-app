@@ -1,4 +1,5 @@
 #![allow(unused)]
+
 use crate::game::create_pawns;
 use crate::structs::*;
 use neo4rs::*;
@@ -28,6 +29,24 @@ pub async fn get_game(game_id: &str) -> Result<Game> {
         .param("game_id", game_id.clone())
     ).await?;
 
+    let mut moves_stream = graph.execute(
+        query("MATCH (:Game {id: $game_id})<-[:MOVE_OF]-(m:Move)-[:OF_PAWN]->(pawn:Pawn) RETURN m,pawn")
+        .param("game_id", game_id.clone())
+    ).await?;
+
+    let mut moves = Vec::<Move>::new();
+    while let Ok(Some(row)) = moves_stream.next().await {
+        let move_node = row.get::<Node>("m").unwrap();
+        let pawn_node = row.get::<Node>("pawn").unwrap();
+        let index = pawn_node.get::<i64>("index").unwrap();
+        let side = pawn_node.get::<String>("side").unwrap();
+        let move_obj = Move::from_dbo(
+            move_node.try_into().unwrap(),
+            index as i32,
+            side
+        );
+    }
+
     let mut pawns = Vec::<Pawn>::new();
     while let Ok(Some(row)) = pawns_stream.next().await {
         let node: Node = row.get("p").unwrap();
@@ -38,7 +57,7 @@ pub async fn get_game(game_id: &str) -> Result<Game> {
 
     let game = Game::from_dbo(
         game_dbo,
-        Vec::<Move>::new(),
+        moves,
         pawns
     );
 
@@ -97,13 +116,3 @@ pub async fn create_game(pos_white: &str, pos_black: &str) -> Result<()> {
     }
 }
 
-pub async fn pawn_move(m: Move) {
-
-}
-
-pub async fn exec_query(query_string: &str) -> Result<()> {
-    match connect().await {
-        Ok(graph) => graph.run(query(query_string)).await,
-        Err(err) => Err(err),
-    }
-}

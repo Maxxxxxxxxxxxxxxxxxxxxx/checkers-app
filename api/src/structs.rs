@@ -91,6 +91,19 @@ pub struct Move {
     pub dest_y: i32,
 }
 
+impl Move {
+    pub fn from_dbo(dbo: MoveDBO, index: i32, side: String) -> Self {
+        Self {
+            index,
+            side,
+            start_x: dbo.start_x,
+            start_y: dbo.start_y,
+            dest_x: dbo.dest_x,
+            dest_y: dbo.dest_y
+        }
+    }
+}
+
 // POST bodies --------------------------------
 
 #[derive(Deserialize, Serialize)]
