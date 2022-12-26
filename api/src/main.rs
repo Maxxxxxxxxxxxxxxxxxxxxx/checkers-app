@@ -16,6 +16,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(cors)
             .service(game_controller::new_game)
             .service(game_controller::get_game)
+            .service(game_controller::list_games)
             // .route("/", web::get().to(greet))
             // .route("/{name}", web::get().to(greet))
     })

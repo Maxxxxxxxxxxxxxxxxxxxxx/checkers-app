@@ -7,10 +7,15 @@ use actix_web::{
     post,
 };
 
-// #[get("/games")]
-// pub async fn list_games() -> HttpResponse {
-
-// }
+#[get("/games")]
+pub async fn list_games() -> HttpResponse {
+    match db::get_all_games().await {
+        Ok(games) => ResponseType::Ok(games).get_response(),
+        Err(_) => ResponseType::NotFound(
+            NotFoundMessage::new("No games in the database!")
+        ).get_response()
+    }
+}
 
 #[get("/games/{id}")]
 pub async fn get_game(req: HttpRequest) -> HttpResponse {

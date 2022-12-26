@@ -28,7 +28,7 @@ impl<T: Serialize> ResponseType<T> {
             ResponseType::Ok(payload) => HttpResponse::Ok()
                 .content_type("application/json")
                 .json(payload),
-            ResponseType::NotFound(error) => HttpResponse::BadRequest()
+            ResponseType::NotFound(error) => HttpResponse::NotFound()
                 .content_type("application/json")
                 .json(error),
             ResponseType::Created(payload) => HttpResponse::Created()

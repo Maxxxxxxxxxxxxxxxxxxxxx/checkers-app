@@ -13,6 +13,31 @@ pub async fn connect() -> Result<Graph> {
     Graph::new(&URI, USERNAME, PASSWORD).await
 }
 
+pub async fn get_all_games() -> Result<Vec<Game>> {
+    let graph = connect().await?;
+
+    let mut stream = graph.execute(
+        query("MATCH (game:Game) RETURN game")
+    ).await?;
+
+    let mut all_ids = Vec::<String>::new();
+    while let Ok(Some(row)) = stream.next().await {
+        let node = row.get::<Node>("game").unwrap();
+        let id = node.get("id").unwrap();
+
+        all_ids.push(id);
+    };
+
+    let mut games = Vec::<Game>::new();
+
+    for id in all_ids {
+        let game = get_game(&id).await?;
+        games.push(game);
+    }
+
+    return Ok(games)
+}
+
 pub async fn get_game(game_id: &str) -> Result<Game> {
     let graph = connect().await?;
 
