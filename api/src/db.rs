@@ -21,9 +21,6 @@ pub async fn get_game(game_id: &str) -> Result<Game> {
         .param("game_id", game_id.clone())
     ).await?;
 
-    let game_node: Node = game_stream.next().await?.unwrap().get("game").unwrap();
-    let game_dbo: GameDBO = game_node.try_into().unwrap();
-
     let mut pawns_stream = graph.execute(
         query("MATCH (:Game {id: $game_id})<-[:PAWN_OF]-(p:Pawn) RETURN p")
         .param("game_id", game_id.clone())
@@ -33,6 +30,9 @@ pub async fn get_game(game_id: &str) -> Result<Game> {
         query("MATCH (:Game {id: $game_id})<-[:MOVE_OF]-(m:Move)-[:OF_PAWN]->(pawn:Pawn) RETURN m,pawn")
         .param("game_id", game_id.clone())
     ).await?;
+
+    let game_node: Node = game_stream.next().await?.unwrap().get("game").unwrap();
+    let game_dbo: GameDBO = game_node.try_into().unwrap();
 
     let mut moves = Vec::<Move>::new();
     while let Ok(Some(row)) = moves_stream.next().await {
