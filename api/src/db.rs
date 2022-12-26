@@ -31,8 +31,15 @@ pub async fn get_game(game_id: &str) -> Result<Game> {
         .param("game_id", game_id.clone())
     ).await?;
 
-    let game_node: Node = game_stream.next().await?.unwrap().get("game").unwrap();
-    let game_dbo: GameDBO = game_node.try_into().unwrap();
+    let game_node = game_stream.next().await?;
+    let game_dbo: Option<GameDBO> = match game_node {
+        Some(row) => Some(row
+            .get::<Node>("game")
+            .unwrap()
+            .try_into()
+            .unwrap()),
+        None => None
+    };
 
     let mut moves = Vec::<Move>::new();
     while let Ok(Some(row)) = moves_stream.next().await {
@@ -55,13 +62,14 @@ pub async fn get_game(game_id: &str) -> Result<Game> {
         pawns.push(pawn);
     }
 
-    let game = Game::from_dbo(
-        game_dbo,
-        moves,
-        pawns
-    );
-
-    Ok(game)
+    match game_dbo {
+        Some(dbo) => Ok(Game::from_dbo(
+            dbo,
+            moves,
+            pawns
+        )),
+        None => Err(neo4rs::Error::DeserializationError("Failed to parse game DBO".to_string()))
+    }
 }
 
 pub async fn create_game(pos_white: &str, pos_black: &str) -> Result<()> {
