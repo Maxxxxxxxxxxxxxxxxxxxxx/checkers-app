@@ -15,7 +15,7 @@ export default function Field({ x, y }) {
         alt=""
         className="sprite"
         onClick={() => {
-          console.log(pawn);
+          // console.log(pawn);
           focusPawn(pawn);
           // dispatch({type: 'MOVE', pawn: pawn, x: 1, y: 4 })
           // dispatch(Actions.move(pawn, 1, 4))
@@ -28,7 +28,7 @@ export default function Field({ x, y }) {
     <div
       className={`game__field game__field--empty`}
       onClick={() => {
-        console.log(x, y);
+        // console.log(x, y);
         focusDest(x,y);
         // setDestination({ x, y });
         // clearFocus();

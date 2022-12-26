@@ -1,7 +1,13 @@
-import { useState, useReducer, createContext, useContext, useEffect } from "react";
+import {
+  useState,
+  useReducer,
+  createContext,
+  useContext,
+  useEffect,
+} from "react";
 import { useSearchParams } from "react-router-dom";
 import GamestateReducer from "./GamestateReducer";
-import * as Actions from './GamestateActions';
+import * as Actions from "./GamestateActions";
 import axios from "axios";
 
 const GameContext = createContext();
@@ -9,31 +15,41 @@ export const useGameContext = () => useContext(GameContext);
 
 export default function GameContextProvider({ children }) {
   const [params] = useSearchParams();
-  const [gamestate, dispatch] = useReducer(GamestateReducer, {pawns: []});
+  const [gamestate, dispatch] = useReducer(GamestateReducer, { pawns: [] });
   const [moveParams, setMoveParams] = useState({});
 
   const gameId = params.get("gameId");
 
-  const focusPawn = (pawn) => setMoveParams({...moveParams, pawn});
-  const focusDest = (x, y) => setMoveParams({...moveParams, dest: [x, y]})
-  const clearFocus = () => setMoveParams({});
+  const focusPawn = (pawn) => setMoveParams({ ...moveParams, pawn });
+  const focusDest = (x, y) =>
+    moveParams.pawn
+      ? setMoveParams({ ...moveParams, dest: [x, y] })
+      : undefined;
+  const clearParams = () => setMoveParams({});
 
   useEffect(() => {
+    // console.log(moveParams)
     if (moveParams.pawn && moveParams.dest) {
-      dispatch(Actions.move(moveParams.pawn, moveParams.dest[0], moveParams.dest[1]))
-      clearFocus();
+      /*
+        TODO: PUT request to handle gamestate change in backend
+      */
+
+      dispatch(
+        Actions.move(moveParams.pawn, moveParams.dest[0], moveParams.dest[1])
+      );
+      clearParams();
     }
-  })
+  });
 
   useEffect(() => {
-    axios.get(`http://localhost:8080/games/${gameId}`)
-      .then(res => { dispatch(Actions.set(res.data)); console.log(res.data) })
+    axios.get(`http://localhost:8080/games/${gameId}`).then((res) => {
+      dispatch(Actions.set(res.data));
+      console.log(res.data);
+    });
   }, []);
 
   return (
-    <GameContext.Provider
-      value={{ gamestate, dispatch, focusPawn, focusDest }}
-    >
+    <GameContext.Provider value={{ gamestate, dispatch, focusPawn, focusDest }}>
       {children}
     </GameContext.Provider>
   );
