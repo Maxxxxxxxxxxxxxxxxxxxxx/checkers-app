@@ -1,3 +1,20 @@
 $font-color: rgba(255, 255, 255, 0.87);
-$bg-darker: #1c1a18;
-$bg-lighter: rgb(58, 56, 54);
+$bg-global: rgb(50,45,44);
+$bg-grey-darker: rgb(50,45,44);
+$bg-grey: rgb(50,45,44);
+$bg-green: rgb(127,166,80);
+$bg-green-darker: rgb(83,113,52);
+
+@mixin coolBoxShadow($shadowcolor) {
+    box-shadow: 0 .1rem
+                0 0 $shadowcolor,
+                0 .4rem .0rem .00rem 
+                $shadowcolor;
+}
+
+@mixin coolBoxShadowHighlight($shadowcolor) {
+    box-shadow: 0 .1rem
+                0 0 $shadowcolor,
+                0 .7rem .95rem .05rem
+                $shadowcolor;
+}
