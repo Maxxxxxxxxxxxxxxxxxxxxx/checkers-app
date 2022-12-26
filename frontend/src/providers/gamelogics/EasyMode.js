@@ -1,5 +1,14 @@
 import { Vector } from "vector2d";
 
+const getPawnAtVector = (gamestate, vector) => {
+  let p = gamestate.pawns.find((pawn) => {
+    let position = new Vector(pawn.pos_x, pawn.pos_y);
+    return position.equals(vector) ? true : false;
+  });
+
+  return p;
+};
+
 export class MovePawn {
   constructor(gamestate, pawn, x, y) {
     this.gamestate = gamestate;
@@ -32,23 +41,51 @@ export class MovePawn {
     if (this.absVec.equals(new Vector(1, 1))) return true;
   };
 
+  getPossibleKills = () => {
+    let positions = [];
+
+    // scanner vector to switch between all fields around to check for available kills
+    let scanner = new Vector(1, 1);
+
+    // rotates the scanner by 90 degrees and returns new vector
+    let rotatedScanner = (vector) => {
+      vector.rotate(1.5708);
+      let obj = vector.toObject();
+      return new Vector(Math.round(obj.x), Math.round(obj.y));
+    };
+
+    // rotate the vector and check for pawn presence at its pos
+    for (let i = 0; i < 4; i++) {
+      if (getPawnAtVector(this.gamestate, scanner)) {
+        /*
+          TODO: check 
+        */
+        // positions.push()
+      }
+
+      scanner = rotatedScanner();
+    }
+
+    console.log("killPositions: ", positions)
+  };
+
   isKill = () => {
     // shift vector to enemy pos
     let shift = this.vec.clone().divS(2);
 
     // calculate enemy pos
-    let enemyPos = new Vector(this.pawn.pos_x, this.pawn.pos_y)
-    enemyPos.add(shift)
+    let enemyPos = new Vector(this.pawn.pos_x, this.pawn.pos_y);
+    enemyPos.add(shift);
 
     if (this.absVec.equals(new Vector(2, 2))) {
-      let enemyPawn = this.gamestate.pawns.find(pawn => {
+      let enemyPawn = this.gamestate.pawns.find((pawn) => {
         let position = new Vector(pawn.pos_x, pawn.pos_y);
-        return position.equals(enemyPos) && 
-               pawn.side != this.pawn.side
-          ? true : false
+        return position.equals(enemyPos) && pawn.side != this.pawn.side
+          ? true
+          : false;
       });
 
-      return enemyPawn
+      return enemyPawn;
     } else return false;
-  }
+  };
 }
