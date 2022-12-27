@@ -16,15 +16,22 @@ export const useGameContext = () => useContext(GameContext);
 export default function GameContextProvider({ children }) {
   const [params] = useSearchParams();
   const [gamestate, dispatch] = useReducer(GamestateReducer, { pawns: [] });
+
+  // moveParams: { pawn: [PAWN OBJECT], dest: [x,y] }
   const [moveParams, setMoveParams] = useState({});
 
   const gameId = params.get("gameId");
 
+  // sets "pawn" property in moveParams
   const focusPawn = (pawn) => setMoveParams({ ...moveParams, pawn });
+
+  // sets "dest" property in moveParams
   const focusDest = (x, y) =>
     moveParams.pawn
       ? setMoveParams({ ...moveParams, dest: [x, y] })
       : undefined;
+  
+  // clears moveParams
   const clearParams = () => setMoveParams({});
 
   useEffect(() => {
@@ -41,6 +48,7 @@ export default function GameContextProvider({ children }) {
     }
   });
 
+  // fetch current gamestate from api
   useEffect(() => {
     axios.get(`http://localhost:8080/games/${gameId}`).then((res) => {
       dispatch(Actions.set(res.data));
