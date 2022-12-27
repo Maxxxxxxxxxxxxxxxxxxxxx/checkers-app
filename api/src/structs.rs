@@ -31,7 +31,7 @@ impl From<GameDBO> for Game {
             turn: dbo.turn,
             id: dbo.id,
             moves: Vec::<Move>::new(),
-            pawns: Vec::<Pawn>::new()
+            pawns: Vec::<Pawn>::new(),
         }
     }
 }
@@ -62,14 +62,7 @@ impl TryFrom<Node> for Pawn {
         // dbg!(&side);
 
         match (is_queen, is_dead, index, side, pos_x, pos_y) {
-            (
-                Some(is_queen), 
-                Some(is_dead), 
-                Some(index), 
-                Some(side), 
-                Some(pos_x), 
-                Some(pos_y)
-            ) => {
+            (Some(is_queen), Some(is_dead), Some(index), Some(side), Some(pos_x), Some(pos_y)) => {
                 let x32 = pos_x as i32;
                 let y32 = pos_y as i32;
                 let index32 = index as i32;
@@ -103,6 +96,40 @@ pub struct Move {
     pub dest_y: i32,
 }
 
+impl TryFrom<Node> for Move {
+    type Error = ();
+    fn try_from(node: Node) -> Result<Self, Self::Error> {
+        let index: Option<i64> = node.get("index");
+        let side: Option<String> = node.get("side");
+        let start_x: Option<i64> = node.get("start_x");
+        let start_y: Option<i64> = node.get("start_y");
+        let dest_x: Option<i64> = node.get("dest_x");
+        let dest_y: Option<i64> = node.get("dest_y");
+
+        match (index, side, start_x, start_y, dest_x, dest_y) {
+            (Some(index), Some(side), Some(start_x), Some(start_y), Some(dest_x), Some(dest_y)) => {
+                let index32 = index as i32;
+                let sx = start_x as i32;
+                let sy = start_y as i32;
+                let dx = dest_x as i32;
+                let dy = dest_y as i32;
+
+                Ok(
+                    Self {
+                        index: index32,
+                        side,
+                        start_x: sx,
+                        start_y: sy,
+                        dest_x: dx,
+                        dest_y: dy
+                    }
+                )
+            }
+            _ => Err(()),
+        }
+    }
+}
+
 impl Move {
     pub fn from_dbo(dbo: MoveDBO, index: i32, side: String) -> Self {
         Self {
@@ -111,7 +138,7 @@ impl Move {
             start_x: dbo.start_x,
             start_y: dbo.start_y,
             dest_x: dbo.dest_x,
-            dest_y: dbo.dest_y
+            dest_y: dbo.dest_y,
         }
     }
 }
@@ -150,12 +177,7 @@ impl TryFrom<Node> for MoveDBO {
         let dest_y: Option<i64> = node.get("start_x");
 
         match (start_x, start_y, dest_x, dest_y) {
-            (
-                Some(sx),
-                Some(sy),
-                Some(dx),
-                Some(dy),
-            ) => {
+            (Some(sx), Some(sy), Some(dx), Some(dy)) => {
                 let start_x = sx as i32;
                 let start_y = sy as i32;
                 let dest_x = dx as i32;
@@ -164,14 +186,13 @@ impl TryFrom<Node> for MoveDBO {
                     start_x,
                     start_y,
                     dest_x,
-                    dest_y
+                    dest_y,
                 })
-            },
-            _ => Err(())
+            }
+            _ => Err(()),
         }
     }
 }
-
 
 #[derive(Deserialize, Serialize)]
 pub struct GameDBO {
@@ -188,19 +209,15 @@ impl TryFrom<Node> for GameDBO {
         let id: Option<String> = node.get("id");
 
         match (current_color, turn, id) {
-            (
-                Some(current_color),
-                Some(turn),
-                Some(id),
-            ) => {
+            (Some(current_color), Some(turn), Some(id)) => {
                 let turn32 = turn as i32;
                 Ok(GameDBO {
                     current_color,
                     turn: turn32,
-                    id
+                    id,
                 })
-            },
-            _ => Err(())
+            }
+            _ => Err(()),
         }
     }
 }
