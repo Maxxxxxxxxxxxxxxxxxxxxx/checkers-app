@@ -24,6 +24,18 @@ impl Game {
     }
 }
 
+impl From<GameDBO> for Game {
+    fn from(dbo: GameDBO) -> Self {
+        Self {
+            current_color: dbo.current_color,
+            turn: dbo.turn,
+            id: dbo.id,
+            moves: Vec::<Move>::new(),
+            pawns: Vec::<Pawn>::new()
+        }
+    }
+}
+
 #[derive(Deserialize, Serialize, Clone, Debug)]
 pub struct Pawn {
     pub is_queen: bool,
