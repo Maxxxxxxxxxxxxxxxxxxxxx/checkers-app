@@ -1,0 +1,23 @@
+@import '../variables';
+
+body {
+    padding: 1rem;
+}
+
+.games-list {
+    display: flex;
+    flex-direction: column;
+    padding: 3rem;
+    gap: 2rem;
+    &__game {
+        display: flex;
+        justify-content: space-around;
+        width: 100%;
+        // background-color: $bg-grey;
+        padding: 1rem;
+        border-bottom: 1px lightgray dashed;
+        .info {
+            font-size: 0.8rem;
+        }
+    }
+}
