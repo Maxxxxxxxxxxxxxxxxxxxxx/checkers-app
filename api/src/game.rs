@@ -29,6 +29,70 @@ pub const POSITIONS_BOTTOM: [(i32, i32); 12] = [
     (6, 5),
 ];
 
+pub struct GameConfig {
+    pub top_side: String,
+    pub bottom_side: String,
+    pub name: String,
+    pub mode: String,
+}
+impl GameConfig {
+    pub fn new() -> Self {
+        Self { 
+            top_side: "b".into(), 
+            bottom_side: "w".into(), 
+            name: "Game".into(), 
+            mode: "easy".into()
+        }
+    }
+    pub fn name(mut self, name: &str) -> Self {
+        self.name = name.to_string();
+        self
+    }
+    pub fn mode(mut self, name: &str) -> Self {
+        self.name = name.to_string();
+        self
+    }
+    pub fn top(mut self, top: &str) -> Self {
+        match top {
+            "b" => {
+                self.top_side = "b".to_string();
+                self.bottom_side = "w".to_string();
+                self
+            },
+            "w" => {
+                self.top_side = "w".to_string();
+                self.bottom_side = "b".to_string();
+                self
+            }
+            character => {
+                self.top_side = character.to_string();
+                self
+            }
+        }
+    }
+    pub fn bottom(mut self, bottom: &str) -> Self {
+        match bottom {
+            "b" => {
+                self.top_side = "w".to_string();
+                self.bottom_side = "b".to_string();
+                self
+            },
+            "w" => {
+                self.top_side = "b".to_string();
+                self.bottom_side = "w".to_string();
+                self
+            }
+            character => {
+                self.top_side = character.to_string();
+                self
+            }
+        }
+    }
+    pub fn build(self) -> Result<Self, String> {
+        Ok(self)
+    }
+}
+
 pub fn create_pawns(side: &str, top_bottom: &str) -> Vec<Pawn> {
     let positions = match top_bottom {
         "top" => POSITIONS_TOP,
