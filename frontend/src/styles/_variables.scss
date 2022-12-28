@@ -86,10 +86,13 @@ $bg-grey-darker-2: rgb(30,30,25);
     &__header-text {
         font-weight: bolder;
         gap: 1rem;
-
         &--gray {
             color: gray;
         }
+    }
+    &__notfound {
+        text-align: center;
+        font-weight: bolder;
     }
 
 }

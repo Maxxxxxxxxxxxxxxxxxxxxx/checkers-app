@@ -1,23 +1,63 @@
 @import '../variables';
 
-body {
-    padding: 1rem;
+.game-btn:hover {
+    background-color: red;
 }
 
-.games-list {
+.view {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 1rem;
+    margin-left: 170px;
+}
+
+.toolbar {
+    @include coolBoxShadow($bg-grey-darker-2);
+    border-radius: 0.4rem;
+    background-color: $bg-grey-darker-1;
+    align-items: center;
+    &__text {
+        font-weight: 1000;
+        font-size: 1.3rem;
+    }
+    &__leftside {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 0.4rem;
+    }
+}
+
+.list-view {
+    max-width: 500px;
     display: flex;
     flex-direction: column;
-    padding: 3rem;
-    gap: 2rem;
-    &__game {
+    &__games-list {
         display: flex;
-        justify-content: space-around;
-        width: 100%;
-        // background-color: $bg-grey;
-        padding: 1rem;
-        border-bottom: 1px lightgray dashed;
-        .info {
-            font-size: 0.8rem;
+        flex: 1;
+        gap: 2rem;
+        flex-wrap: wrap;
+        margin: 0;
+        padding: 0px;
+        max-width: 500px;
+        padding: 1rem 0 0 0;
+        .button {
+            &--white {
+                color: black;
+                background: white;
+            }
+            &--black {
+                color: white;
+                background: black;
+            }
+        }
+        .element {
+            @include coolBoxShadow($bg-grey-darker-2);
+            border-radius: 0.5rem;
+            width: 200px;
+            background: $bg-grey-darker-1;
+            padding: 1rem;
         }
     }
 }
