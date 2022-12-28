@@ -1,5 +1,6 @@
 import "@/styles/Home/Home.css";
 import { Link } from 'react-router-dom';
+import ViewListRoundedIcon from '@mui/icons-material/ViewListRounded';
 
 export default function HomeView() {
   return (
@@ -9,9 +10,10 @@ export default function HomeView() {
           Checkers 
         </div>
         <div className="home-window__buttons">
-          <Link to="/games">
+          <Link to="/list">
             <button className="big-button">
               <div className="big-button__content">
+                <ViewListRoundedIcon></ViewListRoundedIcon>
                 Games
               </div>
             </button>

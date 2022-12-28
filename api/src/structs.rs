@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 
 // PAYLOADS --------------------------------
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Debug)]
 pub struct Game {
     pub current_color: String,
     pub turn: i32,
@@ -86,7 +86,7 @@ pub struct Pos {
     pub y: i32,
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Debug)]
 pub struct Move {
     pub index: i32,
     pub side: String,
@@ -194,7 +194,7 @@ impl TryFrom<Node> for MoveDBO {
     }
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Debug)]
 pub struct GameDBO {
     pub current_color: String,
     pub turn: i32,
