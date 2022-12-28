@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
+import { Container, Typography } from '@mui/material/index';
 import { Link } from 'react-router-dom';
 import "@/styles/GamesList/GamesList.css";
 import axios from 'axios';
+import GameWindow from './GameWindow';
 
 export default function GamesListView() {
   let [games, setGames] = useState([]);
@@ -11,36 +13,23 @@ export default function GamesListView() {
       .then(res => { setGames(res.data); console.log(res.data) })
   }, []);
 
+  let children = games.map(gamestate => {
+    return (
+      <GameWindow gamestate={gamestate}/>
+    )
+  })
+
   return (
     <div className="view">
-      <div className="container">
-        <div className="container__header">
-          <div className="container__header-text">
-            Games
-          </div>
-          <div className="container__header-text container__header-text--gray">
-            { games ? `(${games.length})` : undefined }
-          </div>
-        </div>
-        <div className="games-list">
-          {games.map(gamestate => {
-            return (<div className="games-list__game">
-              <span className="info">
-                <div className="info__element">
-                  Game { gamestate.id }
-                </div>
-                <div className="info__element">
-                  Turn { gamestate.turn }
-                </div>
-              </span>
-              <Link className="small-button small-button--black" to={`/game?gameId=${gamestate.id}`}>
-                  Play as black
-              </Link>
-              <Link className="small-button small-button--white" to={`/game?gameId=${gamestate.id}`}>
-                  Play as white
-              </Link>
-            </div>)
-          })}
+      <div className="list-view">
+        <Typography variant="h4" component="h2" className="list-view__header">
+          Games 
+          <Typography variant="h4" component="h2" sx={{color: "gray"}}>
+            { games ? `(${games.length})` : "(0)"}
+          </Typography>
+        </Typography>
+        <div className="list-view__games-list">
+          { children }
         </div>
       </div>
     </div>
