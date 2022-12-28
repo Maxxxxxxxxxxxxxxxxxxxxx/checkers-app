@@ -147,7 +147,8 @@ impl Move {
 
 #[derive(Deserialize, Serialize)]
 pub struct NewGameRequest {
-    mode: String,
+    pub white: String,
+    pub black: String,
 }
 
 #[derive(Deserialize, Serialize)]
@@ -158,7 +159,7 @@ pub struct MoveRequest {
     pub new_pos: Pos,
 }
 
-// DB structs
+// DB structs --------------------------------
 
 #[derive(Deserialize, Serialize)]
 pub struct MoveDBO {

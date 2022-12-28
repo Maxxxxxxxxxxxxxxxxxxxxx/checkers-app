@@ -20,6 +20,7 @@ pub enum ResponseType<T> {
     Ok(T),
     Created(T),
     NotFound(T),
+    BadRequest(T),
 }
 
 impl<T: Serialize> ResponseType<T> {
@@ -29,6 +30,9 @@ impl<T: Serialize> ResponseType<T> {
                 .content_type("application/json")
                 .json(payload),
             ResponseType::NotFound(error) => HttpResponse::NotFound()
+                .content_type("application/json")
+                .json(error),
+            ResponseType::BadRequest(error) => HttpResponse::BadRequest()
                 .content_type("application/json")
                 .json(error),
             ResponseType::Created(payload) => HttpResponse::Created()
