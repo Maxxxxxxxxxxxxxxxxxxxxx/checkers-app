@@ -4,6 +4,7 @@ import NotFoundPage from "./views/404/NotFoundPage";
 import { Routes, Route } from "react-router-dom";
 import HomeView from "./views/Home/HomeView";
 import GameContextProvider from "./providers/GameContextProvider";
+import GamesListView from "./views/GamesList/GamesList";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           </GameContextProvider>
         }
       ></Route>
+      <Route path={"/list"} element={<GamesListView />} />
       <Route path="*" element={<NotFoundPage />}></Route>
     </Routes>
   );
