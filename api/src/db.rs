@@ -82,7 +82,7 @@ pub async fn get_game(game_id: &str) -> Result<Game> {
     }
 }
 
-pub async fn create_game(pos_white: &str, pos_black: &str) -> Result<()> {
+pub async fn create_game(pos_white: &str, pos_black: &str) -> Result<Game> {
     match connect().await {
         Ok(graph) => {
             let game_id = Uuid::new_v4().to_string();
@@ -99,7 +99,7 @@ pub async fn create_game(pos_white: &str, pos_black: &str) -> Result<()> {
             .param("game_id", game_id.clone())
             .param("color", "w");
 
-            let mut queries = pawns.into_iter().map(|pawn| {
+            let mut queries = pawns.clone().into_iter().map(|pawn| {
                 query(
                     "
                 MATCH (game:Game {id: $game_id})
@@ -107,15 +107,25 @@ pub async fn create_game(pos_white: &str, pos_black: &str) -> Result<()> {
                 )
                 .param("game_id", game_id.clone())
                 .param("side", pawn.side.clone())
-                .param("index", pawn.index as i64)
-                .param("pos_x", pawn.pos_x as i64)
-                .param("pos_y", pawn.pos_y as i64)
+                .param("index", pawn.index.clone() as i64)
+                .param("pos_x", pawn.pos_x.clone() as i64)
+                .param("pos_y", pawn.pos_y.clone() as i64)
             }).collect::<Vec<Query>>();
 
             queries.insert(0, game_query);
 
             txn.run_queries(queries).await.unwrap();
-            txn.commit().await
+            txn.commit().await?;
+
+            let game = Game {
+                current_color: "w".to_string(),
+                turn: 1,
+                id: game_id,
+                moves: Vec::<Move>::new(),
+                pawns: pawns,
+            };
+
+            Ok(game)
         }
         Err(err) => Err(err),
     }

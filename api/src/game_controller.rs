@@ -1,3 +1,4 @@
+use crate::structs::NewGameRequest;
 use crate::utils::*;
 use crate::db;
 use actix_web::HttpRequest;
@@ -5,6 +6,7 @@ use actix_web::{
     HttpResponse,
     get,
     post,
+    web
 };
 
 #[get("/games")]
@@ -29,11 +31,11 @@ pub async fn get_game(req: HttpRequest) -> HttpResponse {
 }
 
 #[post("/games/new_game")]
-pub async fn new_game() -> HttpResponse {
-    match db::create_game("bottom", "top").await {
-        Ok(_) => ResponseType::Created(()).get_response(),
-        Err(_) => ResponseType::NotFound(
-            NotFoundMessage::new("Error while creating in db!")
+pub async fn new_game(data: web::Json<NewGameRequest>) -> HttpResponse {
+    match db::create_game(data.white.as_str(), data.black.as_str()).await {
+        Ok(game) => ResponseType::Created(game).get_response(),
+        Err(_) => ResponseType::BadRequest(
+            NotFoundMessage::new("Bad request!")
         ).get_response()
     }
 }
