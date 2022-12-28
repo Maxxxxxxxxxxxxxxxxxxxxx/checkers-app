@@ -17,22 +17,34 @@ pub async fn get_all_games() -> Result<Vec<Game>> {
     let graph = connect().await?;
 
     let mut stream = graph.execute(
-        query("MATCH (game:Game) RETURN game")
+        query("MATCH (game:Game)<-[:PAWN_OF]-(pawn:Pawn) RETURN game, pawn")
     ).await?;
 
-    let mut all_ids = Vec::<String>::new();
-    while let Ok(Some(row)) = stream.next().await {
-        let node = row.get::<Node>("game").unwrap();
-        let id = node.get("id").unwrap();
-
-        all_ids.push(id);
-    };
-
     let mut games = Vec::<Game>::new();
+    while let Ok(Some(row)) = stream.next().await {
+        // rows.push(row);
 
-    for id in all_ids {
-        let game = get_game(&id).await?;
-        games.push(game);
+        let game_dbo: GameDBO = row.get::<Node>("game").unwrap().try_into().unwrap();
+        let pawn: Pawn = row.get::<Node>("pawn").unwrap().try_into().unwrap();
+        // let mov: Move = row.get::<Node>("move").unwrap().try_into().unwrap();
+
+        let mut game = Game::from(game_dbo);
+
+        // dbg!(&game);
+
+        match games.iter_mut().find(|found| found.id == game.id) {
+            // if game is found in accumulator, push move & pawn
+            Some(found) => {
+                found.pawns.push(pawn);
+                // game.moves.push(mov);
+            },
+            // if game is not found, push all
+            None => {
+                game.pawns.push(pawn);
+                // game.moves.push(mov);
+                games.push(game);
+            }
+        };
     }
 
     return Ok(games)
@@ -83,9 +95,11 @@ pub async fn get_game(game_id: &str) -> Result<Game> {
     while let Ok(Some(row)) = pawns_stream.next().await {
         let node: Node = row.get("p").unwrap();
         let pawn: Pawn = node.try_into().unwrap();
-        // dbg!(pawn);
+        // dbg!(&pawn);
         pawns.push(pawn);
     }
+
+    // dbg!(&pawns);
 
     match game_dbo {
         Some(dbo) => Ok(Game::from_dbo(
@@ -109,13 +123,7 @@ pub async fn create_game(pos_white: &str, pos_black: &str) -> Result<()> {
             let txn = graph.start_txn().await.unwrap();
 
             let game_query = query(
-                "
-                CREATE (:Game {
-                    id: $game_id,
-                    current_color: $color,
-                    turn: 1
-                });
-            ",
+                "CREATE (:Game {id: $game_id,current_color: $color,turn: 1});",
             )
             .param("game_id", game_id.clone())
             .param("color", "w");
@@ -124,14 +132,7 @@ pub async fn create_game(pos_white: &str, pos_black: &str) -> Result<()> {
                 query(
                     "
                 MATCH (game:Game {id: $game_id})
-                CREATE (p:Pawn {
-                    is_queen: false, 
-                    is_dead: false, 
-                    side: $side,
-                    index: $index,
-                    pos_x: $pos_x,
-                    pos_y: $pos_y
-                })-[:PAWN_OF]->(game)",
+                CREATE (p:Pawn {is_queen: false, is_dead: false, side: $side,index: $index,pos_x: $pos_x,pos_y: $pos_y})-[:PAWN_OF]->(game)",
                 )
                 .param("game_id", game_id.clone())
                 .param("side", pawn.side.clone())
