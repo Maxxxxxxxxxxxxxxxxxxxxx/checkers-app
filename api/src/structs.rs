@@ -147,6 +147,8 @@ impl Move {
 pub struct NewGameRequest {
     pub white: String,
     pub black: String,
+    pub mode: String,
+    pub name: String,
 }
 
 #[derive(Deserialize, Serialize)]

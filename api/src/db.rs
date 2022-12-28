@@ -1,6 +1,6 @@
 #![allow(unused)]
 
-use crate::game::create_pawns;
+use crate::game::*;
 use crate::structs::*;
 use neo4rs::*;
 use uuid::Uuid;
@@ -84,11 +84,14 @@ pub async fn get_game(game_id: &str) -> Result<Game> {
     }
 }
 
-pub async fn create_game(pos_white: &str, pos_black: &str) -> Result<Game> {
+pub async fn create_game(cfg: GameConfig) -> Result<Game> {
     match connect().await {
         Ok(graph) => {
             let game_id = Uuid::new_v4().to_string();
-            let mut pawns = [create_pawns("w", pos_white), create_pawns("b", pos_black)].concat();
+            let mut pawns = [
+                create_pawns("w", &cfg.white_side), 
+                create_pawns("b", &cfg.black_side)
+            ].concat();
 
             let txn = graph.start_txn().await.unwrap();
 

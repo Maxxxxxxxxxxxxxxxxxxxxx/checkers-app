@@ -30,16 +30,18 @@ pub const POSITIONS_BOTTOM: [(i32, i32); 12] = [
 ];
 
 pub struct GameConfig {
-    pub top_side: String,
-    pub bottom_side: String,
+    pub white_side: String,
+    pub black_side: String,
     pub name: String,
     pub mode: String,
 }
+
+#[allow(dead_code)]
 impl GameConfig {
     pub fn new() -> Self {
         Self { 
-            top_side: "b".into(), 
-            bottom_side: "w".into(), 
+            black_side: "top".into(), 
+            white_side: "bottom".into(), 
             name: "Game".into(), 
             mode: "easy".into()
         }
@@ -52,43 +54,16 @@ impl GameConfig {
         self.name = name.to_string();
         self
     }
-    pub fn top(mut self, top: &str) -> Self {
-        match top {
-            "b" => {
-                self.top_side = "b".to_string();
-                self.bottom_side = "w".to_string();
-                self
-            },
-            "w" => {
-                self.top_side = "w".to_string();
-                self.bottom_side = "b".to_string();
-                self
-            }
-            character => {
-                self.top_side = character.to_string();
-                self
-            }
-        }
+    pub fn white_at(mut self, side: &str) -> Self {
+        self.white_side = side.to_string();
+        self
     }
-    pub fn bottom(mut self, bottom: &str) -> Self {
-        match bottom {
-            "b" => {
-                self.top_side = "w".to_string();
-                self.bottom_side = "b".to_string();
-                self
-            },
-            "w" => {
-                self.top_side = "b".to_string();
-                self.bottom_side = "w".to_string();
-                self
-            }
-            character => {
-                self.top_side = character.to_string();
-                self
-            }
-        }
+    pub fn black_at(mut self, side: &str) -> Self {
+        self.black_side = side.to_string();
+        self
     }
     pub fn build(self) -> Result<Self, String> {
+        // todo: add error on bad args
         Ok(self)
     }
 }
