@@ -16,9 +16,11 @@ pub async fn connect() -> Result<Graph> {
 pub async fn get_all_games() -> Result<Vec<Game>> {
     let graph = connect().await?;
 
-    let mut stream = graph.execute(
-        query("MATCH (game:Game)<-[:PAWN_OF]-(pawn:Pawn) RETURN game, pawn")
-    ).await?;
+    let mut stream = graph
+        .execute(query(
+            "MATCH (game:Game)<-[:PAWN_OF]-(pawn:Pawn) RETURN game, pawn",
+        ))
+        .await?;
 
     let mut games = Vec::<Game>::new();
     while let Ok(Some(row)) = stream.next().await {
@@ -33,7 +35,7 @@ pub async fn get_all_games() -> Result<Vec<Game>> {
             Some(found) => {
                 found.pawns.push(pawn);
                 // game.moves.push(mov);
-            },
+            }
             // if game is not found, push all
             None => {
                 game.pawns.push(pawn);
@@ -43,16 +45,18 @@ pub async fn get_all_games() -> Result<Vec<Game>> {
         };
     }
 
-    return Ok(games)
+    return Ok(games);
 }
 
 pub async fn get_game(game_id: &str) -> Result<Game> {
     let graph = connect().await?;
 
-    let mut stream = graph.execute(
-        query("MATCH (game:Game {id: $game_id})<-[:PAWN_OF]-(pawn:Pawn) RETURN game, pawn")
-        .param("game_id", game_id.clone())
-    ).await?;
+    let mut stream = graph
+        .execute(
+            query("MATCH (game:Game {id: $game_id})<-[:PAWN_OF]-(pawn:Pawn) RETURN game, pawn")
+                .param("game_id", game_id.clone()),
+        )
+        .await?;
 
     let mut pawns = Vec::<Pawn>::new();
     let mut game_dbo: Option<GameDBO> = None;
@@ -62,23 +66,21 @@ pub async fn get_game(game_id: &str) -> Result<Game> {
         let pawn: Pawn = node.try_into().unwrap();
 
         if game_dbo.is_none() {
-            game_dbo = Some(row
-                .get::<Node>("game")
-                .unwrap()
-                .try_into()
-                .unwrap())
+            game_dbo = Some(row.get::<Node>("game").unwrap().try_into().unwrap())
         }
         // todo: add move handling
-        pawns.push(pawn); 
-    };
+        pawns.push(pawn);
+    }
 
     match game_dbo {
         Some(dbo) => Ok(Game::from_dbo(
             dbo,
             Vec::<Move>::new(), // todo: add move handling
-            pawns
+            pawns,
         )),
-        None => Err(neo4rs::Error::DeserializationError("Failed to parse game DBO".to_string()))
+        None => Err(neo4rs::Error::DeserializationError(
+            "Failed to parse game DBO".to_string(),
+        )),
     }
 }
 
@@ -86,18 +88,13 @@ pub async fn create_game(pos_white: &str, pos_black: &str) -> Result<Game> {
     match connect().await {
         Ok(graph) => {
             let game_id = Uuid::new_v4().to_string();
-            let mut pawns = [
-                create_pawns("w", pos_white), 
-                create_pawns("b", pos_black)
-            ].concat();
+            let mut pawns = [create_pawns("w", pos_white), create_pawns("b", pos_black)].concat();
 
             let txn = graph.start_txn().await.unwrap();
 
-            let game_query = query(
-                "CREATE (:Game {id: $game_id,current_color: $color,turn: 1});",
-            )
-            .param("game_id", game_id.clone())
-            .param("color", "w");
+            let game_query = query("CREATE (:Game {id: $game_id,current_color: $color,turn: 1});")
+                .param("game_id", game_id.clone())
+                .param("color", "w");
 
             let mut queries = pawns.clone().into_iter().map(|pawn| {
                 query(
@@ -130,4 +127,3 @@ pub async fn create_game(pos_white: &str, pos_black: &str) -> Result<Game> {
         Err(err) => Err(err),
     }
 }
-

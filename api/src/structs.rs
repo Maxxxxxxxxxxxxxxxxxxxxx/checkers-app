@@ -114,16 +114,14 @@ impl TryFrom<Node> for Move {
                 let dx = dest_x as i32;
                 let dy = dest_y as i32;
 
-                Ok(
-                    Self {
-                        index: index32,
-                        side,
-                        start_x: sx,
-                        start_y: sy,
-                        dest_x: dx,
-                        dest_y: dy
-                    }
-                )
+                Ok(Self {
+                    index: index32,
+                    side,
+                    start_x: sx,
+                    start_y: sy,
+                    dest_x: dx,
+                    dest_y: dy,
+                })
             }
             _ => Err(()),
         }
