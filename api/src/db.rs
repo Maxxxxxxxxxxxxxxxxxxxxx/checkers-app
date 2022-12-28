@@ -22,15 +22,11 @@ pub async fn get_all_games() -> Result<Vec<Game>> {
 
     let mut games = Vec::<Game>::new();
     while let Ok(Some(row)) = stream.next().await {
-        // rows.push(row);
-
         let game_dbo: GameDBO = row.get::<Node>("game").unwrap().try_into().unwrap();
         let pawn: Pawn = row.get::<Node>("pawn").unwrap().try_into().unwrap();
         // let mov: Move = row.get::<Node>("move").unwrap().try_into().unwrap();
 
         let mut game = Game::from(game_dbo);
-
-        // dbg!(&game);
 
         match games.iter_mut().find(|found| found.id == game.id) {
             // if game is found in accumulator, push move & pawn
@@ -53,58 +49,33 @@ pub async fn get_all_games() -> Result<Vec<Game>> {
 pub async fn get_game(game_id: &str) -> Result<Game> {
     let graph = connect().await?;
 
-    let mut game_stream = graph.execute(
-        query("MATCH (game:Game {id: $game_id}) RETURN game")
+    let mut stream = graph.execute(
+        query("MATCH (game:Game {id: $game_id})<-[:PAWN_OF]-(pawn:Pawn) RETURN game, pawn")
         .param("game_id", game_id.clone())
     ).await?;
-
-    let mut pawns_stream = graph.execute(
-        query("MATCH (:Game {id: $game_id})<-[:PAWN_OF]-(p:Pawn) RETURN p")
-        .param("game_id", game_id.clone())
-    ).await?;
-
-    let mut moves_stream = graph.execute(
-        query("MATCH (:Game {id: $game_id})<-[:MOVE_OF]-(m:Move)-[:OF_PAWN]->(pawn:Pawn) RETURN m,pawn")
-        .param("game_id", game_id.clone())
-    ).await?;
-
-    let game_node = game_stream.next().await?;
-    let game_dbo: Option<GameDBO> = match game_node {
-        Some(row) => Some(row
-            .get::<Node>("game")
-            .unwrap()
-            .try_into()
-            .unwrap()),
-        None => None
-    };
-
-    let mut moves = Vec::<Move>::new();
-    while let Ok(Some(row)) = moves_stream.next().await {
-        let move_node = row.get::<Node>("m").unwrap();
-        let pawn_node = row.get::<Node>("pawn").unwrap();
-        let index = pawn_node.get::<i64>("index").unwrap();
-        let side = pawn_node.get::<String>("side").unwrap();
-        let move_obj = Move::from_dbo(
-            move_node.try_into().unwrap(),
-            index as i32,
-            side
-        );
-    }
 
     let mut pawns = Vec::<Pawn>::new();
-    while let Ok(Some(row)) = pawns_stream.next().await {
-        let node: Node = row.get("p").unwrap();
-        let pawn: Pawn = node.try_into().unwrap();
-        // dbg!(&pawn);
-        pawns.push(pawn);
-    }
+    let mut game_dbo: Option<GameDBO> = None;
 
-    // dbg!(&pawns);
+    while let Ok(Some(row)) = stream.next().await {
+        let node: Node = row.get("pawn").unwrap();
+        let pawn: Pawn = node.try_into().unwrap();
+
+        if game_dbo.is_none() {
+            game_dbo = Some(row
+                .get::<Node>("game")
+                .unwrap()
+                .try_into()
+                .unwrap())
+        }
+        // todo: add move handling
+        pawns.push(pawn); 
+    };
 
     match game_dbo {
         Some(dbo) => Ok(Game::from_dbo(
             dbo,
-            moves,
+            Vec::<Move>::new(), // todo: add move handling
             pawns
         )),
         None => Err(neo4rs::Error::DeserializationError("Failed to parse game DBO".to_string()))
