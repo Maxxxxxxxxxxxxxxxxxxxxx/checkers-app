@@ -41,6 +41,7 @@ export default function GameContextProvider({ children }) {
         TODO: PUT request to handle gamestate change in backend
       */
 
+      // dispatch the move to GamestateReducer
       dispatch(
         Actions.move(moveParams.pawn, moveParams.dest[0], moveParams.dest[1])
       );

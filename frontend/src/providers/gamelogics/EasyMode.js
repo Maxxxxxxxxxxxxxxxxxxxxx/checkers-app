@@ -81,8 +81,6 @@ export class MovePawn {
       let enemyPawn = this.gamestate.pawns.find((pawn) => {
         let position = new Vector(pawn.pos_x, pawn.pos_y);
         return position.equals(enemyPos) && pawn.side != this.pawn.side
-          ? true
-          : false;
       });
 
       return enemyPawn;

@@ -23,7 +23,8 @@ const GamestateReducer = (state, action) => {
 
       // pawn should get killed only when move is valid
       if (move.isKill() && move.validate()) {
-        // move.isKill() returns pawn object
+
+        // move.isKill() returns dead pawn object
         let deadPawn = move.isKill();
 
         // update newPawnState with killed pawn's state changed
