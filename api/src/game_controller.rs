@@ -1,9 +1,9 @@
 use crate::db;
 use crate::game::GameConfig;
-use crate::structs::NewGameRequest;
+use crate::structs::*;
 use crate::utils::*;
 use actix_web::HttpRequest;
-use actix_web::{get, post, web, HttpResponse};
+use actix_web::{get, post, put, web, HttpResponse};
 
 #[get("/games")]
 pub async fn list_games() -> HttpResponse {
@@ -35,5 +35,13 @@ pub async fn new_game(data: web::Json<NewGameRequest>) -> HttpResponse {
     match db::create_game(config).await {
         Ok(game) => ResponseType::Created(game).get_response(),
         Err(_) => ResponseType::BadRequest(NotFoundMessage::new("Bad request!")).get_response(),
+    }
+}
+
+#[put("/games/{id}")]
+pub async fn put_move(data: web::Json<MoveRequest>) -> HttpResponse {
+    match db::add_move(data.game_move.clone(), data.id.clone(), data.killed.clone()).await {
+        Ok(m) => ResponseType::Created(m).get_response(),
+        Err(_) => ResponseType::BadRequest(NotFoundMessage::new("Bad request!")).get_response()
     }
 }

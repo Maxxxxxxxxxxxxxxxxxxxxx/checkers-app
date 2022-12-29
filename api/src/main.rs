@@ -17,6 +17,7 @@ async fn main() -> std::io::Result<()> {
             .service(game_controller::new_game)
             .service(game_controller::get_game)
             .service(game_controller::list_games)
+            .service(game_controller::put_move)
     })
     .bind(("127.0.0.1", 8080))?
     .run()
