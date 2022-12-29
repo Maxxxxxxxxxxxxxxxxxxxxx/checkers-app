@@ -53,29 +53,52 @@ pub async fn get_game(game_id: &str) -> Result<Game> {
 
     let mut stream = graph
         .execute(
-            query("MATCH (game:Game {id: $game_id})<-[:PAWN_OF]-(pawn:Pawn) RETURN game, pawn")
+            query("
+                   MATCH (game:Game {id: $game_id})<-[:PAWN_OF]-(pawn:Pawn) 
+                   OPTIONAL MATCH (move:Move)-[:MOVE_OF]->(game)
+                   RETURN game, pawn, move")
                 .param("game_id", game_id.clone()),
         )
         .await?;
 
     let mut pawns = Vec::<Pawn>::new();
+    let mut moves = Vec::<Move>::new();
     let mut game_dbo: Option<GameDBO> = None;
 
     while let Ok(Some(row)) = stream.next().await {
-        let node: Node = row.get("pawn").unwrap();
-        let pawn: Pawn = node.try_into().unwrap();
+        let pawn: Pawn = row
+            .get::<Node>("pawn")
+            .unwrap()
+            .try_into()
+            .unwrap();
+
+        let move_node = row
+            .get::<Node>("move");
 
         if game_dbo.is_none() {
             game_dbo = Some(row.get::<Node>("game").unwrap().try_into().unwrap())
         }
-        // todo: add move handling
+
+        if move_node.is_some() {
+            let m: Move = move_node
+                .unwrap()
+                .try_into()
+                .unwrap();
+
+            if moves.iter().find(|mov| {
+                **mov == m
+            }).is_none() {
+                moves.push(m)
+            }
+        }
+
         pawns.push(pawn);
     }
 
     match game_dbo {
         Some(dbo) => Ok(Game::from_dbo(
             dbo,
-            Vec::<Move>::new(), // todo: add move handling
+            moves,
             pawns,
         )),
         None => Err(neo4rs::Error::DeserializationError(
@@ -127,10 +150,47 @@ pub async fn create_game(cfg: GameConfig) -> Result<Game> {
 
             txn.run_queries(queries).await.unwrap();
             txn.commit().await?;
-            
+
             let game = get_game(&game_id).await?;
             Ok(game)
         }
         Err(err) => Err(err),
     }
+}
+
+pub async fn add_move(m: Move, game_id: String) -> Result<Move> {
+    let graph = connect().await?;
+    
+    // move creation query
+    let mut stream = graph.execute(
+        query("MATCH (game:Game {id: $game_id}), (pawn:Pawn {side: $side, index: $index})-[:PAWN_OF]->(game)
+               CREATE (
+                move:Move { 
+                    index: $index, 
+                    side: $side, 
+                    start_x: $start_x, 
+                    start_y: $start_y, 
+                    dest_x: $dest_x, 
+                    dest_y: $dest_y })
+                    -[:MOVE_OF]->(game) RETURN move, pawn")
+        .param("game_id", game_id.clone())
+        .param("index", m.index.clone() as i64)
+        .param("side", m.side.clone())
+        .param("start_x", m.start_x.clone() as i64)
+        .param("start_y", m.start_y.clone() as i64)
+        .param("dest_x", m.dest_x.clone() as i64)
+        .param("dest_y", m.dest_y.clone() as i64)
+    ).await?;
+
+    // modify pawn position query
+
+
+    let row = stream.next().await?.unwrap();
+    let move_object: Move = row
+        .get::<Node>("move")
+        .unwrap()
+        .try_into()
+        .unwrap();
+
+    Ok(move_object)
 }
