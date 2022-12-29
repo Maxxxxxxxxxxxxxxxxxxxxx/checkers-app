@@ -156,6 +156,33 @@ impl Move {
     }
 }
 
+impl PartialEq for Move {
+    fn eq(&self, other: &Self) -> bool {
+        if self.index == other.index &&
+            self.side == other.side &&
+            self.start_x == other.start_x &&
+            self.start_y == other.start_y &&
+            self.dest_x == other.dest_x &&
+            self.dest_y == other.dest_y {
+                true
+            } else {
+                false 
+            }
+    }
+    fn ne(&self, other: &Self) -> bool {
+        if self.index != other.index ||
+            self.side != other.side ||
+            self.start_x != other.start_x ||
+            self.start_y != other.start_y ||
+            self.dest_x != other.dest_x ||
+            self.dest_y != other.dest_y {
+                true
+            } else {
+                false 
+            }
+    }
+}
+
 // POST bodies --------------------------------
 
 #[derive(Deserialize, Serialize)]
