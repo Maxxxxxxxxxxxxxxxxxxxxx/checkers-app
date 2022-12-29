@@ -1,6 +1,7 @@
 use {
     actix_web::HttpResponse,
     serde::{Deserialize, Serialize},
+    struct_field_names_as_array::FieldNamesAsArray,
 };
 
 #[derive(Serialize, Debug, Deserialize)]

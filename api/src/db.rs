@@ -95,9 +95,20 @@ pub async fn create_game(cfg: GameConfig) -> Result<Game> {
 
             let txn = graph.start_txn().await.unwrap();
 
-            let game_query = query("CREATE (:Game {id: $game_id,current_color: $color,turn: 1});")
+            let game_query = query("CREATE (:Game {id: $game_id, 
+                current_color: $current_color, 
+                turn: 1,
+                white_side: $white_side,
+                black_side: $black_side,
+                name: $name,
+                mode: $mode
+            });")
                 .param("game_id", game_id.clone())
-                .param("color", "w");
+                .param("white_side", cfg.white_side.clone())
+                .param("black_side", cfg.black_side.clone())
+                .param("name", cfg.name.clone())
+                .param("mode", cfg.mode.clone())
+                .param("current_color", "w");
 
             let mut queries = pawns.clone().into_iter().map(|pawn| {
                 query(
@@ -116,15 +127,8 @@ pub async fn create_game(cfg: GameConfig) -> Result<Game> {
 
             txn.run_queries(queries).await.unwrap();
             txn.commit().await?;
-
-            let game = Game {
-                current_color: "w".to_string(),
-                turn: 1,
-                id: game_id,
-                moves: Vec::<Move>::new(),
-                pawns: pawns,
-            };
-
+            
+            let game = get_game(&game_id).await?;
             Ok(game)
         }
         Err(err) => Err(err),
