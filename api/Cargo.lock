@@ -254,6 +254,7 @@ dependencies = [
  "actix-web",
  "neo4rs",
  "serde",
+ "struct-field-names-as-array",
  "uuid",
 ]
 
@@ -1249,6 +1250,17 @@ name = "static_assertions"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
+
+[[package]]
+name = "struct-field-names-as-array"
+version = "0.1.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9f9a5b81f3941efcfba306e1134bd5c930265a3c3177d645acb44638a230f1fe"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
 
 [[package]]
 name = "syn"

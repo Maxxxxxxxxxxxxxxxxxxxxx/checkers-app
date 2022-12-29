@@ -10,4 +10,5 @@ actix-cors = "0.6.4"
 actix-web = "4.2.1"
 neo4rs = "0.5.9"
 serde = { version = "1.0.151", features = ["derive"] }
+struct-field-names-as-array = "0.1.4"
 uuid = { version = "1.2.2", features = ["v4"] }
