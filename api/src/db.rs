@@ -195,6 +195,8 @@ pub async fn add_move(m: Move, game_id: String, killed: Option<KilledPawn>) -> R
         ).await?;
     }
 
+    tx.commit().await?;
+
     let row = stream.next().await?.unwrap();
     let move_object: Move = row
         .get::<Node>("move")
