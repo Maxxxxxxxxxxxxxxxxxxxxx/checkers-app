@@ -161,10 +161,10 @@ pub async fn create_game(cfg: GameConfig) -> Result<Game> {
 pub async fn add_move(m: Move, game_id: String, killed: Option<KilledPawn>) -> Result<Move> {
     let graph = connect().await?;
 
-    let tx = graph.start_txn().await?;
+    // let tx = graph.start_txn().await?;
     
     // create move query
-    let mut stream = tx.execute(
+    let mut stream = graph.execute(
         query("
         MATCH (game:Game {id: $game_id}), (pawn:Pawn {side: $side, index: $index})-[:PAWN_OF]->(game)
         CREATE (move:Move { index: $index, side: $side, start_x: $start_x, start_y: $start_y, dest_x: $dest_x, dest_y: $dest_y })-[:MOVE_OF]->(game)     
@@ -183,7 +183,7 @@ pub async fn add_move(m: Move, game_id: String, killed: Option<KilledPawn>) -> R
     // update killed pawn state in the db
     if killed.is_some() {
         let killed = killed.unwrap();
-        tx.run(
+        graph.run(
             query("
                 MATCH (:Game {id: $game_id})<-[:PAWN_OF]-(pawn:Pawn {side: $killed_side, index: $killed_index})
                 SET pawn.is_dead = true, pawn.pos_x = -1, pawn.pos_y = -1
@@ -194,8 +194,6 @@ pub async fn add_move(m: Move, game_id: String, killed: Option<KilledPawn>) -> R
             .param("killed_index", killed.index.clone() as i64)
         ).await?;
     }
-
-    tx.commit().await?;
 
     let row = stream.next().await?.unwrap();
     let move_object: Move = row
