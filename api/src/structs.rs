@@ -101,7 +101,7 @@ pub struct Pos {
     pub y: i32,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Move {
     pub index: i32,
     pub side: String,
@@ -185,6 +185,12 @@ impl PartialEq for Move {
 
 // POST bodies --------------------------------
 
+#[derive(Deserialize, Serialize, Clone)]
+pub struct KilledPawn {
+    pub side: String,
+    pub index: i32
+}
+
 #[derive(Deserialize, Serialize)]
 pub struct NewGameRequest {
     pub white: String,
@@ -195,10 +201,9 @@ pub struct NewGameRequest {
 
 #[derive(Deserialize, Serialize)]
 pub struct MoveRequest {
-    pub index: i32,
-    pub side: String,
-    pub old_pos: Pos,
-    pub new_pos: Pos,
+    pub id: String,
+    pub game_move: Move,
+    pub killed: Option<KilledPawn>
 }
 
 // DB structs --------------------------------
