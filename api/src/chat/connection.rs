@@ -6,22 +6,21 @@ use actix::{AsyncContext, Handler};
 use actix_web_actors::ws;
 use actix_web_actors::ws::Message::Text;
 use actix_web_actors::ws::WebsocketContext;
-use rand::prelude::*;
 use std::time::Instant;
 
 use super::*;
 
 pub struct WsConnection {
-    pub id: usize,
-    room_id: usize,
+    pub id: Id,
+    room_id: Id,
     lobby_addr: Addr<Lobby>,
     hb: Instant,
 }
 
 impl WsConnection {
-    pub fn new(room_id: usize, lobby_addr: Addr<Lobby>) -> Self {
+    pub fn new(room_id: Id, lobby_addr: Addr<Lobby>) -> Self {
         Self {
-            id: thread_rng().gen_range(0..100),
+            id: super::new_id(),
             room_id,
             lobby_addr,
             hb: Instant::now(),

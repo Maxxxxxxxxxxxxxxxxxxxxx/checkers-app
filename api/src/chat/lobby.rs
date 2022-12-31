@@ -2,20 +2,27 @@ use crate::chat::messages::{ClientActorMessage, Connect, Disconnect, WsMessage};
 use actix::prelude::{Actor, Context, Handler, Recipient};
 use std::collections::{HashMap, HashSet};
 
+use super::GLOBAL_CHAT_ID;
+use super::Id;
+
 type Socket = Recipient<WsMessage>;
 
 #[derive(Debug)]
 pub struct Lobby {
-    sessions: HashMap<usize, Socket>,
-    rooms: HashMap<usize, HashSet<usize>>,
+    sessions: HashMap<Id, Socket>,
+    rooms: HashMap<Id, HashSet<usize>>,
 }
 
 impl Default for Lobby {
     fn default() -> Lobby {
-        Lobby {
+        let mut lobby = Lobby {
             sessions: HashMap::new(),
             rooms: HashMap::new(),
-        }
+        };
+
+        // Create the global chat room that always exists
+        lobby.rooms.insert(GLOBAL_CHAT_ID, HashSet::new());
+        lobby
     }
 }
 
@@ -27,10 +34,18 @@ impl Lobby {
             println!("attempting to send message but couldn't find user id.");
         }
     }
+
+    /// Creates a new empty chat room, with random ID
+    pub fn create_room(&mut self) {
+        let room_id = super::new_id();
+        self.rooms.insert(room_id, HashSet::new());
+    }
 }
 
 impl Actor for Lobby {
     type Context = Context<Self>;
+
+    // no fn impls here because Lobby doesn't need any behavior on start / stop
 }
 
 impl Handler<Disconnect> for Lobby {
@@ -42,12 +57,13 @@ impl Handler<Disconnect> for Lobby {
                 if lobby.len() > 1 {
                     lobby.remove(&msg.id);
                 } else {
-                    //only one in the lobby, remove it entirely
-                    self.rooms.remove(&msg.room_id);
+                    //only one in the lobby, remove it entirely, unless its global
+                    if msg.room_id != GLOBAL_CHAT_ID {
+                        self.rooms.remove(&msg.room_id);
+                    }
                 }
             }
         }
-        dbg!(&self);
     }
 }
 
@@ -62,8 +78,6 @@ impl Handler<Connect> for Lobby {
 
         self.sessions.insert(msg.self_id, msg.addr);
         self.send_message(&format!("your id is {}", msg.self_id), msg.self_id);
-
-        dbg!(&self);
     }
 }
 
