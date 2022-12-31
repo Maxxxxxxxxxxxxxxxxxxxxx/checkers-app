@@ -39,9 +39,10 @@ pub async fn new_game(data: web::Json<NewGameRequest>) -> HttpResponse {
 }
 
 #[put("/games/{id}")]
-pub async fn put_move(data: web::Json<MoveRequest>) -> HttpResponse {
-    match db::add_move(data.game_move.clone(), data.id.clone(), data.killed.clone()).await {
+pub async fn put_move(req: HttpRequest, data: web::Json<MoveRequest>) -> HttpResponse {
+    let id = req.match_info().query("id");
+    match db::add_move(data.game_move.clone(), id.to_string(), data.killed.clone()).await {
         Ok(m) => ResponseType::Created(m).get_response(),
-        Err(_) => ResponseType::BadRequest(NotFoundMessage::new("Bad request!")).get_response()
+        Err(_) => ResponseType::BadRequest(NotFoundMessage::new("Bad request!")).get_response(),
     }
 }

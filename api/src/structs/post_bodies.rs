@@ -3,7 +3,7 @@ use super::*;
 #[derive(Deserialize, Serialize, Clone)]
 pub struct KilledPawn {
     pub side: String,
-    pub index: i32
+    pub index: i32,
 }
 
 #[derive(Deserialize, Serialize)]
@@ -18,5 +18,6 @@ pub struct NewGameRequest {
 pub struct MoveRequest {
     pub id: String,
     pub game_move: Move,
-    pub killed: Option<KilledPawn>
+    pub killed: Option<KilledPawn>,
+    pub turn: bool,
 }

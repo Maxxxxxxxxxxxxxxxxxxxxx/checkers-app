@@ -39,11 +39,11 @@ pub struct GameConfig {
 #[allow(dead_code)]
 impl GameConfig {
     pub fn new() -> Self {
-        Self { 
-            black_side: "top".into(), 
-            white_side: "bottom".into(), 
-            name: "Game".into(), 
-            mode: "easy".into()
+        Self {
+            black_side: "top".into(),
+            white_side: "bottom".into(),
+            name: "Game".into(),
+            mode: "easy".into(),
         }
     }
     pub fn name(mut self, name: &str) -> Self {

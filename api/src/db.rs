@@ -53,11 +53,13 @@ pub async fn get_game(game_id: &str) -> Result<Game> {
 
     let mut stream = graph
         .execute(
-            query("
+            query(
+                "
                    MATCH (game:Game {id: $game_id})<-[:PAWN_OF]-(pawn:Pawn) 
                    OPTIONAL MATCH (move:Move)-[:MOVE_OF]->(game)
-                   RETURN game, pawn, move")
-                .param("game_id", game_id.clone()),
+                   RETURN game, pawn, move",
+            )
+            .param("game_id", game_id.clone()),
         )
         .await?;
 
@@ -66,28 +68,18 @@ pub async fn get_game(game_id: &str) -> Result<Game> {
     let mut game_dbo: Option<GameDBO> = None;
 
     while let Ok(Some(row)) = stream.next().await {
-        let pawn: Pawn = row
-            .get::<Node>("pawn")
-            .unwrap()
-            .try_into()
-            .unwrap();
+        let pawn: Pawn = row.get::<Node>("pawn").unwrap().try_into().unwrap();
 
-        let move_node = row
-            .get::<Node>("move");
+        let move_node = row.get::<Node>("move");
 
         if game_dbo.is_none() {
             game_dbo = Some(row.get::<Node>("game").unwrap().try_into().unwrap())
         }
 
         if move_node.is_some() {
-            let m: Move = move_node
-                .unwrap()
-                .try_into()
-                .unwrap();
+            let m: Move = move_node.unwrap().try_into().unwrap();
 
-            if moves.iter().find(|mov| {
-                **mov == m
-            }).is_none() {
+            if moves.iter().find(|mov| **mov == m).is_none() {
                 moves.push(m)
             }
         }
@@ -96,11 +88,7 @@ pub async fn get_game(game_id: &str) -> Result<Game> {
     }
 
     match game_dbo {
-        Some(dbo) => Ok(Game::from_dbo(
-            dbo,
-            moves,
-            pawns,
-        )),
+        Some(dbo) => Ok(Game::from_dbo(dbo, moves, pawns)),
         None => Err(neo4rs::Error::DeserializationError(
             "Failed to parse game DBO".to_string(),
         )),
@@ -112,26 +100,29 @@ pub async fn create_game(cfg: GameConfig) -> Result<Game> {
         Ok(graph) => {
             let game_id = Uuid::new_v4().to_string();
             let mut pawns = [
-                create_pawns("w", &cfg.white_side), 
-                create_pawns("b", &cfg.black_side)
-            ].concat();
+                create_pawns("w", &cfg.white_side),
+                create_pawns("b", &cfg.black_side),
+            ]
+            .concat();
 
             let txn = graph.start_txn().await.unwrap();
 
-            let game_query = query("CREATE (:Game {id: $game_id, 
+            let game_query = query(
+                "CREATE (:Game {id: $game_id, 
                 current_color: $current_color, 
                 turn: 1,
                 white_side: $white_side,
                 black_side: $black_side,
                 name: $name,
                 mode: $mode
-            });")
-                .param("game_id", game_id.clone())
-                .param("white_side", cfg.white_side.clone())
-                .param("black_side", cfg.black_side.clone())
-                .param("name", cfg.name.clone())
-                .param("mode", cfg.mode.clone())
-                .param("current_color", "w");
+            });",
+            )
+            .param("game_id", game_id.clone())
+            .param("white_side", cfg.white_side.clone())
+            .param("black_side", cfg.black_side.clone())
+            .param("name", cfg.name.clone())
+            .param("mode", cfg.mode.clone())
+            .param("current_color", "w");
 
             let mut queries = pawns.clone().into_iter().map(|pawn| {
                 query(
@@ -162,7 +153,7 @@ pub async fn add_move(m: Move, game_id: String, killed: Option<KilledPawn>) -> R
     let graph = connect().await?;
 
     // let tx = graph.start_txn().await?;
-    
+
     // create move query
     let mut stream = graph.execute(
         query("
@@ -196,11 +187,7 @@ pub async fn add_move(m: Move, game_id: String, killed: Option<KilledPawn>) -> R
     }
 
     let row = stream.next().await?.unwrap();
-    let move_object: Move = row
-        .get::<Node>("move")
-        .unwrap()
-        .try_into()
-        .unwrap();
+    let move_object: Move = row.get::<Node>("move").unwrap().try_into().unwrap();
 
     Ok(move_object)
 }
