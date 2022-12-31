@@ -6,6 +6,7 @@ import "@/styles/GamesList/GamesList.css";
 import axios from "axios";
 import GameWindow from "./GameWindow";
 import Sidebar from "../Sidebar";
+import ChatTab from "../ChatTab/ChatTab";
 
 export default function GamesListView() {
   let [games, setGames] = useState([]);
@@ -31,12 +32,6 @@ export default function GamesListView() {
       <Sidebar></Sidebar>
       <div className="view">
         <div className="list-view">
-          {/* <Typography variant="h4" component="h2" className="list-view__header">
-            Games
-            <Typography variant="h4" component="h2" sx={{ color: "gray" }}>
-              {games ? `(${games.length})` : "(0)"}
-            </Typography>
-          </Typography> */}
           <Toolbar variant="dense" className="toolbar">
             <span className="toolbar__leftside">
               <IconButton
@@ -53,11 +48,17 @@ export default function GamesListView() {
                 component="div"
               >
                 Games
+                <Typography variant="p" color="gray" component="div">
+                  { games ? `(${games.length})` : "(0)" }
+                </Typography>
               </Typography>
             </span>
           </Toolbar>
-          <div className="list-view__games-list">{children}</div>
+          <div className="list-view__games-list">
+            { children }
+          </div>
         </div>
+        <ChatTab />
       </div>
     </Fragment>
   );
