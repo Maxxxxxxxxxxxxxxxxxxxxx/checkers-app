@@ -22,6 +22,28 @@ export class MovePawn {
     );
   }
 
+  static Serialize = (moveObject) => {
+    let killed = moveObject.isKill();
+    let serialized = {
+      id: moveObject.gamestate.id,
+      game_move: {
+        side: moveObject.pawn.side,
+        index: moveObject.pawn.index,
+        start_x: moveObject.pawn.pos_x,
+        start_y: moveObject.pawn.pos_y,
+        dest_y: moveObject.y,
+        dest_x: moveObject.x
+      },
+    }
+    return killed ? {
+      ...serialized,
+      killed: {
+        side: killed.side,
+        index: killed.index
+      }
+    } : serialized
+  }
+
   validate = () => {
     // if move is other than 1 diagonal tile and not a kill
     if (!this.absVec.equals(new Vector(1, 1)) && !this.isKill()) return false;

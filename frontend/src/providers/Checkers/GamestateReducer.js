@@ -1,5 +1,7 @@
 import { MovePawn } from "./gamelogics/EasyMode";
+import axios from 'axios';
 
+// Easy mode reducer
 const GamestateReducer = (state, action) => {
   switch (action.type) {
     case "MOVE":
@@ -36,13 +38,26 @@ const GamestateReducer = (state, action) => {
         });
       }
 
-      // return new state only if move is valid
-      return move.validate()
-        ? {
-            ...state,
-            pawns: newPawnState,
-          }
-        : state;
+      console.log(JSON.stringify(MovePawn.Serialize(move)));
+
+      // if move valid, put request to backend and return new state
+      if (move.validate()) {
+        let body = MovePawn.Serialize(move);
+
+        axios.put(`http://localhost:8080/games/${state.id}`, body)
+          .then(res => console.log("PUT successful!", res.data));
+
+        return {
+          ...state,
+          pawns: newPawnState
+        }
+      } else return state
+      // return move.validate()
+      //   ? {
+      //       ...state,
+      //       pawns: newPawnState,
+      //     }
+      //   : state;
 
     case "SET":
       console.log("Gamestate set", action.newState);

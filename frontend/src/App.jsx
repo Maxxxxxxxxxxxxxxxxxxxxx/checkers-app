@@ -3,7 +3,7 @@ import GameView from "./views/Game/GameView";
 import NotFoundPage from "./views/404/NotFoundPage";
 import { Routes, Route } from "react-router-dom";
 import HomeView from "./views/Home/HomeView";
-import GameContextProvider from "./providers/GameContextProvider";
+import GameContextProvider from "@/providers/Checkers/GameContextProvider";
 import GamesListView from "./views/GamesList/GamesList";
 
 function App() {

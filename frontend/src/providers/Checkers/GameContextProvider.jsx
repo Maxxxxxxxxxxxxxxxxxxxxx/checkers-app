@@ -20,7 +20,7 @@ export default function GameContextProvider({ children }) {
   // moveParams: { pawn: [PAWN OBJECT], dest: [x,y] }
   const [moveParams, setMoveParams] = useState({});
 
-  const gameId = params.get("gameId");
+  const gameId = params.get("id");
 
   // sets "pawn" property in moveParams
   const focusPawn = (pawn) => setMoveParams({ ...moveParams, pawn });
