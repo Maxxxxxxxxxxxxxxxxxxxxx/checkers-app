@@ -1,4 +1,4 @@
-use crate::structs::*;
+use crate::schema::*;
 
 pub const POSITIONS_TOP: [(i32, i32); 12] = [
     (1, 0),

@@ -4,11 +4,10 @@ use actix_cors::Cors;
 use actix_web::web::Data;
 use actix_web::{App, HttpServer};
 use env_logger;
+use games::controllers as game_route;
 
-mod db;
-mod game;
-mod game_controller;
-mod structs;
+mod games;
+mod schema;
 mod utils;
 mod chat;
 
@@ -28,10 +27,10 @@ async fn main() -> std::io::Result<()> {
             .service(ws_route)
             .app_data(Data::new(chat_server.clone()))
             .wrap(cors)
-            .service(game_controller::new_game)
-            .service(game_controller::get_game)
-            .service(game_controller::list_games)
-            .service(game_controller::put_move)
+            .service(game_route::new_game)
+            .service(game_route::get_game)
+            .service(game_route::list_games)
+            .service(game_route::put_move)
     })
     .bind(("127.0.0.1", 8080))?
     .run()

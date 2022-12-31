@@ -1,7 +1,7 @@
 #![allow(unused)]
 
-use crate::game::*;
-use crate::structs::*;
+use crate::games::logic::*;
+use crate::schema::*;
 use neo4rs::*;
 use uuid::Uuid;
 
@@ -9,11 +9,11 @@ const URI: &str = "127.0.0.1:7687";
 const USERNAME: &str = "neo4j";
 const PASSWORD: &str = "neo";
 
-pub async fn connect() -> Result<Graph> {
+async fn connect() -> Result<Graph> {
     Graph::new(&URI, USERNAME, PASSWORD).await
 }
 
-pub async fn get_all_games() -> Result<Vec<Game>> {
+pub async fn all() -> Result<Vec<Game>> {
     let graph = connect().await?;
 
     let mut stream = graph
@@ -48,7 +48,7 @@ pub async fn get_all_games() -> Result<Vec<Game>> {
     return Ok(games);
 }
 
-pub async fn get_game(game_id: &str) -> Result<Game> {
+pub async fn get(game_id: &str) -> Result<Game> {
     let graph = connect().await?;
 
     let mut stream = graph
@@ -95,7 +95,7 @@ pub async fn get_game(game_id: &str) -> Result<Game> {
     }
 }
 
-pub async fn create_game(cfg: GameConfig) -> Result<Game> {
+pub async fn create(cfg: GameConfig) -> Result<Game> {
     match connect().await {
         Ok(graph) => {
             let game_id = Uuid::new_v4().to_string();
@@ -142,7 +142,7 @@ pub async fn create_game(cfg: GameConfig) -> Result<Game> {
             txn.run_queries(queries).await.unwrap();
             txn.commit().await?;
 
-            let game = get_game(&game_id).await?;
+            let game = get(&game_id).await?;
             Ok(game)
         }
         Err(err) => Err(err),
