@@ -1,6 +1,8 @@
 use crate::chat::messages::{ClientActorMessage, Connect, Disconnect, WsMessage};
 use actix::prelude::{Actor, Context, Handler, Recipient};
+use uuid::Uuid;
 use std::collections::{HashMap, HashSet};
+use std::str::FromStr;
 
 use super::GLOBAL_CHAT_ID;
 use super::Id;
@@ -10,7 +12,7 @@ type Socket = Recipient<WsMessage>;
 #[derive(Debug)]
 pub struct Lobby {
     sessions: HashMap<Id, Socket>,
-    rooms: HashMap<Id, HashSet<usize>>,
+    rooms: HashMap<Id, HashSet<Id>>,
 }
 
 impl Default for Lobby {
@@ -26,8 +28,9 @@ impl Default for Lobby {
     }
 }
 
+#[allow(unused)]
 impl Lobby {
-    fn send_message(&self, message: &str, id_to: usize) {
+    fn send_message(&self, message: &str, id_to: Id) {
         if let Some(socket_recipient) = self.sessions.get(&id_to) {
             let _ = socket_recipient.do_send(WsMessage(message.to_owned()));
         } else {
@@ -35,17 +38,27 @@ impl Lobby {
         }
     }
 
-    /// Creates a new empty chat room, with random ID
-    pub fn create_room(&mut self) {
-        let room_id = super::new_id();
-        self.rooms.insert(room_id, HashSet::new());
+    pub fn attach_ids(mut self, ids: Vec<Uuid>) -> Self {
+        ids
+            .to_owned()
+            .iter()
+            .for_each(|id| self.create_room(*id));
+        self
+    }
+
+    /// Creates a new empty chat room, with specified id
+    pub fn create_room(&mut self, game_id: Id) {
+        self.rooms.insert(game_id, HashSet::new());
+        log::info!("created room #{}", &game_id);
     }
 }
 
 impl Actor for Lobby {
     type Context = Context<Self>;
 
-    // no fn impls here because Lobby doesn't need any behavior on start / stop
+    fn started(&mut self, _: &mut Self::Context) {
+        log::info!("Lobby started");
+    }
 }
 
 impl Handler<Disconnect> for Lobby {

@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use crate::chat::*;
 use actix::Actor;
 use actix_cors::Cors;
@@ -5,6 +7,7 @@ use actix_web::web::Data;
 use actix_web::{App, HttpServer};
 use env_logger;
 use games::controllers as game_route;
+use uuid::Uuid;
 
 mod games;
 mod schema;
@@ -17,14 +20,23 @@ async fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "debug");
     env_logger::init();
     
-    let chat_server = Lobby::default().start();
+    let game_ids = games::db::all()
+        .await
+        .unwrap()
+        .iter()
+        .map(move |game| Uuid::from_str(&game.id).unwrap())
+        .collect::<Vec<Uuid>>();
 
+    let chat_server = Lobby::default()
+        .attach_ids(game_ids)
+        .start();
+    
     HttpServer::new(move || {
-
         let cors = Cors::permissive(); // temporary
 
         App::new()
-            .service(ws_route)
+            .service(chat_route::room)
+            .service(chat_route::global)
             .app_data(Data::new(chat_server.clone()))
             .wrap(cors)
             .service(game_route::new_game)
