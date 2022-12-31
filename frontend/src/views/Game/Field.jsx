@@ -1,5 +1,4 @@
-import { useGameContext } from "@/providers/GameContextProvider";
-import * as Actions from '@/providers/GamestateActions';
+import { useGameContext } from "@/providers/Checkers/GameContextProvider";
 
 export default function Field({ x, y }) {
   let { gamestate, focusPawn, focusDest } = useGameContext();
