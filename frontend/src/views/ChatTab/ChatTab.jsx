@@ -1,23 +1,45 @@
-import { Toolbar, IconButton, Typography, Box, Breadcrumbs, Link } from "@mui/material/index";
+import {
+  Toolbar,
+  IconButton,
+  Typography,
+  Box,
+  Breadcrumbs,
+  Link,
+  TextField,
+} from "@mui/material/index";
 import { Menu } from "@mui/material/index";
-import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
-
+import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
+import SendIcon from "@mui/icons-material/Send";
+import { useFormik } from "formik";
 import "@/styles/ChatTab/ChatTab.css";
+import { useEffect } from "react";
 
 export default function ChatTab({ room }) {
+  const formik = useFormik({
+    initialValues: {
+      msg: "",
+    },
+    onSubmit: (values) => {
+      // TODO: handle send message over WS
+
+      alert(values.msg);
+    },
+  });
 
   return (
     <div className="chat-view">
       <Toolbar variant="dense" className="toolbar">
         <span className="toolbar__leftside">
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-          >
+          <IconButton edge="start" color="inherit" aria-label="menu">
             <ChatBubbleIcon />
           </IconButton>
-          <Breadcrumbs aria-label="breadcrumb" separator="/" color="inherit" sx={{'font-weight': 1000}} className="toolbar__route">
+          <Breadcrumbs
+            aria-label="breadcrumb"
+            separator="/"
+            color="inherit"
+            sx={{ fontWeight: 1000 }}
+            className="toolbar__route"
+          >
             <Typography variant="p" className="toolbar__route">
               Chat
             </Typography>
@@ -28,8 +50,21 @@ export default function ChatTab({ room }) {
         </span>
       </Toolbar>
       <div className="chat-view__container">
-        
+        <div className="chat-view__display"></div>
+        <form className="chat-view__input" onSubmit={formik.handleSubmit}>
+          <TextField
+            className="chat-view__textfield"
+            label="Aa"
+            variant="outlined"
+            name="msg"
+            onChange={formik.handleChange}
+            // sx={{ input: { color: 'rgba(255, 255, 255, 0.87)' } }}
+          />
+          <IconButton edge="start" color="inherit" type="submit">
+            <SendIcon />
+          </IconButton>
+        </form>
       </div>
     </div>
-  )
+  );
 }

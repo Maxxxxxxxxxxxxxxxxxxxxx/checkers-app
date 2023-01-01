@@ -2,6 +2,7 @@
 
 .chat-view {
     min-height: 15rem;
+    min-width: 200px;
     display: flex;
     flex-direction: column;
     width: fill;
@@ -12,9 +13,38 @@
     &__container {
         @include coolBoxShadow($bg-grey-darker-2);
         width: fit-content;
-        height: 500px;
+        min-height: 20rem;
         width: 100%;
         background-color: $bg-grey-darker-1;
         border-radius: 0.4rem;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    &__display {
+        background-color: $bg-grey-darker-2;
+        flex: 20;
+        overflow: hidden;
+    }
+    &__input {
+        flex: 1;
+        padding: 0.5rem;
+        display: flex;
+        flex-direction: row;
+        gap: 2rem;
+    }
+    &__textfield {
+        flex: 10;
+        display: flex;
+        align-content: center;
+        justify-content: center;
     }
 }
+
+// .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+//     border-color: gray !important;
+// }
+
+// .MuiOutlinedInput-root.Mui-focused  .MuiOutlinedInput-notchedOutline {
+//     border-color: gray !important;
+// }
