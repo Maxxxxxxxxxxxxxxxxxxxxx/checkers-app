@@ -46,6 +46,7 @@
     border-radius: 0.5rem;
     width: fit-content;
     background: $bg-grey-darker-1;
+    overflow: hidden;
     // padding: 1rem;
     &__label {
 
@@ -53,6 +54,7 @@
 }
 
 .preview {
+    overflow: hidden;
     &__board {
         width: 150px;
         height: 150px;
@@ -61,7 +63,7 @@
         grid-template-rows: repeat(8, 1fr);
         background-image: url("./board.svg");
         background-size: contain;
-        border-radius: 0.5rem 0.5rem 0 0;
+        // border-radius: 0.5rem 0.5rem 0 0;
         // filter:blur(2px);
         &:hover {
             transition: 300ms;
