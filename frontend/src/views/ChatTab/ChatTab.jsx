@@ -52,13 +52,12 @@ export default function ChatTab({ room }) {
       <div className="chat-view__container">
         <div className="chat-view__display"></div>
         <form className="chat-view__input" onSubmit={formik.handleSubmit}>
-          <TextField
-            className="chat-view__textfield"
-            label="Aa"
-            variant="outlined"
+          <input
+            type="text"
             name="msg"
             onChange={formik.handleChange}
-            // sx={{ input: { color: 'rgba(255, 255, 255, 0.87)' } }}
+            className="chat-view__textfield"
+            placeholder="Aa"
           />
           <IconButton edge="start" color="inherit" type="submit">
             <SendIcon />
