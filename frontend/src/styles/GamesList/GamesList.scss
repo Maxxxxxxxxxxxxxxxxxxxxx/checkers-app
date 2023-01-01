@@ -27,22 +27,69 @@
         padding: 0px;
         width: 100%;
         padding: 1rem 0 0 0;
-        .button {
-            &--white {
-                color: black;
-                background: white;
-            }
-            &--black {
-                color: white;
-                background: black;
-            }
+    }
+}
+
+.button {
+    &--white {
+        color: black;
+        background: white;
+    }
+    &--black {
+        color: white;
+        background: black;
+    }
+}
+
+.element {
+    @include coolBoxShadow($bg-grey-darker-2);
+    border-radius: 0.5rem;
+    width: fit-content;
+    background: $bg-grey-darker-1;
+    // padding: 1rem;
+    &__label {
+
+    }
+}
+
+.preview {
+    &__board {
+        width: 150px;
+        height: 150px;
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        grid-template-rows: repeat(8, 1fr);
+        background-image: url("./board.svg");
+        background-size: contain;
+        border-radius: 0.5rem 0.5rem 0 0;
+        // filter:blur(2px);
+        &:hover {
+            transition: 300ms;
+            filter: blur(2.5px);
+            cursor: pointer;
+            // .preview__play-button {
+            //     display: block;
+            // }
         }
-        .element {
-            @include coolBoxShadow($bg-grey-darker-2);
-            border-radius: 0.5rem;
-            width: 200px;
-            background: $bg-grey-darker-1;
-            padding: 1rem;
+        &:hover + .preview__play-button {
+            display: inline-block;
         }
+    }
+    &__play-button {
+        display: none;
+        position: absolute;
+        font-weight: 1000;
+        z-index: 100;
+    }
+    &__field {
+        display: flex;
+        align-items: center;
+        justify-items: center;
+        justify-content: center;
+    }
+    &__sprite {
+        width: 70%;
+        height: 70%;
+        // padding: 0.5rem;
     }
 }
