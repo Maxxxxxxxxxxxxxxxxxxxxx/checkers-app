@@ -1,13 +1,21 @@
 @import '../variables';
 
+$lower-icon-dimension: 1.3rem;
+
 .sidebar {
   width: 170px;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   // padding: 0.6rem;
   height: 100%;
   position: fixed;
   background-color: $bg-grey-darker-1;
+  &__icon-wrapper {
+    padding-inline: calc(2rem - $lower-icon-dimension);
+    display: flex;
+    align-content: center;
+  }
   &__links {
     display: flex;
     flex-direction: column;
@@ -18,19 +26,50 @@
     color: $font-color;
     text-decoration: none;
     font-weight: bolder;
-    font-size: 1.2rem;
+    font-size: 1rem;
     align-items: center;
     align-content: center;
-    gap: 0.2rem;
+    gap: 0.5rem;
     padding: 0.5rem 0.5rem 0.5rem 0.5rem;
     &:hover {
       background-color: $bg-grey-darker-2;
+      cursor: pointer;
+      color:white;
     }
+    svg {
+      width: 2rem;
+      height: 2rem;
+    }
+    &--lower {
+      color: grey;
+      font-size: 0.9rem;
+      padding: 0.3rem;
+      svg {
+        max-width: $lower-icon-dimension;
+        max-height: $lower-icon-dimension;
+      }
+    }
+    // &--folded {
+    //   justify-content: center;
+    // }
+  }
+  &__lower {
+    margin-bottom: 1rem;
+  }
+  &--folded {
+    width: 3rem;
   }
 }
 
 .logo {
   font-weight: 1000;
   font-size: 1.2rem;
-  padding: 0.6rem;
+  padding: 0.5rem 0.5rem 0.5rem 1.1rem;
+  // text-align: center;
+}
+
+.fold-button {
+  @media(max-width: 768px) {
+    display: none;
+  }
 }
