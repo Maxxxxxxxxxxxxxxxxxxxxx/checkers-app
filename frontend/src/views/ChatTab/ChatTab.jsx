@@ -2,29 +2,24 @@ import {
   Toolbar,
   IconButton,
   Typography,
-  Box,
   Breadcrumbs,
-  Link,
-  TextField,
 } from "@mui/material/index";
-import { Menu } from "@mui/material/index";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import SendIcon from "@mui/icons-material/Send";
-import { useFormik } from "formik";
 import "@/styles/ChatTab/ChatTab.css";
-import { useEffect } from "react";
+import { useState } from "react";
 
 export default function ChatTab({ room }) {
-  const formik = useFormik({
-    initialValues: {
-      msg: "",
-    },
-    onSubmit: (values) => {
-      // TODO: handle send message over WS
+  let [msg, setMsg] = useState("");
 
-      alert(values.msg);
-    },
-  });
+  let onSubmit = async (event) => {
+    event.preventDefault();
+    setMsg(event.target.msg.value);
+    console.log(event.target.msg.value);
+    document.getElementById('form').reset();
+  }
+
+  let handleChange = (event) => setMsg(event.target.value);
 
   return (
     <div className="chat-view">
@@ -51,11 +46,16 @@ export default function ChatTab({ room }) {
       </Toolbar>
       <div className="chat-view__container">
         <div className="chat-view__display"></div>
-        <form className="chat-view__input" onSubmit={formik.handleSubmit}>
+        <form
+          className="chat-view__input"
+          id="form"
+          onSubmit={onSubmit}
+          autoComplete="off"
+        >
           <input
             type="text"
             name="msg"
-            onChange={formik.handleChange}
+            onChange={handleChange}
             className="chat-view__textfield"
             placeholder="Aa"
           />
