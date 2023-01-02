@@ -34,13 +34,7 @@ export default function GamesListView() {
         <div className="list-view">
           <Toolbar variant="dense" className="toolbar">
             <span className="toolbar__leftside">
-              <IconButton
-                edge="start"
-                color="inherit"
-                aria-label="menu"
-              >
-                <Menu />
-              </IconButton>
+              <Menu />
               <Typography
                 className="toolbar__text"
                 variant="p"

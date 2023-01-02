@@ -4,6 +4,7 @@ import ViewListRoundedIcon from '@mui/icons-material/ViewListRounded';
 import { Fragment } from "react";
 import Sidebar from "../Sidebar";
 import ChatTab from "../ChatTab/ChatTab";
+import AddBoxIcon from '@mui/icons-material/AddBox';
 
 export default function HomeView() {
   return (
@@ -18,7 +19,7 @@ export default function HomeView() {
             <Link to="/list">
               <button className="big-button">
                 <div className="big-button__content">
-                  <ViewListRoundedIcon></ViewListRoundedIcon>
+                  <ViewListRoundedIcon />
                   Games
                 </div>
               </button>
@@ -26,6 +27,7 @@ export default function HomeView() {
             <Link to="/newgame">
               <button className="big-button">
                 <div className="big-button__content">
+                  <AddBoxIcon />
                   New game
                 </div>
               </button>
