@@ -7,9 +7,11 @@ import axios from "axios";
 import GameWindow from "./GameWindow";
 import Sidebar from "../Sidebar";
 import ChatTab from "../ChatTab/ChatTab";
+import { useSidebarContext } from "@/providers/Sidebar/SidebarProvider";
 
 export default function GamesListView() {
   let [games, setGames] = useState([]);
+  let { sidebarMargin } = useSidebarContext();
 
   useEffect(() => {
     axios.get("http://localhost:8080/games").then((res) => {
@@ -30,7 +32,7 @@ export default function GamesListView() {
   return (
     <Fragment>
       <Sidebar></Sidebar>
-      <div className="view">
+      <div className="view" style={{marginLeft: sidebarMargin}}>
         <div className="list-view">
           <Toolbar variant="dense" className="toolbar">
             <span className="toolbar__leftside">

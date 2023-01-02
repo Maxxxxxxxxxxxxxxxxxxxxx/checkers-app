@@ -8,9 +8,11 @@ import axios from 'axios';
 import BoardPreview from "../Preview/BoardPreview";
 import { useFormik } from 'formik';
 import { FormLabel, RadioGroup, FormControlLabel, Radio} from "@mui/material/index";
+import { useSidebarContext } from "@/providers/Sidebar/SidebarProvider";
 
 export default function NewGameView() {
   let [gamestate, setGamestate] = useState([]);
+  let { sidebarMargin } = useSidebarContext();
 
   let formik = useFormik({
     initialValues: {
@@ -31,7 +33,7 @@ export default function NewGameView() {
   return (
     <Fragment>
       <Sidebar></Sidebar>
-      <div className="view">
+      <div className="view" style={{marginLeft: sidebarMargin}}>
         <div className="newgame">
           <Toolbar variant="dense" className="toolbar">
               <span className="toolbar__leftside">

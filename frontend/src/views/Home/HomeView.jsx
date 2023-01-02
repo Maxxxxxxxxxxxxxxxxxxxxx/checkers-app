@@ -5,12 +5,14 @@ import { Fragment } from "react";
 import Sidebar from "../Sidebar";
 import ChatTab from "../ChatTab/ChatTab";
 import AddBoxIcon from '@mui/icons-material/AddBox';
+import { useSidebarContext } from "@/providers/Sidebar/SidebarProvider";
 
 export default function HomeView() {
+  let { sidebarMargin } = useSidebarContext();
   return (
     <Fragment>
       <Sidebar />
-      <div className="view">
+      <div className="view" style={{marginLeft: sidebarMargin}}>
         <div className="home-window">
           <div className="home-window__header"> 
             Checkers 
