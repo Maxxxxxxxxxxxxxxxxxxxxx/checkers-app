@@ -26,7 +26,7 @@ pub async fn get_game(req: HttpRequest) -> HttpResponse {
 
 #[post("/games/new_game")]
 pub async fn new_game(data: web::Json<NewGameRequest>) -> HttpResponse {
-    let config = GameConfig::new()
+    let config = GameConfig::default()
         .white_at(&data.white)
         .black_at(&data.black)
         .mode(&data.mode)

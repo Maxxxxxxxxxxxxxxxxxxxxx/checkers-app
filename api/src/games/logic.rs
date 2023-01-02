@@ -1,3 +1,5 @@
+use uuid::Uuid;
+
 use crate::schema::*;
 
 pub const POSITIONS_TOP: [(i32, i32); 12] = [
@@ -38,14 +40,6 @@ pub struct GameConfig {
 
 #[allow(dead_code)]
 impl GameConfig {
-    pub fn new() -> Self {
-        Self {
-            black_side: "top".into(),
-            white_side: "bottom".into(),
-            name: "Game".into(),
-            mode: "easy".into(),
-        }
-    }
     pub fn name(mut self, name: &str) -> Self {
         self.name = name.to_string();
         self
@@ -65,6 +59,37 @@ impl GameConfig {
     pub fn build(self) -> Result<Self, String> {
         // todo: add error on bad args
         Ok(self)
+    }
+}
+
+impl Default for GameConfig {
+    fn default() -> Self {
+        Self {
+            black_side: "top".into(),
+            white_side: "bottom".into(),
+            name: "Game".into(),
+            mode: "easy".into(),
+        }
+    }
+}
+
+impl From<GameConfig> for Game {
+    fn from(cfg: GameConfig) -> Self {
+        let pawns = [
+            create_pawns("white", &cfg.white_side),
+            create_pawns("black", &cfg.black_side),
+        ].concat();
+        Self {
+            id: Uuid::new_v4().to_string(),
+            name: cfg.name,
+            mode: cfg.mode,
+            pawns,
+            white_side: cfg.white_side,
+            black_side: cfg.black_side,
+            current_color: "w".to_string(),
+            turn: 1,
+            moves: Vec::<Move>::new()
+        }
     }
 }
 
