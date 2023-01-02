@@ -43,6 +43,7 @@ async fn main() -> std::io::Result<()> {
             .service(game_route::get_game)
             .service(game_route::list_games)
             .service(game_route::put_move)
+            .service(game_route::preview)
     })
     .bind(("127.0.0.1", 8080))?
     .run()

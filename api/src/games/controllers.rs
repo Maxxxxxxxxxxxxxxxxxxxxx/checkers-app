@@ -46,3 +46,16 @@ pub async fn put_move(req: HttpRequest, data: web::Json<MoveRequest>) -> HttpRes
         Err(_) => ResponseType::BadRequest(NotFoundMessage::new("Bad request!")).get_response(),
     }
 }
+
+#[get("/games/preview")]
+pub async fn preview(data: web::Json<NewGameRequest>) -> HttpResponse {
+    let config = GameConfig::default()
+        .white_at(&data.white)
+        .black_at(&data.black)
+        .mode(&data.mode)
+        .name(&data.name);
+    
+    let game = Game::from(config);
+
+    ResponseType::Ok(game).get_response()
+}
