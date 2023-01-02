@@ -9,28 +9,29 @@ use env_logger;
 use games::controllers as game_route;
 use uuid::Uuid;
 
+mod chat;
 mod games;
 mod schema;
 mod utils;
-mod chat;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     
     std::env::set_var("RUST_LOG", "debug");
     env_logger::init();
-    
-    let game_ids = games::db::all()
-        .await
-        .unwrap()
-        .iter()
-        .map(move |game| Uuid::from_str(&game.id).unwrap())
-        .collect::<Vec<Uuid>>();
 
-    let chat_server = Lobby::default()
-        .attach_ids(game_ids)
-        .start();
-    
+    let chat_server = match games::db::all().await {
+        Ok(vec) => {
+            let ids = vec
+                .iter()
+                .map(move |game| Uuid::from_str(&game.id).unwrap())
+                .collect::<Vec<Uuid>>();
+            Some(Lobby::default().attach_ids(ids).start())
+        }
+        Err(_) => Some(Lobby::default().start()),
+    }
+    .unwrap();
+
     HttpServer::new(move || {
         let cors = Cors::permissive(); // temporary
 

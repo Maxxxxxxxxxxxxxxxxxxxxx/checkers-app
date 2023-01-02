@@ -105,7 +105,7 @@ pub async fn create(cfg: GameConfig) -> Result<Game> {
             ]
             .concat();
 
-            let txn = graph.start_txn().await.unwrap();
+            let txn = graph.start_txn().await?;
 
             let game_query = query(
                 "CREATE (:Game {id: $game_id, 
