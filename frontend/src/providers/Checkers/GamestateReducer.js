@@ -43,6 +43,7 @@ const GamestateReducer = (state, action) => {
       // if move valid, put request to backend and return new state
       if (move.validate()) {
         let body = MovePawn.Serialize(move);
+        console.log("put body:", body);
 
         axios.put(`http://localhost:8080/games/${state.id}`, body)
           .then(res => console.log("PUT successful!", res.data));

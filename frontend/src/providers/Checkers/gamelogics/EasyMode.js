@@ -25,7 +25,7 @@ export class MovePawn {
   static Serialize = (moveObject) => {
     let killed = moveObject.isKill();
     let serialized = {
-      id: moveObject.gamestate.id,
+      turn: false, // TODO: ADD TURNS
       game_move: {
         side: moveObject.pawn.side,
         index: moveObject.pawn.index,

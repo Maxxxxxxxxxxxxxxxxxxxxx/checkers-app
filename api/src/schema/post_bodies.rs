@@ -16,7 +16,7 @@ pub struct NewGameRequest {
 
 #[derive(Deserialize, Serialize)]
 pub struct MoveRequest {
-    pub id: String,
+    // pub id: String,
     pub game_move: Move,
     pub killed: Option<KilledPawn>,
     pub turn: bool,

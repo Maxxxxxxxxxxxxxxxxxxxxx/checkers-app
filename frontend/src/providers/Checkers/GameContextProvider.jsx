@@ -37,10 +37,6 @@ export default function GameContextProvider({ children }) {
   useEffect(() => {
     // console.log(moveParams)
     if (moveParams.pawn && moveParams.dest) {
-      /*
-        TODO: PUT request to handle gamestate change in backend
-      */
-
       // dispatch the move to GamestateReducer
       dispatch(
         Actions.move(moveParams.pawn, moveParams.dest[0], moveParams.dest[1])
