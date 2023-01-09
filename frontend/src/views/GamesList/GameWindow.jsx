@@ -4,8 +4,8 @@ import BoardPreview from '@/views/Preview/BoardPreview';
 import { useNavigate } from 'react-router-dom';
 
 export default function GameWindow({ gamestate }) {
-  let linkBlack = `/game?id=${gamestate.id}&player=black`;
-  let linkWhite = `/game?id=${gamestate.id}&player=white`;
+  let linkBlack = `/game?id=${gamestate.id}&player=b`;
+  let linkWhite = `/game?id=${gamestate.id}&player=w`;
 
   let navigate = useNavigate();
 

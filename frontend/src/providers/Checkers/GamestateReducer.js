@@ -5,7 +5,7 @@ import axios from 'axios';
 const GamestateReducer = (state, action) => {
   switch (action.type) {
     case "MOVE":
-      let move = new MovePawn(state, action.pawn, action.x, action.y);
+      let move = new MovePawn(state, action.pawn, action.x, action.y, action.playerColor);
       console.log("iskill: ", move.isKill());
 
       // update the pawn state, searches pawn by index and side

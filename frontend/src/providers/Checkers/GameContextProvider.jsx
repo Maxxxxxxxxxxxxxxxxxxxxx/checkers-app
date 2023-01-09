@@ -21,6 +21,9 @@ export default function GameContextProvider({ children }) {
   const [moveParams, setMoveParams] = useState({});
 
   const gameId = params.get("id");
+  const playerColor = params.get("player");
+
+  console.log("player:", playerColor);
 
   // sets "pawn" property in moveParams
   const focusPawn = (pawn) => setMoveParams({ ...moveParams, pawn });
@@ -35,11 +38,10 @@ export default function GameContextProvider({ children }) {
   const clearParams = () => setMoveParams({});
 
   useEffect(() => {
-    // console.log(moveParams)
     if (moveParams.pawn && moveParams.dest) {
       // dispatch the move to GamestateReducer
       dispatch(
-        Actions.move(moveParams.pawn, moveParams.dest[0], moveParams.dest[1])
+        Actions.move(moveParams.pawn, moveParams.dest[0], moveParams.dest[1], playerColor)
       );
       clearParams();
     }

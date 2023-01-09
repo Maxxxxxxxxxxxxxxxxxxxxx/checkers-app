@@ -1,8 +1,9 @@
-export const move = (pawn, x, y) => ({
+export const move = (pawn, x, y, playerColor) => ({
   type: "MOVE",
   pawn: pawn,
   x: x,
-  y: y
+  y: y,
+  playerColor
 });
 
 export const set = (newState) => ({

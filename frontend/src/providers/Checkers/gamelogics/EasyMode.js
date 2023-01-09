@@ -10,7 +10,8 @@ const getPawnAtVector = (gamestate, vector) => {
 };
 
 export class MovePawn {
-  constructor(gamestate, pawn, x, y) {
+  constructor(gamestate, pawn, x, y, playerColor) {
+    this.playerColor = playerColor;
     this.gamestate = gamestate;
     this.pawn = pawn;
     this.x = x;
@@ -45,6 +46,10 @@ export class MovePawn {
   }
 
   validate = () => {
+    // check if moved pawn belongs to player
+    console.log("validate (side / playerColor):", this.pawn.side, this.playerColor)
+    if (this.pawn.side != this.playerColor) return false;
+
     // if move is other than 1 diagonal tile and not a kill
     if (!this.absVec.equals(new Vector(1, 1)) && !this.isKill()) return false;
 
