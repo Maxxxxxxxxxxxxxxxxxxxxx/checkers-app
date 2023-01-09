@@ -2,6 +2,7 @@
 
 .chat-view {
     min-height: 15rem;
+    max-height: 15rem;
     min-width: 200px;
     max-width: 30rem;
     display: flex;
@@ -15,6 +16,7 @@
         @include coolBoxShadow($bg-grey-darker-2);
         width: fit-content;
         min-height: 20rem;
+        max-height: fit-content;
         width: 100%;
         background-color: $bg-grey-darker-1;
         border-radius: 0.4rem;
@@ -25,7 +27,11 @@
     &__display {
         background-color: $bg-grey-darker-2;
         flex: 20;
-        overflow: hidden;
+        overflow-y: scroll;
+        display: flex;
+        flex-direction: column;
+        padding: 0.9rem;
+        gap: 0.6rem;
     }
     &__input {
         flex: 1;
@@ -33,6 +39,14 @@
         display: flex;
         flex-direction: row;
         gap: 2rem;
+    }
+    &__message {
+        background-color: $bg-grey-darker-1;
+        padding: 0.4rem;
+        border-radius: 0.5rem;
+        // border: 1px solid white;
+        width: fit-content;
+
     }
     &__textfield {
         flex: 10;
