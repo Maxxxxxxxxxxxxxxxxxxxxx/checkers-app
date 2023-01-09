@@ -8,14 +8,18 @@ import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import SendIcon from "@mui/icons-material/Send";
 import "@/styles/ChatTab/ChatTab.css";
 import { useState } from "react";
+import { useChat } from "@/providers/Chat/ChatContext";
+import Message from "./Message";
 
 export default function ChatTab({ room }) {
   let [msg, setMsg] = useState("");
+  let { messageHistory, sendMessage } = useChat();
 
   let onSubmit = async (event) => {
     event.preventDefault();
     setMsg(event.target.msg.value);
-    console.log(event.target.msg.value);
+    console.log(messageHistory);
+    sendMessage(event.target.msg.value);
     document.getElementById('form').reset();
   }
 
@@ -45,7 +49,11 @@ export default function ChatTab({ room }) {
         </span>
       </Toolbar>
       <div className="chat-view__container">
-        <div className="chat-view__display"></div>
+        <div className="chat-view__display">
+          {messageHistory.map(message => {
+            return <Message content={message.data} />
+          })}
+        </div>
         <form
           className="chat-view__input"
           id="form"
