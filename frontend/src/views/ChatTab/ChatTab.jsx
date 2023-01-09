@@ -51,7 +51,7 @@ export default function ChatTab({ room }) {
       <div className="chat-view__container">
         <div className="chat-view__display">
           {messageHistory.map(message => {
-            return <Message content={message.data} />
+            return <Message key={Math.random()}content={message.data} />
           })}
         </div>
         <form

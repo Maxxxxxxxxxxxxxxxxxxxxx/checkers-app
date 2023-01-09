@@ -3,11 +3,9 @@ import Field from "./Field";
 import { useGameContext } from "@/providers/Checkers/GameContextProvider";
 import { Skeleton, Toolbar, IconButton, Typography } from "@mui/material";
 import { Menu } from "@mui/icons-material/index";
-import html2canvas from "html2canvas";
 import * as board from "@/game/board.json";
-import Sidebar from "../Sidebar";
-import ChatTab from "../ChatTab/ChatTab";
 import { Fragment, useEffect } from 'react';
+import View from "../View";
 
 export default function GameView({}) {
   let { gamestate } = useGameContext();
