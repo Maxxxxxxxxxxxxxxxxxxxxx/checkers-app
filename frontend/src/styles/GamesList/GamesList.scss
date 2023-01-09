@@ -41,15 +41,39 @@
     }
 }
 
+.pawn-white-icon {
+    background-image: url("/pawn_white.svg");
+    min-height:1.5rem;
+    min-width: 1.5rem;
+}
+
+.pawn-black-icon {
+    @extend .pawn-white-icon;
+    background: url("/pawn_black.svg")
+}
+
 .element {
     @include coolBoxShadow($bg-grey-darker-2);
     border-radius: 0.5rem;
     width: fit-content;
     background: $bg-grey-darker-1;
     overflow: hidden;
-    // padding: 1rem;
     &__label {
-
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        text-align: center;
+        padding: 0.3rem;
+    }
+    &__buttons {
+        display: flex;
+        justify-content: center;
+        box-shadow: none;
+        gap: 0.2rem;
+    }
+    &__btn {
+        background-color: $bg-green;
+        width: fit-content;
     }
 }
 
