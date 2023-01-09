@@ -15,7 +15,7 @@ pub async fn room(
     ).unwrap();
 
     let ws = Session::new(group_id, srv.get_ref().clone());
-    println!("{} polaczony do pokoju {}", &ws.id, &group_id);
+    log::info!("CONNECTED to {}: {}", &group_id, &ws.id);
 
     let resp = ws::start(ws, &req, stream)?;
     Ok(resp)
@@ -28,7 +28,8 @@ pub async fn global(
     srv: Data<Addr<Lobby>>,
 ) -> Result<HttpResponse, Error> {
     let ws = Session::new(super::GLOBAL_CHAT_ID, srv.get_ref().clone());
-    println!("{} polaczony do global", &ws.id);
+
+    log::info!("CONNECTED to GLOBAL: {}", &ws.id);
 
     let resp = ws::start(ws, &req, stream)?;
     Ok(resp)

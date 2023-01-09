@@ -98,6 +98,8 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for Session {
                 ctx.stop();
             }
             Ok(ws::Message::Nop) => (),
+            
+            // handles a websocket message from client
             Ok(Text(s)) => self.lobby_addr.do_send(ClientActorMessage {
                 id: self.id,
                 msg: String::from(s),

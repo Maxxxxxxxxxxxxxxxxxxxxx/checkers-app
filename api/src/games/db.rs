@@ -83,7 +83,7 @@ pub async fn get(game_id: &str) -> Result<Game> {
                 moves.push(m)
             }
         }
-
+        
         pawns.push(pawn);
     }
 

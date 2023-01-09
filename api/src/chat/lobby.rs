@@ -2,7 +2,7 @@ use crate::chat::messages::{ClientActorMessage, Connect, Disconnect, WsMessage};
 use actix::prelude::{Actor, Context, Handler, Recipient};
 use uuid::Uuid;
 use std::collections::{HashMap, HashSet};
-use std::str::FromStr;
+// use std::str::FromStr;
 
 use super::GLOBAL_CHAT_ID;
 use super::Id;
@@ -34,7 +34,8 @@ impl Lobby {
         if let Some(socket_recipient) = self.sessions.get(&id_to) {
             let _ = socket_recipient.do_send(WsMessage(message.to_owned()));
         } else {
-            println!("attempting to send message but couldn't find user id.");
+            log::info!("MESSAGE: {} Couldn't send to {}", message, id_to);
+            // println!("attempting to send message but couldn't find user id.");
         }
     }
 
@@ -50,6 +51,10 @@ impl Lobby {
     pub fn create_room(&mut self, game_id: Id) {
         self.rooms.insert(game_id, HashSet::new());
         log::info!("created room #{}", &game_id);
+    }
+
+    fn broadcast(msg: &str) {
+        
     }
 }
 
@@ -102,6 +107,6 @@ impl Handler<ClientActorMessage> for Lobby {
             .get(&msg.room_id)
             .unwrap()
             .iter()
-            .for_each(|client| self.send_message(&msg.msg, client.clone()));
+            .for_each(|client_id| self.send_message(&msg.msg, client_id.clone()));
     }
 }
