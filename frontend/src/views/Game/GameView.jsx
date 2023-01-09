@@ -23,8 +23,7 @@ export default function GameView({}) {
 
   return (
     <Fragment>
-      <Sidebar></Sidebar>
-      <div className="view">
+      <View>
         <div className="game">
           <Toolbar variant="dense" className="toolbar">
             <span className="toolbar__leftside">
@@ -60,8 +59,7 @@ export default function GameView({}) {
             <Skeleton variant="rectangular" className="game__board--skeleton" />
           )}
         </div>
-      <ChatTab />
-      </div>
+      </View>
     </Fragment>
   );
 }

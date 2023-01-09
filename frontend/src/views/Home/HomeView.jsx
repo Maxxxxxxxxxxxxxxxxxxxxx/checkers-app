@@ -6,13 +6,13 @@ import Sidebar from "../Sidebar";
 import ChatTab from "../ChatTab/ChatTab";
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import { useSidebarContext } from "@/providers/Sidebar/SidebarProvider";
+import View from "../View";
 
 export default function HomeView() {
-  let { sidebarMargin } = useSidebarContext();
   return (
     <Fragment>
-      <Sidebar />
-      <div className="view" style={{marginLeft: sidebarMargin}}>
+      {/* <Sidebar /> */}
+      <View>
         <div className="home-window">
           <div className="home-window__header"> 
             Checkers 
@@ -36,8 +36,7 @@ export default function HomeView() {
             </Link>
           </div>
         </div>
-      <ChatTab />
-      </div>
+      </View>
     </Fragment>
   )
 }

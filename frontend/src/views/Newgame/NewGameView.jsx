@@ -9,6 +9,7 @@ import BoardPreview from "../Preview/BoardPreview";
 import { useFormik } from 'formik';
 import { FormLabel, RadioGroup, FormControlLabel, Radio} from "@mui/material/index";
 import { useSidebarContext } from "@/providers/Sidebar/SidebarProvider";
+import View from "../View";
 
 export default function NewGameView() {
   let [gamestate, setGamestate] = useState([]);
@@ -32,8 +33,8 @@ export default function NewGameView() {
 
   return (
     <Fragment>
-      <Sidebar></Sidebar>
-      <div className="view" style={{marginLeft: sidebarMargin}}>
+      {/* <Sidebar></Sidebar> */}
+      <View>
         <div className="newgame">
           <Toolbar variant="dense" className="toolbar">
               <span className="toolbar__leftside">
@@ -63,8 +64,7 @@ export default function NewGameView() {
             </div>
           </div>
         </div>
-        <ChatTab></ChatTab>
-      </div>
+      </View>
     </Fragment>
   );
 }

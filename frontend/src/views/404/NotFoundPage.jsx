@@ -1,7 +1,10 @@
+import View from "../View"
+import ChatTab from "../ChatTab/ChatTab"
+
 export default function NotFoundPage() {
     return (
-        <div>
+        <View>
             404 Not found :(
-        </div>
+        </View>
     )
 }

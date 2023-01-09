@@ -8,6 +8,7 @@ import GameWindow from "./GameWindow";
 import Sidebar from "../Sidebar";
 import ChatTab from "../ChatTab/ChatTab";
 import { useSidebarContext } from "@/providers/Sidebar/SidebarProvider";
+import View from "../View";
 
 export default function GamesListView() {
   let [games, setGames] = useState([]);
@@ -31,8 +32,8 @@ export default function GamesListView() {
 
   return (
     <Fragment>
-      <Sidebar></Sidebar>
-      <div className="view" style={{marginLeft: sidebarMargin}}>
+      {/* <Sidebar></Sidebar> */}
+      <View>
         <div className="list-view">
           <Toolbar variant="dense" className="toolbar">
             <span className="toolbar__leftside">
@@ -54,8 +55,7 @@ export default function GamesListView() {
             { children }
           </div>
         </div>
-        <ChatTab />
-      </div>
+      </View>
     </Fragment>
   );
 }
