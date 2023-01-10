@@ -3,8 +3,19 @@
 .game {
   display: flex;
   flex-direction: column;
-  max-width: fit-content;
-  // margin: 10px;
+  // max-width: fit-content;
+  flex: 3;
+  &__container {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+  }
+  &__field {
+    display: flex;
+    align-items: center;
+    justify-items: center;
+    justify-content: center;
+  }
   &__board {
     display: grid;
     grid-template-columns: repeat(8, 1fr);
@@ -15,29 +26,8 @@
     background-size: contain;
     border-radius: 5px;
     margin-top: 1rem;
-    .game__field {
-      display: flex;
-      align-items: center;
-      justify-items: center;
-      justify-content: center;
-      .sprite {
-        width: 70%;
-        height: 70%;
-        // padding: 0.5rem;
-        text-align: center;
-        border: 0px;
-        color: black;
-        &:hover {
-          cursor: grab;
-        }
-        &:focus {
-          border: lightblue 2px;
-          border-radius: 1rem;
-        }
-      }
-    }
   }
-  .game__board--skeleton {
+  &__board--skeleton {
     display: grid;
     grid-template-columns: repeat(8, 1fr);
     grid-template-rows: repeat(8, 1fr);
@@ -47,4 +37,29 @@
     background-size: contain;
     border-radius: 5px;
   }
+}
+
+.sprite {
+  width: 70%;
+  height: 70%;
+  // padding: 0.5rem;
+  text-align: center;
+  border: 0px;
+  color: black;
+  &:hover {
+    cursor: pointer;
+  }
+  &:focus {
+    border: lightblue 2px;
+    border-radius: 1rem;
+  }
+}
+
+.game-info {
+  @include coolBoxShadow($bg-grey-darker-2);
+  background-color: $bg-grey-darker-1;
+  border-radius: 0.4rem;
+  margin-top: 1rem;
+  flex:1;
+  padding: 1rem;
 }

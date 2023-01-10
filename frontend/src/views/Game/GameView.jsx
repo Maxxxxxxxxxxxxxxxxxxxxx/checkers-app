@@ -6,6 +6,7 @@ import { Menu } from "@mui/icons-material/index";
 import * as board from "@/game/board.json";
 import { Fragment, useEffect } from 'react';
 import View from "../View";
+import GameInfo from "./GameInfo";
 
 export default function GameView({}) {
   let { gamestate } = useGameContext();
@@ -42,20 +43,22 @@ export default function GameView({}) {
               </Typography>
             </span>
           </Toolbar>
-
-          {gamestate ? (
-            <div className="game__board" id="capture">
-              {board.fields.map((field) => (
-                <Field
-                  key={Math.floor(Math.random() * 7890000)}
-                  x={field.x}
-                  y={field.y}
-                />
-              ))}
+            <div className="game__container">
+              {gamestate ? (
+                <div className="game__board" id="capture">
+                  {board.fields.map((field) => (
+                    <Field
+                      key={Math.floor(Math.random() * 7890000)}
+                      x={field.x}
+                      y={field.y}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <Skeleton variant="rectangular" className="game__board--skeleton" />
+              )}
+              <GameInfo></GameInfo>
             </div>
-          ) : (
-            <Skeleton variant="rectangular" className="game__board--skeleton" />
-          )}
         </div>
       </View>
     </Fragment>
