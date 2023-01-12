@@ -1,9 +1,10 @@
 @import '../variables';
 
-.game-btn:hover {
-    background-color: red;
-}
-
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  
 .view {
     display: flex;
     flex-direction: row;
@@ -21,7 +22,8 @@
     &__games-list {
         display: flex;
         flex: 1;
-        gap: 5%;
+        gap: 1rem 2% ;
+        justify-content: space-around;
         flex-wrap: wrap;
         margin: 0;
         padding: 0px;
@@ -80,8 +82,8 @@
 .preview {
     overflow: hidden;
     &__board {
-        width: 150px;
-        height: 150px;
+        width: 15rem;
+        height: 15rem;
         display: grid;
         grid-template-columns: repeat(8, 1fr);
         grid-template-rows: repeat(8, 1fr);
@@ -97,15 +99,17 @@
             //     display: block;
             // }
         }
-        &:hover + .preview__play-button {
-            display: inline-block;
-        }
+        // &:hover + .preview__play-button {
+        //     display: inline-block;
+        // }
     }
     &__play-button {
-        display: none;
-        position: absolute;
         font-weight: 1000;
+        position: relative;
         z-index: 100;
+        &:hover {
+
+        }
     }
     &__field {
         display: flex;

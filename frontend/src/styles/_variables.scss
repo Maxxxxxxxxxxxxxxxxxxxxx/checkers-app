@@ -24,7 +24,7 @@ $bg-grey-darker-2: rgb(30,30,25);
 @mixin coolBoxShadowHighlight($shadowcolor) {
     box-shadow: 0 .1rem
                 0 0 $shadowcolor,
-                0 .7rem .95rem .05rem
+                0 .4rem .25rem .05rem
                 $shadowcolor;
 }
 
@@ -47,9 +47,10 @@ $bg-grey-darker-2: rgb(30,30,25);
         flex-direction: row;
     }
     &:hover {
+        @include coolBoxShadowHighlight($bg-green-darker);
         transition: 200ms;
         cursor: pointer;
-        background: brightness(110%);
+        filter: brightness(110%);
     }
 }
 
