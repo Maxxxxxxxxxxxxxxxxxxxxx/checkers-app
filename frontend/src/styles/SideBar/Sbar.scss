@@ -69,7 +69,7 @@ $lower-icon-dimension: 1.3rem;
 }
 
 .fold-button {
-  @media(max-width: 768px) {
+  @media(max-width: 1000px) {
     display: none;
   }
 }
