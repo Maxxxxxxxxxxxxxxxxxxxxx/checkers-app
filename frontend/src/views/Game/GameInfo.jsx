@@ -7,7 +7,7 @@ export default function GameInfo() {
     return (
         <div className="game-info">
             <Typography variant="h4" sx={{textAlign: "center"}}>
-                { gamestate.name }
+                Playing as { gamestate.current_color === "w" ? "WHITE" : "BLACK" }
             </Typography>
             <div className="game-info__params">
                 <Typography variant="p">

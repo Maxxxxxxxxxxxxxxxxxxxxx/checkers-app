@@ -4,7 +4,7 @@ import { useGameContext } from "@/providers/Checkers/GameContextProvider";
 import { Skeleton, Toolbar, IconButton, Typography } from "@mui/material";
 import { Menu } from "@mui/icons-material/index";
 import * as board from "@/game/board.json";
-import { Fragment, useEffect } from 'react';
+import { Fragment } from 'react';
 import View from "../View";
 import GameInfo from "./GameInfo";
 
