@@ -1,28 +1,62 @@
 use super::*;
-use crate::schema::user;
+use crate::schema::user::*;
 use crate::utils::hash_password;
 
 pub async fn get(username: String) -> Result<User> {
-    let graph = connect();
+    let graph = connect().await?;
 
     let mut stream = graph
         .execute(query("MATCH (user:User {username: $username}) RETURN user")
         .param("username", username.clone())
     ).await?;
 
-    let Ok(Some(row)) = stream.await?;
+    let row = stream.next().await.unwrap().unwrap();
 
-    let node = row.get::<Node>("user");
-    let user = node.try_into();
+    let node = row.get::<Node>("user").unwrap();
+    let user: user::User = node.try_into().unwrap();
 
     Ok(user)
 }
 
-pub async fn register(username: String, password: String) -> Result<()> {
-    let graph = connect();
+pub async fn registered_count(username: String) -> Result<usize> {
+    let graph = connect().await?;
 
-    if get(username).await.is_ok() {
-        return Err(())
+    let mut stream = graph
+        .execute(query("MATCH (users:User) RETURN count(users) AS count")
+    ).await?;
+
+    let row = stream.next().await.unwrap().unwrap();
+    let count = row.get::<i64>("count").unwrap();
+
+    Ok(count as usize)
+}
+
+pub async fn all() -> Result<Vec<String>> {
+    let graph = connect().await?;
+
+    let mut stream = graph
+        .execute(query("MATCH (users:User) RETURN users")
+    ).await?;
+
+    let mut usernames = Vec::<String>::new();
+
+    while let Ok(Some(row)) = stream.next().await {
+        let node = row.get::<Node>("user").unwrap();
+        let username: String = node.get("username").unwrap();
+
+        usernames.push(username);
+    };
+
+    Ok(usernames)
+}
+
+pub async fn register(username: String, password: String) -> Result<()> {
+    let graph = connect().await?;
+    
+    let user_exists = get(username.clone()).await;
+
+    if user_exists.is_ok() {
+        return Err(neo4rs::Error::IOError { detail: "User already exists!".to_string() })
     }
 
     let pass_hash = hash_password(password.clone());
@@ -35,12 +69,12 @@ pub async fn register(username: String, password: String) -> Result<()> {
 
     match get(username).await {
         Ok(_) => Ok(()),
-        Err(_) => Err(())
+        Err(_) => Err(neo4rs::Error::DeserializationError("Failed to add user to DB!".to_string()))
     }
 }
 
 pub async fn delete(username: String) -> Result<()> {
-    let graph = connect();
+    let graph = connect().await?;
 
     graph.run(
         query("DELETE (:User { username: $username })")
@@ -49,6 +83,6 @@ pub async fn delete(username: String) -> Result<()> {
 
     match get(username).await {
         Err(_) => Ok(()),
-        Ok(_) => Err(())
+        Ok(_) => Err(neo4rs::Error::DeserializationError("Deletion failed!".to_string()))
     }
 }

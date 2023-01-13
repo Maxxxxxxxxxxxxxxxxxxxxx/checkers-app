@@ -1,8 +1,9 @@
 #![allow(unused)]
 
 pub mod game;
+pub mod user;
 
-use crate::games::logic::*;
+use crate::crud::games::logic::*;
 use crate::schema::*;
 use neo4rs::*;
 use uuid::Uuid;
