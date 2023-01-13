@@ -7,6 +7,7 @@ pub mod game;
 pub mod gamemove;
 pub mod pawn;
 pub mod post_bodies;
+pub mod user;
 
 pub use game::*;
 pub use gamemove::*;

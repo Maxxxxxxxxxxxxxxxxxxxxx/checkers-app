@@ -18,7 +18,7 @@ pub async fn get(username: String) -> Result<User> {
     Ok(user)
 }
 
-pub async fn registered_count(username: String) -> Result<usize> {
+pub async fn registered_count() -> Result<usize> {
     let graph = connect().await?;
 
     let mut stream = graph
@@ -52,7 +52,7 @@ pub async fn all() -> Result<Vec<String>> {
 
 pub async fn register(username: String, password: String) -> Result<()> {
     let graph = connect().await?;
-    
+
     let user_exists = get(username.clone()).await;
 
     if user_exists.is_ok() {

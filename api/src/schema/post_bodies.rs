@@ -21,3 +21,9 @@ pub struct MoveRequest {
     pub killed: Option<KilledPawn>,
     pub turn: bool,
 }
+
+#[derive(Deserialize, Serialize)]
+pub struct RegisterRequest {
+    pub username: String,
+    pub password: String,
+}
