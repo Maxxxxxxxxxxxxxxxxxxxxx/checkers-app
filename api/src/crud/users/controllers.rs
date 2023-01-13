@@ -4,9 +4,9 @@ use crate::schema::*;
 use actix_web::HttpRequest;
 use actix_web::{get, post, put, delete, web, HttpResponse};
 
-#[get("/users/<username>")]
+#[get("/user/users/{username}")]
 pub async fn user_info(req: HttpRequest) -> HttpResponse {
-    let name = req.match_info().query("id");
+    let name = req.match_info().query("username");
 
     match db::user::get(name.to_string()).await {
         Ok(user) => ResponseType::Ok(user).get_response(),
@@ -16,7 +16,7 @@ pub async fn user_info(req: HttpRequest) -> HttpResponse {
     }
 }
 
-#[get("/users")]
+#[get("/user/users")]
 pub async fn all_users() -> HttpResponse {
     match db::user::all().await {
         Ok(users) => ResponseType::Ok(users).get_response(),
@@ -26,7 +26,7 @@ pub async fn all_users() -> HttpResponse {
     }
 }
 
-#[get("/users/count")]
+#[get("/user/count")]
 pub async fn count() -> HttpResponse {
     match db::user::registered_count().await {
         Ok(count) => ResponseType::Ok(count).get_response(),
@@ -36,22 +36,39 @@ pub async fn count() -> HttpResponse {
     }
 }
 
-#[post("/register")]
-pub async fn register(user_data: web::Json<RegisterRequest>) -> HttpResponse {
-    match db::user::register(user_data.username.to_owned(), user_data.password.to_owned()).await {
-        Ok(_) => ResponseType::Ok("User registered!").get_response(),
+#[get("/user/login")]
+pub async fn login(req: web::Json<AuthRequest>) -> HttpResponse {
+    match db::user::login(req.username.to_owned(), req.password.to_owned()).await {
+        Ok(username) => ResponseType::Ok(username).get_response(),
         Err(_) => {
-            ResponseType::NotFound(NotFoundMessage::new("No users registered found!")).get_response()
+            ResponseType::NotFound(NotFoundMessage::new("Authentication failed!")).get_response()
         }
     }
 }
 
-#[delete("/users/<username>/delete")]
-pub async fn delete() -> HttpResponse {
-    unimplemented!()
+#[post("/user/register")]
+pub async fn register(user_data: web::Json<AuthRequest>) -> HttpResponse {
+    match db::user::register(user_data.username.to_owned(), user_data.password.to_owned()).await {
+        Ok(_) => ResponseType::Created("User registered!").get_response(),
+        Err(_) => {
+            ResponseType::NotFound(NotFoundMessage::new("Failed to register user!")).get_response()
+        }
+    }
 }
 
-#[put("/users/<username>/change")]
-pub async fn update(new_data: web::Json<RegisterRequest>) -> HttpResponse {
+#[delete("/user/users/{username}")]
+pub async fn delete(req: HttpRequest) -> HttpResponse {
+    let username = req.match_info().query("username");
+
+    match db::user::delete(username.to_owned()).await {
+        Ok(_) => ResponseType::Ok("User deleted!").get_response(),
+        Err(_) => {
+            ResponseType::NotFound(NotFoundMessage::new("Failed to delete user!")).get_response()
+        }
+    }
+}
+
+#[put("/user/users/{username}")]
+pub async fn update(new_data: web::Json<AuthRequest>) -> HttpResponse {
     unimplemented!()
 }

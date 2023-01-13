@@ -23,7 +23,7 @@ pub struct MoveRequest {
 }
 
 #[derive(Deserialize, Serialize)]
-pub struct RegisterRequest {
+pub struct AuthRequest {
     pub username: String,
     pub password: String,
 }
