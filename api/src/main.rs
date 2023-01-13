@@ -7,6 +7,7 @@ use actix_web::web::Data;
 use actix_web::{App, HttpServer};
 use env_logger;
 use crud::games::controllers as game_route;
+use crud::users::controllers as user_route;
 use uuid::Uuid;
 
 mod chat;
@@ -46,6 +47,11 @@ async fn main() -> std::io::Result<()> {
             .service(game_route::list_games)
             .service(game_route::put_move)
             .service(game_route::preview)
+            
+            .service(user_route::all_users)
+            .service(user_route::user_info)
+            .service(user_route::count)
+            .service(user_route::register)
     })
     .bind(("127.0.0.1", 8080))?
     .run()

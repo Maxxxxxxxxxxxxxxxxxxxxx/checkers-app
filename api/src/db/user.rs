@@ -2,7 +2,7 @@ use super::*;
 use crate::schema::user::*;
 use crate::utils::hash_password;
 
-pub async fn get(username: String) -> Result<User> {
+pub async fn get(username: String) -> Result<String> {
     let graph = connect().await?;
 
     let mut stream = graph
@@ -15,7 +15,7 @@ pub async fn get(username: String) -> Result<User> {
     let node = row.get::<Node>("user").unwrap();
     let user: user::User = node.try_into().unwrap();
 
-    Ok(user)
+    Ok(user.username)
 }
 
 pub async fn registered_count() -> Result<usize> {
