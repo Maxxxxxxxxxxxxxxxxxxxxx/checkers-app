@@ -6,14 +6,14 @@ use actix_cors::Cors;
 use actix_web::web::Data;
 use actix_web::{App, HttpServer};
 use env_logger;
-use games::controllers as game_route;
+use crud::games::controllers as game_route;
 use uuid::Uuid;
 
 mod chat;
-mod games;
 mod schema;
 mod utils;
 mod db;
+mod crud;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {

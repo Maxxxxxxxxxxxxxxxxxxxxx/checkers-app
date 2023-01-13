@@ -1,5 +1,5 @@
+use super::logic::*;
 use crate::db;
-use crate::games::logic::GameConfig;
 use crate::schema::*;
 use crate::utils::*;
 use actix_web::HttpRequest;
