@@ -13,6 +13,7 @@ mod chat;
 mod games;
 mod schema;
 mod utils;
+mod db;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -20,7 +21,7 @@ async fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "debug");
     env_logger::init();
 
-    let chat_server = match games::db::all().await {
+    let chat_server = match db::game::all().await {
         Ok(vec) => {
             let ids = vec
                 .iter()

@@ -1,4 +1,4 @@
-use crate::games::db;
+use crate::db;
 use crate::games::logic::GameConfig;
 use crate::schema::*;
 use crate::utils::*;
@@ -7,7 +7,7 @@ use actix_web::{get, post, put, web, HttpResponse};
 
 #[get("/games")]
 pub async fn list_games() -> HttpResponse {
-    match db::all().await {
+    match db::game::all().await {
         Ok(games) => ResponseType::Ok(games).get_response(),
         Err(_) => {
             ResponseType::NotFound(NotFoundMessage::new("No games in the database!")).get_response()
@@ -18,7 +18,7 @@ pub async fn list_games() -> HttpResponse {
 #[get("/games/{id}")]
 pub async fn get_game(req: HttpRequest) -> HttpResponse {
     let id = req.match_info().query("id");
-    match db::get(id).await {
+    match db::game::get(id).await {
         Ok(game) => ResponseType::Ok(game).get_response(),
         Err(_) => ResponseType::NotFound(NotFoundMessage::new("Not found!")).get_response(),
     }
@@ -32,7 +32,7 @@ pub async fn new_game(data: web::Json<NewGameRequest>) -> HttpResponse {
         .mode(&data.mode)
         .name(&data.name);
 
-    match db::create(config).await {
+    match db::game::create(config).await {
         Ok(game) => ResponseType::Created(game).get_response(),
         Err(_) => ResponseType::BadRequest(NotFoundMessage::new("Bad request!")).get_response(),
     }
@@ -41,7 +41,7 @@ pub async fn new_game(data: web::Json<NewGameRequest>) -> HttpResponse {
 #[put("/games/{id}")]
 pub async fn put_move(req: HttpRequest, data: web::Json<MoveRequest>) -> HttpResponse {
     let id = req.match_info().query("id");
-    match db::add_move(data.game_move.clone(), id.to_string(), data.killed.clone()).await {
+    match db::game::add_move(data.game_move.clone(), id.to_string(), data.killed.clone()).await {
         Ok(m) => ResponseType::Created(m).get_response(),
         Err(_) => ResponseType::BadRequest(NotFoundMessage::new("Bad request!")).get_response(),
     }

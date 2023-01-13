@@ -1,6 +1,7 @@
 use {
     actix_web::HttpResponse,
     serde::{Deserialize, Serialize},
+    sha2::{Sha512, Digest}
 };
 
 #[derive(Serialize, Debug, Deserialize)]
@@ -40,4 +41,13 @@ impl<T: Serialize> ResponseType<T> {
                 .json(payload),
         }
     }
+}
+
+pub fn hash_password(password: String) -> String {
+    let mut hasher = Sha512::new();
+    hasher.update(password);
+
+    let hasher_result = hasher.finalize();
+
+    format!("{:x}", hasher_result)
 }
