@@ -38,11 +38,17 @@ pub async fn count() -> HttpResponse {
 
 #[get("/user/login")]
 pub async fn login(req: web::Json<AuthRequest>) -> HttpResponse {
-    match db::user::login(req.username.to_owned(), req.password.to_owned()).await {
-        Ok(username) => ResponseType::Ok(username).get_response(),
-        Err(_) => {
-            ResponseType::NotFound(NotFoundMessage::new("Authentication failed!")).get_response()
-        }
+    let creds = db::user::get_creds(req.username.clone()).await;
+
+    match creds {
+        Ok(c) => {
+            if hash_password(req.password.clone()) == c.pass_hash {
+                ResponseType::Ok(AuthResponse::new("Logged in!".to_string(), Some(c.pass_hash))).get_response()
+            } else {
+                ResponseType::NotFound(NotFoundMessage::new("Invalid credentials!")).get_response()
+            }
+        },
+        Err(_) => ResponseType::NotFound(NotFoundMessage::new("User doesn't exist!")).get_response()
     }
 }
 

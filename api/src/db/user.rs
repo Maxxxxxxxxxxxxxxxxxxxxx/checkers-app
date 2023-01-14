@@ -23,7 +23,7 @@ pub async fn get(username: String) -> Result<String> {
     }
 }
 
-async fn get_creds(username: String) -> Result<User> {
+pub async fn get_creds(username: String) -> Result<User> {
     let graph = connect().await?;
 
     let mut stream = graph
