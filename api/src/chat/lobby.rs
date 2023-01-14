@@ -1,11 +1,11 @@
 use crate::chat::messages::{ClientActorMessage, Connect, Disconnect, WsMessage};
 use actix::prelude::{Actor, Context, Handler, Recipient};
-use uuid::Uuid;
 use std::collections::{HashMap, HashSet};
+use uuid::Uuid;
 // use std::str::FromStr;
 
-use super::GLOBAL_CHAT_ID;
 use super::Id;
+use super::GLOBAL_CHAT_ID;
 
 type Socket = Recipient<WsMessage>;
 
@@ -40,10 +40,7 @@ impl Lobby {
     }
 
     pub fn attach_ids(mut self, ids: Vec<Uuid>) -> Self {
-        ids
-            .to_owned()
-            .iter()
-            .for_each(|id| self.create_room(*id));
+        ids.to_owned().iter().for_each(|id| self.create_room(*id));
         self
     }
 
@@ -53,9 +50,7 @@ impl Lobby {
         log::info!("created room #{}", &game_id);
     }
 
-    fn broadcast(msg: &str) {
-        
-    }
+    fn broadcast(msg: &str) {}
 }
 
 impl Actor for Lobby {

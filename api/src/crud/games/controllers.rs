@@ -54,7 +54,7 @@ pub async fn preview(data: web::Json<NewGameRequest>) -> HttpResponse {
         .black_at(&data.black)
         .mode(&data.mode)
         .name(&data.name);
-    
+
     let game = Game::from(config);
 
     ResponseType::Ok(game).get_response()

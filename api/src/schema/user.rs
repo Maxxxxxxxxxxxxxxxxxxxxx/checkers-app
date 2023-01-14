@@ -3,7 +3,7 @@ use super::*;
 #[derive(Serialize, Deserialize, Debug)]
 pub struct User {
     pub pass_hash: String,
-    pub username: String
+    pub username: String,
 }
 
 impl TryFrom<Node> for User {
@@ -13,8 +13,11 @@ impl TryFrom<Node> for User {
         let username: Option<String> = node.get::<String>("username");
 
         match (pass_hash, username) {
-            (Some(pass_hash), Some(username)) => Ok(User { pass_hash, username }),
-            _ => Err(())
+            (Some(pass_hash), Some(username)) => Ok(User {
+                pass_hash,
+                username,
+            }),
+            _ => Err(()),
         }
     }
 }

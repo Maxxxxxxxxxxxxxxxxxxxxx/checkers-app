@@ -78,7 +78,8 @@ impl From<GameConfig> for Game {
         let pawns = [
             create_pawns("white", &cfg.white_side),
             create_pawns("black", &cfg.black_side),
-        ].concat();
+        ]
+        .concat();
         Self {
             id: Uuid::new_v4().to_string(),
             name: cfg.name,
@@ -88,7 +89,7 @@ impl From<GameConfig> for Game {
             black_side: cfg.black_side,
             current_color: "w".to_string(),
             turn: 1,
-            moves: Vec::<Move>::new()
+            moves: Vec::<Move>::new(),
         }
     }
 }

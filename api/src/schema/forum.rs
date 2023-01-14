@@ -13,7 +13,7 @@ pub struct Comment {
     pub timestamp: SystemTime,
     pub title: String,
     pub content: String,
-    pub beers: Vec<Beer>
+    pub beers: Vec<Beer>,
 }
 
 pub struct CommentDBO {

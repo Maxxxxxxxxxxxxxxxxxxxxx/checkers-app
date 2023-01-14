@@ -5,20 +5,19 @@ use actix::Actor;
 use actix_cors::Cors;
 use actix_web::web::Data;
 use actix_web::{App, HttpServer};
-use env_logger;
 use crud::games::controllers as game_route;
 use crud::users::controllers as user_route;
+use env_logger;
 use uuid::Uuid;
 
 mod chat;
+mod crud;
+mod db;
 mod schema;
 mod utils;
-mod db;
-mod crud;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    
     std::env::set_var("RUST_LOG", "debug");
     env_logger::init();
 

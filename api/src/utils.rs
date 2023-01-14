@@ -1,7 +1,7 @@
 use {
     actix_web::HttpResponse,
     serde::{Deserialize, Serialize},
-    sha2::{Sha512, Digest}
+    sha2::{Digest, Sha512},
 };
 
 #[derive(Serialize, Debug, Deserialize)]

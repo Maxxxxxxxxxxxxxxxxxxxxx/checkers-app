@@ -1,5 +1,5 @@
 use super::*;
-use actix::{Addr};
+use actix::Addr;
 use actix_web::{get, web::Data, web::Payload, Error, HttpRequest, HttpResponse};
 use actix_web_actors::ws;
 
@@ -9,10 +9,7 @@ pub async fn room(
     stream: Payload,
     srv: Data<Addr<Lobby>>,
 ) -> Result<HttpResponse, Error> {
-
-    let group_id = Uuid::from_str(
-        req.match_info().query("group_id")
-    ).unwrap();
+    let group_id = Uuid::from_str(req.match_info().query("group_id")).unwrap();
 
     let ws = Session::new(group_id, srv.get_ref().clone());
     log::info!("CONNECTED to {}: {}", &group_id, &ws.id);

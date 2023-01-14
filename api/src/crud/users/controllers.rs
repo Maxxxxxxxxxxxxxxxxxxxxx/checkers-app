@@ -1,8 +1,8 @@
 use crate::db;
-use crate::utils::*;
 use crate::schema::*;
+use crate::utils::*;
 use actix_web::HttpRequest;
-use actix_web::{get, post, put, delete, web, HttpResponse};
+use actix_web::{delete, get, post, put, web, HttpResponse};
 
 #[get("/user/users/{username}")]
 pub async fn user_info(req: HttpRequest) -> HttpResponse {
@@ -10,9 +10,7 @@ pub async fn user_info(req: HttpRequest) -> HttpResponse {
 
     match db::user::get(name.to_string()).await {
         Ok(user) => ResponseType::Ok(user).get_response(),
-        Err(_) => {
-            ResponseType::NotFound(NotFoundMessage::new("User not found!")).get_response()
-        }
+        Err(_) => ResponseType::NotFound(NotFoundMessage::new("User not found!")).get_response(),
     }
 }
 
@@ -20,9 +18,8 @@ pub async fn user_info(req: HttpRequest) -> HttpResponse {
 pub async fn all_users() -> HttpResponse {
     match db::user::all().await {
         Ok(users) => ResponseType::Ok(users).get_response(),
-        Err(_) => {
-            ResponseType::NotFound(NotFoundMessage::new("No users registered found!")).get_response()
-        }
+        Err(_) => ResponseType::NotFound(NotFoundMessage::new("No users registered found!"))
+            .get_response(),
     }
 }
 
@@ -30,9 +27,8 @@ pub async fn all_users() -> HttpResponse {
 pub async fn count() -> HttpResponse {
     match db::user::registered_count().await {
         Ok(count) => ResponseType::Ok(count).get_response(),
-        Err(_) => {
-            ResponseType::NotFound(NotFoundMessage::new("No users registered found!")).get_response()
-        }
+        Err(_) => ResponseType::NotFound(NotFoundMessage::new("No users registered found!"))
+            .get_response(),
     }
 }
 
@@ -43,12 +39,18 @@ pub async fn login(req: web::Json<AuthRequest>) -> HttpResponse {
     match creds {
         Ok(c) => {
             if hash_password(req.password.clone()) == c.pass_hash {
-                ResponseType::Ok(AuthResponse::new("Logged in!".to_string(), Some(c.pass_hash))).get_response()
+                ResponseType::Ok(AuthResponse::new(
+                    "Logged in!".to_string(),
+                    Some(c.pass_hash),
+                ))
+                .get_response()
             } else {
                 ResponseType::NotFound(NotFoundMessage::new("Invalid credentials!")).get_response()
             }
-        },
-        Err(_) => ResponseType::NotFound(NotFoundMessage::new("User doesn't exist!")).get_response()
+        }
+        Err(_) => {
+            ResponseType::NotFound(NotFoundMessage::new("User doesn't exist!")).get_response()
+        }
     }
 }
 

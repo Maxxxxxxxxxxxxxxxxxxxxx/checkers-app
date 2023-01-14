@@ -1,5 +1,5 @@
-use actix::prelude::{Message, Recipient};
 use super::Id;
+use actix::prelude::{Message, Recipient};
 
 #[derive(Message)]
 #[rtype(result = "()")]
