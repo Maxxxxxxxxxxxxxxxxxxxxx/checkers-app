@@ -57,15 +57,14 @@
 .element {
     @include coolBoxShadow($bg-grey-darker-2);
     border-radius: 0.5rem;
-    width: fit-content;
+    width: 100%;
     background: $bg-grey-darker-1;
     overflow: hidden;
-    &__label {
+    display: flex;
+    &__info {
         display: flex;
-        justify-content: center;
         flex-direction: column;
-        text-align: center;
-        padding: 0.3rem;
+        padding: 1rem;
     }
     &__buttons {
         display: flex;

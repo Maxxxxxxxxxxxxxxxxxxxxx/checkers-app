@@ -11,6 +11,40 @@ $lower-icon-dimension: 1.3rem;
   height: 100%;
   position: fixed;
   background-color: $bg-grey-darker-1;
+  &__upper {
+    display: flex;
+    flex-direction: column;
+  }
+  &__auth {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    align-self: center;
+    width: 100%;
+    gap: 1rem;
+    margin-top: 2rem;
+    justify-items: center;
+    &__wrapper {
+      width: 100%;
+    }
+    &--logged-in {
+      justify-content: flex-start;
+      align-self: flex-start;
+      gap: 0;
+    }
+    &__logout {
+      font-style: none;
+      text-decoration: none;
+      color: grey;
+      font-weight: bolder;
+      display: flex;
+      align-items: center;
+      &:hover {
+        filter: brightness(110%);
+        cursor:pointer;
+      }
+    }
+  }
   &__icon-wrapper {
     padding-inline: calc(2rem - $lower-icon-dimension);
     display: flex;
