@@ -17,9 +17,12 @@
     "formik": "^2.2.9",
     "html2canvas": "^1.4.1",
     "react": "^18.2.0",
+    "react-auth-kit": "^2.7.1",
     "react-dom": "^18.2.0",
+    "react-hook-form": "^7.41.5",
     "react-router-dom": "^6.4.3",
     "react-use-websocket": "^4.2.0",
+    "universal-cookie": "^4.0.4",
     "vector2d": "^3.0.0"
   },
   "devDependencies": {
