@@ -1,7 +1,6 @@
 import "@/styles/SideBar/Sbar.css";
-import { Typography } from "@mui/material/index";
+import { Typography, Button, IconButton, Box } from "@mui/material/index";
 import { Link } from "react-router-dom";
-import { Menu } from "@mui/icons-material/index";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import HomeIcon from "@mui/icons-material/Home";
 import SwitchRightIcon from "@mui/icons-material/SwitchRight";
@@ -10,9 +9,20 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import HelpIcon from "@mui/icons-material/Help";
 import AppsTwoToneIcon from "@mui/icons-material/AppsTwoTone";
 import { useSidebarContext } from "@/providers/Sidebar/SidebarProvider";
+import { useNavigate } from "react-router-dom";
+import { useAuthUser, useSignOut } from "react-auth-kit";
 
-export default function Sidebar({children}) {
+import LoginIcon from "@mui/icons-material/Login";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import LogoutIcon from '@mui/icons-material/Logout';
+
+export default function Sidebar({ children }) {
   let { folded, setFold } = useSidebarContext();
+  let navigate = useNavigate();
+  let signOut = useSignOut();
+
+  const getUsername = useAuthUser();
 
   return folded === false ? (
     <div className="view-wrapper">
@@ -35,6 +45,52 @@ export default function Sidebar({children}) {
               New
             </Link>
           </div>
+          {getUsername() ? (
+            <Box
+              className="sidebar__auth sidebar__auth--logged-in"
+              sx={{ color: "white" }}
+            >
+              <Box
+                className="sidebar__auth__wrapper"
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  fontWeight: "bolder",
+                  justifySelf: "flex-start",
+                }}
+              >
+                <IconButton
+                  aria-label="user"
+                  className="sidebar__icon-button"
+                >
+                  <AccountCircleIcon
+                    sx={{ color: "white" }}
+                  ></AccountCircleIcon>
+                </IconButton>
+                {getUsername()}
+              </Box>
+              <Link className="sidebar__auth__logout" to="/login" onClick={() => signOut()}>
+              <IconButton
+                  aria-label="user"
+                  className="sidebar__icon-button"
+                >
+                  <LogoutIcon
+                    sx={{ color: "grey" }}
+                  ></LogoutIcon>
+                </IconButton> 
+                Log out
+              </Link>
+            </Box>
+          ) : (
+            <Box sx={{ marginLeft: "20px"}}className="sidebar__auth">
+              <Button sx={{width: "80%", justifySelf: "center" }} variant="contained" onClick={() => navigate("/register")}>
+                Sign up
+              </Button>
+              <Button sx={{width: "80%", justifySelf: "center" }} variant="outlined" onClick={() => navigate("/login")}>
+                Sign in
+              </Button>
+            </Box>
+          )}
         </div>
         <div className="sidebar__lower">
           <div
@@ -80,6 +136,57 @@ export default function Sidebar({children}) {
               <AddBoxIcon className="sidebar__link-icon sidebar__link-icon--folded" />
             </Link>
           </div>
+          { getUsername() ? (
+            <Box
+              className="sidebar__auth sidebar__auth--logged-in"
+              sx={{ color: "white" }}
+            >
+              <Box
+                className="sidebar__auth__wrapper"
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  fontWeight: "bolder",
+                  justifySelf: "flex-start",
+                }}
+              >
+                <IconButton
+                  aria-label="register"
+                  className="sidebar__icon-button"
+                >
+                  <AccountCircleIcon
+                    sx={{ color: "white" }}
+                  ></AccountCircleIcon>
+                </IconButton>
+                {/* {getUsername()} */}
+              </Box>
+              <Link className="sidebar__auth__logout" to="/login" onClick={() => signOut()}>
+              <IconButton
+                  aria-label="user"
+                  className="sidebar__icon-button"
+                >
+                  <LogoutIcon
+                    sx={{ color: "grey" }}
+                  ></LogoutIcon>
+                </IconButton> 
+              </Link>
+            </Box>
+          ) : <Box sx={{ width: "20px", gap: "0.2rem" }} className="sidebar__auth">
+            <IconButton
+              aria-label="register"
+              onClick={() => navigate("/register")}
+              className="sidebar__icon-button"
+            >
+              <PersonAddIcon sx={{ color: "white" }}></PersonAddIcon>
+            </IconButton>
+            <IconButton
+              aria-label="login"
+              onClick={() => navigate("/login")}
+              className="sidebar__icon-button"
+            >
+              <LoginIcon sx={{ color: "white" }}></LoginIcon>
+            </IconButton>
+          </Box>}
         </div>
         <div className="sidebar__lower">
           <div
