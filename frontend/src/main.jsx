@@ -7,6 +7,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import SidebarContextProvider from './providers/Sidebar/SidebarProvider';
 import Sidebar from './views/Sidebar';
 import ChatProvider from './providers/Chat/ChatContext';
+import { AuthProvider } from 'react-auth-kit'
 
 const theme = createTheme({
   palette: {
@@ -17,15 +18,21 @@ const theme = createTheme({
 });
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <BrowserRouter>
-    <ThemeProvider theme={theme}>
-      <SidebarContextProvider>
-        <ChatProvider>
-          <Sidebar>
-            <App /> 
-          </Sidebar>
-        </ChatProvider>
-      </SidebarContextProvider>
-    </ThemeProvider>
-  </BrowserRouter>
+  <AuthProvider 
+    authType="cookie"
+    authName="auth"
+    cookieDomain={window.location.hostname}
+  >
+    <BrowserRouter>
+      <ThemeProvider theme={theme}>
+        <SidebarContextProvider>
+          <ChatProvider>
+            <Sidebar>
+              <App /> 
+            </Sidebar>
+          </ChatProvider>
+        </SidebarContextProvider>
+      </ThemeProvider>
+    </BrowserRouter>
+  </AuthProvider>
 )

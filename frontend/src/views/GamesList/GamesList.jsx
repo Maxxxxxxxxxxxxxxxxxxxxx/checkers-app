@@ -1,18 +1,13 @@
 import { useState, useEffect, Fragment} from "react";
-import { Typography, Toolbar, IconButton } from "@mui/material/index";
+import { Typography, Toolbar } from "@mui/material/index";
 import { Menu } from "@mui/icons-material/index";
-import { Link } from "react-router-dom";
 import "@/styles/GamesList/GamesList.css";
 import axios from "axios";
 import GameWindow from "./GameWindow";
-import Sidebar from "../Sidebar";
-import ChatTab from "../ChatTab/ChatTab";
-import { useSidebarContext } from "@/providers/Sidebar/SidebarProvider";
 import View from "../View";
 
 export default function GamesListView() {
   let [games, setGames] = useState([]);
-  let { sidebarMargin } = useSidebarContext();
 
   useEffect(() => {
     axios.get("http://localhost:8080/games").then((res) => {

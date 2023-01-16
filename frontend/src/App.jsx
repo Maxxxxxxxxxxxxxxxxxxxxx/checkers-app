@@ -6,6 +6,9 @@ import HomeView from "./views/Home/HomeView";
 import GameContextProvider from "@/providers/Checkers/GameContextProvider";
 import GamesListView from "./views/GamesList/GamesList";
 import NewGameView from "./views/Newgame/NewGameView";
+import LoginView from "./views/Users/LoginView";
+import RegisterView from "./views/Users/RegisterView";
+import { RequireAuth } from 'react-auth-kit'
 
 function App() {
   return (
@@ -14,13 +17,21 @@ function App() {
       <Route
         path={"/game"}
         element={
-          <GameContextProvider>
-            <GameView />
-          </GameContextProvider>
+          <RequireAuth loginPath={'/login'}>
+            <GameContextProvider>
+              <GameView />
+            </GameContextProvider>
+          </RequireAuth>
         }
       ></Route>
       <Route path={"/list"} element={<GamesListView />} />
-      <Route path={"/newgame"} element={<NewGameView />} />
+      <Route path={"/newgame"} element={
+        <RequireAuth loginPath={'/login'}>
+          <NewGameView />
+        </RequireAuth>
+      } />
+      <Route path={"/register"} element={<RegisterView />} />
+      <Route path={"/login"} element={<LoginView />} />
       <Route path="*" element={<NotFoundPage />}></Route>
     </Routes>
   );

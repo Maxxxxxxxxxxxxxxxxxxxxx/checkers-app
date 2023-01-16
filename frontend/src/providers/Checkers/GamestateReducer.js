@@ -45,7 +45,7 @@ const GamestateReducer = (state, action) => {
         let body = MovePawn.Serialize(move);
         console.log("put body:", body);
 
-        axios.put(`http://localhost:8080/games/${state.id}`, body)
+        axios.put(`http://localhost:8080/games/game/${state.id}`, body)
           .then(res => console.log("PUT successful!", res.data));
 
         return {

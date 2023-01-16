@@ -49,7 +49,7 @@ export default function GameContextProvider({ children }) {
 
   // fetch current gamestate from api
   useEffect(() => {
-    axios.get(`http://localhost:8080/games/${gameId}`).then((res) => {
+    axios.get(`http://localhost:8080/games/game/${gameId}`).then((res) => {
       dispatch(Actions.set(res.data));
       console.log(res.data);
     });
