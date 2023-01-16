@@ -4,7 +4,6 @@ use crate::utils::hash_password;
 
 pub async fn get(username: String) -> Result<String> {
     let graph = connect().await?;
-
     let mut stream = graph
         .execute(
             query("MATCH (user:User {username: $username}) RETURN user")
@@ -13,12 +12,10 @@ pub async fn get(username: String) -> Result<String> {
         .await?;
 
     let row = stream.next().await?;
-
     match row {
         Some(row) => {
             let node = row.get::<Node>("user").unwrap();
             let user: user::User = node.try_into().unwrap();
-
             Ok(user.username)
         }
         None => Err(neo4rs::Error::DeserializationError(
@@ -29,7 +26,6 @@ pub async fn get(username: String) -> Result<String> {
 
 pub async fn get_creds(username: String) -> Result<User> {
     let graph = connect().await?;
-
     let mut stream = graph
         .execute(
             query("MATCH (user:User {username: $username}) RETURN user")
@@ -38,7 +34,6 @@ pub async fn get_creds(username: String) -> Result<User> {
         .await?;
 
     let row = stream.next().await?;
-
     match row {
         Some(row) => {
             let node = row.get::<Node>("user").unwrap();
@@ -54,41 +49,34 @@ pub async fn get_creds(username: String) -> Result<User> {
 
 pub async fn registered_count() -> Result<usize> {
     let graph = connect().await?;
-
     let mut stream = graph
         .execute(query("MATCH (users:User) RETURN count(users) AS count"))
         .await?;
 
     let row = stream.next().await.unwrap().unwrap();
     let count = row.get::<i64>("count").unwrap();
-
     Ok(count as usize)
 }
 
 pub async fn all() -> Result<Vec<String>> {
     let graph = connect().await?;
-
     let mut stream = graph
         .execute(query("MATCH (user:User) RETURN users"))
         .await?;
 
     let mut usernames = Vec::<String>::new();
-
     while let Ok(Some(row)) = stream.next().await {
         let node = row.get::<Node>("user").unwrap();
         let username: String = node.get("username").unwrap();
 
         usernames.push(username);
     }
-
     Ok(usernames)
 }
 
 pub async fn register(username: String, password: String) -> Result<()> {
     let graph = connect().await?;
-
     let user_exists = get(username.clone()).await;
-
     if user_exists.is_ok() {
         log::error!("User already exists! Username: {}", &username);
         return Err(neo4rs::Error::IOError {
@@ -97,7 +85,6 @@ pub async fn register(username: String, password: String) -> Result<()> {
     }
 
     let pass_hash = hash_password(password.clone());
-
     graph
         .run(
             query("CREATE (:User { username: $username, pass_hash: $pass_hash })")
@@ -119,7 +106,6 @@ pub async fn register(username: String, password: String) -> Result<()> {
 
 pub async fn delete(username: String) -> Result<()> {
     let graph = connect().await?;
-
     graph
         .run(
             query("MATCH (u:User { username: $username }) DELETE u")
@@ -139,10 +125,9 @@ pub async fn delete(username: String) -> Result<()> {
 
 pub async fn login(username: String, password: String) -> Result<String> {
     let graph = connect().await?;
-
     let hashed = hash_password(password);
     let user_data = get_creds(username.clone()).await?;
-
+    
     if hashed == user_data.pass_hash {
         return Ok(username);
     } else {

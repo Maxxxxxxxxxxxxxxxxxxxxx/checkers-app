@@ -15,7 +15,7 @@ pub async fn list_games() -> HttpResponse {
     }
 }
 
-#[get("/games/{id}")]
+#[get("/games/game/{id}")]
 pub async fn get_game(req: HttpRequest) -> HttpResponse {
     let id = req.match_info().query("id");
     match db::game::get(id).await {
@@ -38,7 +38,7 @@ pub async fn new_game(data: web::Json<NewGameRequest>) -> HttpResponse {
     }
 }
 
-#[put("/games/{id}")]
+#[put("/games/game/{id}")]
 pub async fn put_move(req: HttpRequest, data: web::Json<MoveRequest>) -> HttpResponse {
     let id = req.match_info().query("id");
     match db::game::add_move(data.game_move.clone(), id.to_string(), data.killed.clone()).await {
@@ -47,7 +47,7 @@ pub async fn put_move(req: HttpRequest, data: web::Json<MoveRequest>) -> HttpRes
     }
 }
 
-#[get("/games/preview")]
+#[put("/games/preview")]
 pub async fn preview(data: web::Json<NewGameRequest>) -> HttpResponse {
     let config = GameConfig::default()
         .white_at(&data.white)

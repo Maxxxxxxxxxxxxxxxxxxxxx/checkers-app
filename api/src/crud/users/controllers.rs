@@ -32,23 +32,28 @@ pub async fn count() -> HttpResponse {
     }
 }
 
-#[get("/user/login")]
+#[put("/user/login")]
 pub async fn login(req: web::Json<AuthRequest>) -> HttpResponse {
     let creds = db::user::get_creds(req.username.clone()).await;
+
+    log::info!("User '{}' is trying to sign in...", &req.username);
 
     match creds {
         Ok(c) => {
             if hash_password(req.password.clone()) == c.pass_hash {
+                log::info!("User {} signed in with auth token {}", &req.username, &c.pass_hash);
                 ResponseType::Ok(AuthResponse::new(
                     "Logged in!".to_string(),
                     Some(c.pass_hash),
                 ))
                 .get_response()
             } else {
-                ResponseType::NotFound(NotFoundMessage::new("Invalid credentials!")).get_response()
+                log::error!("Failed to sign in user {}!", &req.username);
+                ResponseType::NotFound(NotFoundMessage::new("Invalid password!")).get_response()
             }
         }
         Err(_) => {
+            log::error!("User '{}' doesn't exist...", &req.username);
             ResponseType::NotFound(NotFoundMessage::new("User doesn't exist!")).get_response()
         }
     }
@@ -57,8 +62,12 @@ pub async fn login(req: web::Json<AuthRequest>) -> HttpResponse {
 #[post("/user/register")]
 pub async fn register(user_data: web::Json<AuthRequest>) -> HttpResponse {
     match db::user::register(user_data.username.to_owned(), user_data.password.to_owned()).await {
-        Ok(_) => ResponseType::Created("User registered!").get_response(),
+        Ok(_) => {
+            log::info!("User '{}' registered!", &user_data.username);
+            ResponseType::Created("User registered!").get_response()
+        },
         Err(_) => {
+            log::info!("Failed to register user '{}'!", &user_data.username);
             ResponseType::NotFound(NotFoundMessage::new("Failed to register user!")).get_response()
         }
     }
