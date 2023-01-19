@@ -2,6 +2,7 @@
 
 pub mod game;
 pub mod user;
+pub mod comment;
 
 use crate::crud::games::logic::*;
 use crate::schema::*;
