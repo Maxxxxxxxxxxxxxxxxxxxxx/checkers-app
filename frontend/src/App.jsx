@@ -9,6 +9,10 @@ import NewGameView from "./views/Newgame/NewGameView";
 import LoginView from "./views/Users/LoginView";
 import RegisterView from "./views/Users/RegisterView";
 import { RequireAuth } from 'react-auth-kit'
+import CommentsView from "./views/CommentsView/CommentsView";
+import { Provider } from 'react-redux';
+import CommentReducer from "./providers/Comments/CommentsReducer";
+import { configureStore } from "@reduxjs/toolkit";
 
 function App() {
   return (
@@ -32,6 +36,15 @@ function App() {
       } />
       <Route path={"/register"} element={<RegisterView />} />
       <Route path={"/login"} element={<LoginView />} />
+      <Route path={"/comments/:id"} element={
+        <Provider store={configureStore({
+          reducer: {
+            comments: CommentReducer,
+          },
+        })}>
+          <CommentsView />
+        </Provider>
+      } />
       <Route path="*" element={<NotFoundPage />}></Route>
     </Routes>
   );
