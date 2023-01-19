@@ -12,6 +12,7 @@ actix-web = "4.2.1"
 actix-web-actors = "4.1.0"
 chrono = "0.4.23"
 env_logger = "0.10.0"
+futures = "0.3.25"
 log = "0.4.17"
 neo4rs = "0.5.9"
 rand = "0.8.5"
@@ -19,4 +20,5 @@ serde = { version = "1.0.151", features = ["derive"] }
 sha2 = "0.10.6"
 simple_logger = "4.0.0"
 struct-field-names-as-array = "0.1.4"
+tokio = "1.24.1"
 uuid = { version = "1.2.2", features = ["v4"] }
