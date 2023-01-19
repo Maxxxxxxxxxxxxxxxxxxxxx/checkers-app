@@ -12,7 +12,7 @@ export default function SidebarContextProvider({ children }) {
     let [sidebarMargin, setMargin] = useState("170px");
 
     useEffect(() => {
-        width < 1000 ? setFold(true) : undefined
+        width < 1000 ? setFold(true) : setFold(false)
     }, [width])
     
     useEffect(() => {
