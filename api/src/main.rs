@@ -7,6 +7,7 @@ use actix_web::web::Data;
 use actix_web::{App, HttpServer};
 use crud::games::controllers as game_route;
 use crud::users::controllers as user_route;
+use crud::comments::controllers as comment_route;
 use env_logger;
 use uuid::Uuid;
 
@@ -41,17 +42,26 @@ async fn main() -> std::io::Result<()> {
             .service(chat_route::global)
             .app_data(Data::new(chat_server.clone()))
             .wrap(cors)
+            // games CRUD routes
             .service(game_route::new_game)
             .service(game_route::get_game)
             .service(game_route::list_games)
             .service(game_route::put_move)
             .service(game_route::preview)
+            // users CRUD routes
             .service(user_route::all_users)
             .service(user_route::user_info)
             .service(user_route::count)
             .service(user_route::register)
             .service(user_route::login)
             .service(user_route::delete)
+            // comments CRUD routes
+            .service(comment_route::add)
+            .service(comment_route::of_game)
+            // .service(comment_route::delete)
+            // .service(comment_route::update)
+            // .service(comment_route::add_beer)
+            // .service(comment_route::delete_beer)
     })
     .bind(("127.0.0.1", 8080))?
     .run()
