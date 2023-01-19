@@ -67,4 +67,9 @@
   margin-top: 1rem;
   flex:1;
   padding: 1rem;
+  &__params {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem
+  }
 }

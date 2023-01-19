@@ -18,13 +18,14 @@
     // max-width: 500px;
     display: flex;
     flex-direction: column;
+    max-width: fit-content;
     flex: 2;
     &__games-list {
         display: flex;
+        flex-direction: column;
         flex: 1;
         gap: 1rem 2% ;
-        justify-content: space-around;
-        flex-wrap: wrap;
+        // flex-wrap: wrap;
         margin: 0;
         padding: 0px;
         width: 100%;
@@ -57,14 +58,25 @@
 .element {
     @include coolBoxShadow($bg-grey-darker-2);
     border-radius: 0.5rem;
-    width: 100%;
+    width: 710px;
     background: $bg-grey-darker-1;
     overflow: hidden;
     display: flex;
+    @media (max-width: 768px) {
+        flex-direction: column;
+        width: fit-content;
+    }
     &__info {
         display: flex;
         flex-direction: column;
         padding: 1rem;
+        align-content: space-between;
+    }
+    &__labels {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5rem;
     }
     &__buttons {
         display: flex;
@@ -72,17 +84,23 @@
         box-shadow: none;
         gap: 0.2rem;
     }
-    &__btn {
-        background-color: $bg-green;
-        width: fit-content;
+    &__comments {
+        background-color: $bg-grey-darker-2;
+        padding: 1rem;
+    }
+    &__comments-link:hover {
+        filter: brightness(120%);
+        cursor: pointer;
     }
 }
 
 .preview {
     overflow: hidden;
     &__board {
-        width: 15rem;
-        height: 15rem;
+        flex-basis: 15rem;
+        width: 250px;
+        height: 250px;
+        position: relative;
         display: grid;
         grid-template-columns: repeat(8, 1fr);
         grid-template-rows: repeat(8, 1fr);

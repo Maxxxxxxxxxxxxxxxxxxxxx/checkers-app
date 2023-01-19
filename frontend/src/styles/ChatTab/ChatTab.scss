@@ -12,12 +12,22 @@
     position: sticky;
     top: 16px;
     gap: 1rem;
+    // .toolbar {
+    //     width: fit-content;
+    // }
+
+    @media (max-width: 1150px) {
+        display: none;
+    }
+    @media (max-width: 768px) {
+        display: none;
+    }
     &__container {
         @include coolBoxShadow($bg-grey-darker-2);
         width: fit-content;
         min-height: 20rem;
         max-height: fit-content;
-        min-width: fit-content;
+        // min-width: fit-content;
         width: 100%;
         background-color: $bg-grey-darker-1;
         border-radius: 0.4rem;

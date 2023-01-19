@@ -13,6 +13,18 @@ $bg-grey-darker: rgb(40,40,39);
 $bg-grey-darker-1: rgb(35,35,30);
 $bg-grey-darker-2: rgb(30,30,25);
 
+@mixin coolTextInput {
+    border: none;
+    background-color: $bg-grey-darker-2;
+    padding: 0.7rem;
+    font-size: 1rem;
+    border-radius: 0.4rem;
+    resize: none;
+    &:focus {
+        outline: none;
+    }
+}
+
 
 @mixin coolBoxShadow($shadowcolor) {
     box-shadow: 0 .1rem
@@ -102,8 +114,25 @@ $bg-grey-darker-2: rgb(30,30,25);
     border-radius: 0.4rem;
     background-color: $bg-grey-darker-1;
     align-items: center;
+    display: flex;
+    justify-content: space-between;
     &__route {
         font-weight: 1000;
+    }
+    &__rightside {
+        display: flex;
+        align-content: center;
+        align-items: center;
+    }
+    &__search {
+        background-color: $bg-grey-darker-2;
+        color: lightgray;
+        border: none;
+        padding: 0.5rem;
+        border-radius: 0.4rem;
+        &:focus {
+            outline: none;
+        }
     }
     &__text {
         font-weight: 1000;
