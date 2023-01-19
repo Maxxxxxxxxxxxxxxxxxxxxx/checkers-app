@@ -23,6 +23,18 @@ pub struct MoveRequest {
 }
 
 #[derive(Deserialize, Serialize)]
+pub struct AddComment {
+    pub author: String,
+    pub title: String,
+    pub content: String,
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct AddBeer {
+    pub author: String,
+}
+
+#[derive(Deserialize, Serialize)]
 pub struct AuthRequest {
     pub username: String,
     pub password: String,
