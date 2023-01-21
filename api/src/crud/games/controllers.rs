@@ -3,7 +3,7 @@ use crate::db;
 use crate::schema::*;
 use crate::utils::*;
 use actix_web::HttpRequest;
-use actix_web::{get, post, put, web, HttpResponse};
+use actix_web::{get, post, delete, put, web, HttpResponse};
 
 #[get("/games")]
 pub async fn list_games() -> HttpResponse {
@@ -59,3 +59,14 @@ pub async fn preview(data: web::Json<NewGameRequest>) -> HttpResponse {
 
     ResponseType::Ok(game).get_response()
 }
+
+#[delete("/games/game/{game_id}")]
+pub async fn delete(req: HttpRequest) -> HttpResponse {
+    let id = req.match_info().query("game_id").to_string();
+
+    match db::game::delete(id).await {
+        Ok(_) => ResponseType::Ok("Deleted!").get_response(),
+        Err(_) => ResponseType::NotFound("Game doesn't exist!").get_response(),
+    }
+}
+
