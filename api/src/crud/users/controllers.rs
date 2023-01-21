@@ -86,6 +86,11 @@ pub async fn delete(req: HttpRequest) -> HttpResponse {
 }
 
 #[put("/user/users/{username}")]
-pub async fn update(new_data: web::Json<AuthRequest>) -> HttpResponse {
-    unimplemented!()
+pub async fn update(req: HttpRequest, new_data: web::Json<AuthRequest>) -> HttpResponse {
+    let username = req.match_info().query("username").to_string();
+    
+    match db::user::update_user(username, new_data.into_inner()).await {
+        Ok(usr) => ResponseType::Ok(usr).get_response(),
+        Err(_) => ResponseType::NotFound("Error").get_response()
+    }
 }
