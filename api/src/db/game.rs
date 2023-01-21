@@ -178,3 +178,21 @@ pub async fn add_move(m: Move, game_id: String, killed: Option<KilledPawn>) -> R
 
     Ok(move_object)
 }
+
+pub async fn delete(id: String) -> Result<()> {
+    let graph = connect().await?;
+    graph.run(
+        query(
+            "
+            MATCH (game:Game { id: $id })<-[r]-(n)
+            DELETE game, n, r
+            "
+        )
+        .param("id", id.clone())
+    ).await?;
+
+    match get(&id.clone()).await {
+        Ok(game) => Err(neo4rs::Error::DeserializationError("Error deleting game".to_string())),
+        Err(_) => Ok(())
+    }
+}
