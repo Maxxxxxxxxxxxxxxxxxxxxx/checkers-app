@@ -48,6 +48,7 @@ async fn main() -> std::io::Result<()> {
             .service(game_route::list_games)
             .service(game_route::put_move)
             .service(game_route::preview)
+            .service(game_route::delete)
             // users CRUD routes
             .service(user_route::all_users)
             .service(user_route::user_info)
@@ -57,11 +58,12 @@ async fn main() -> std::io::Result<()> {
             .service(user_route::delete)
             // comments CRUD routes
             .service(comment_route::add)
+            .service(comment_route::count_all)
             .service(comment_route::of_game)
-            // .service(comment_route::delete)
-            // .service(comment_route::update)
-            // .service(comment_route::add_beer)
-            // .service(comment_route::delete_beer)
+            .service(comment_route::delete)
+            .service(comment_route::edit)
+            .service(comment_route::give_beer)
+            .service(comment_route::remove_beer)
     })
     .bind(("127.0.0.1", 8080))?
     .run()
