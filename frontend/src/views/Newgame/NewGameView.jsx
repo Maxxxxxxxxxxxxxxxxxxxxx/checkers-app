@@ -1,82 +1,85 @@
+import { Toolbar, Typography } from "@mui/material/index";
+
 import { Fragment, useEffect, useState } from "react";
-import { Toolbar, IconButton, Typography, Skeleton } from "@mui/material/index";
-import ChatTab from "../ChatTab/ChatTab";
-import Sidebar from "../Sidebar";
 import "@/styles/Newgame/Newgame.css";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import axios from "axios";
 import BoardPreview from "../Preview/BoardPreview";
-import { useFormik } from "formik";
-import {
-  FormLabel,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-} from "@mui/material/index";
-import { useSidebarContext } from "@/providers/Sidebar/SidebarProvider";
 import View from "../View";
+import { useForm } from "react-hook-form";
+import { useAuthUser } from "react-auth-kit";
 
 export default function NewGameView() {
-  let [gamestate, setGamestate] = useState([]);
+  const [previewState, setPreviewState] = useState();
+  const [params, setParams] = useState({
+    white: "top",
+    black: "bottom",
+  });
+  
+  useEffect(() => {
+    axios
+      .put("http://localhost:8080/games/preview", {
+        ...params,
+        name: "dummy",
+        mode: "easy",
+      })
+      .then((res) => setPreviewState(res.data));
+    }, [params]);
+    
+  const auth = useAuthUser()
 
-  let formik = useFormik({
-    initialValues: {
-      mode: "easy",
-      name: "New Game",
-      white: "top",
-      black: "bottom",
-    },
-    onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
-    },
+  console.log("user", auth());
+
+  const { register, handleSubmit } = useForm({
+    shouldUseNativeValidation: true,
+    // defaultValues: {
+    //   name: `${auth().username}'s game`
+    // }
   });
 
-  // useEffect(() => {
-  //   axios.get("")
-  // }, [])
+  const onSubmit = async (data) => {
+    
+  };
 
   return (
-    <Fragment>
-      {/* <Sidebar></Sidebar> */}
-      <View>
-        <div className="newgame">
-          <Toolbar variant="dense" className="toolbar">
-            <span className="toolbar__leftside">
-              <AddBoxIcon />
-              <Typography
-                className="toolbar__text"
-                variant="p"
-                color="inherit"
-                component="div"
-              >
-                New game
-              </Typography>
-            </span>
-          </Toolbar>
-          <div className="newgame__container">
-            <form className="newgame__form" onSubmit={formik.onSubmit}>
-              <div className="newgame__label">Mode</div>
-              <RadioGroup defaultValue="easy" name="radio-buttons-group">
-                <FormControlLabel
-                  className="newgame__label"
-                  sx={{ fontSize: "0.5rem" }}
-                  value="hardcore"
-                  control={<Radio />}
-                  label="Hardcore"
-                />
-                <FormControlLabel
-                  className="newgame__label"
-                  sx={{ fontSize: "0.5rem" }}
-                  value="easy"
-                  control={<Radio />}
-                  label="Easy"
-                />
-              </RadioGroup>
-            </form>
+    <View>
+      <div className="newgame">
+        <Toolbar variant="dense" className="toolbar">
+          <span className="toolbar__leftside">
+            <AddBoxIcon />
+            <Typography
+              className="toolbar__text"
+              variant="p"
+              color="inherit"
+              component="div"
+            >
+              New game
+            </Typography>
+          </span>
+        </Toolbar>
+        <div className="newgame__container">
+          <form className="newgame__form" onSubmit={handleSubmit(onSubmit)}>
+            <input
+              type="text"
+              placeholder="Game name"
+              className="newgame__textfield"
+              {...register("name", { required: "Enter game name" })}
+            />
+            <div className="newgame__checkbox-group">
+              <input
+                type="checkbox"
+                {...register("mode", { required: "Enter username" })}
+              />{" "}
+              Hard mode
+            </div>
+          </form>
+          {previewState ? (
+            <BoardPreview gamestate={previewState} />
+          ) : (
             <div className="board-preview"></div>
-          </div>
+          )}
         </div>
-      </View>
-    </Fragment>
+      </div>
+    </View>
   );
 }
