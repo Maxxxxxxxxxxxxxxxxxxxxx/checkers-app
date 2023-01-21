@@ -13,6 +13,7 @@ import CommentsView from "./views/CommentsView/CommentsView";
 import { Provider } from 'react-redux';
 import CommentReducer from "./providers/Comments/CommentsReducer";
 import { configureStore } from "@reduxjs/toolkit";
+import MqttProvider from "./providers/Mqtt/MqttProvider";
 
 function App() {
   return (
@@ -22,9 +23,11 @@ function App() {
         path={"/game"}
         element={
           <RequireAuth loginPath={'/login'}>
-            <GameContextProvider>
-              <GameView />
-            </GameContextProvider>
+            <MqttProvider>
+              <GameContextProvider>
+                <GameView />
+              </GameContextProvider>
+            </MqttProvider>
           </RequireAuth>
         }
       ></Route>
@@ -37,13 +40,15 @@ function App() {
       <Route path={"/register"} element={<RegisterView />} />
       <Route path={"/login"} element={<LoginView />} />
       <Route path={"/comments/:id"} element={
-        <Provider store={configureStore({
-          reducer: {
-            comments: CommentReducer,
-          },
-        })}>
-          <CommentsView />
-        </Provider>
+        <MqttProvider>
+          <Provider store={configureStore({
+            reducer: {
+              comments: CommentReducer,
+            },
+          })}>
+            <CommentsView />
+          </Provider>
+        </MqttProvider>
       } />
       <Route path="*" element={<NotFoundPage />}></Route>
     </Routes>
