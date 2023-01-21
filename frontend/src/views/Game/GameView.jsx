@@ -11,15 +11,6 @@ import GameInfo from "./GameInfo";
 export default function GameView({}) {
   let { gamestate } = useGameContext();
 
-  // html2canvas(document.querySelector("#capture")).then(canvas => {
-  //   document.body.appendChild(canvas)
-  // });
-
-  // useEffect(() => {
-  //   let interval = setInterval(() => {
-  //   }, 10000);
-  // }, [])
-
   return (
     <Fragment>
       <View>
