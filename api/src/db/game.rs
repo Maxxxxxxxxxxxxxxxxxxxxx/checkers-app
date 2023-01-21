@@ -43,39 +43,27 @@ pub async fn get(game_id: &str) -> Result<Game> {
             query(
                 "
                    MATCH (game:Game {id: $game_id})<-[:PAWN_OF]-(pawn:Pawn) 
-                   OPTIONAL MATCH (move:Move)-[:MOVE_OF]->(game)
-                   RETURN game, pawn, move",
+                   RETURN game, pawn",
             )
             .param("game_id", game_id.clone()),
         )
         .await?;
 
     let mut pawns = Vec::<Pawn>::new();
-    let mut moves = Vec::<Move>::new();
     let mut game_dbo: Option<GameDBO> = None;
 
     while let Ok(Some(row)) = stream.next().await {
         let pawn: Pawn = row.get::<Node>("pawn").unwrap().try_into().unwrap();
 
-        let move_node = row.get::<Node>("move");
-
         if game_dbo.is_none() {
             game_dbo = Some(row.get::<Node>("game").unwrap().try_into().unwrap())
-        }
-
-        if move_node.is_some() {
-            let m: Move = move_node.unwrap().try_into().unwrap();
-
-            if moves.iter().find(|mov| **mov == m).is_none() {
-                moves.push(m)
-            }
         }
 
         pawns.push(pawn);
     }
 
     match game_dbo {
-        Some(dbo) => Ok(Game::from_dbo(dbo, moves, pawns)),
+        Some(dbo) => Ok(Game::from_dbo(dbo, pawns)),
         None => Err(neo4rs::Error::DeserializationError(
             "Failed to parse game DBO".to_string(),
         )),
@@ -136,10 +124,33 @@ pub async fn create(cfg: GameConfig) -> Result<Game> {
     }
 }
 
-pub async fn add_move(m: Move, game_id: String, killed: Option<KilledPawn>) -> Result<Move> {
+pub async fn add_move(m: Move, game_id: String, killed: Option<KilledPawn>) -> Result<Game> {
     let graph = connect().await?;
 
-    // let tx = graph.start_txn().await?;
+    // update game turn and current color
+
+    let game = get(&game_id).await?;
+
+    let new_color = || {
+        if game.current_color == "w".to_string() {
+            return "b".to_string()
+        } else {
+            return "w".to_string()
+        }
+    };
+
+    // log::info!("New color for game {}: {}", &game_id, &new_color());
+
+    graph.run(
+        query(
+            "
+            MATCH (game:Game { id: $id })
+            SET game.turn = game.turn + 1, game.current_color = $current_color
+            "
+        )
+        .param("current_color", new_color().clone())
+        .param("id", game_id.clone())
+    ).await?;
 
     // create move query
     let mut stream = graph.execute(
@@ -174,9 +185,10 @@ pub async fn add_move(m: Move, game_id: String, killed: Option<KilledPawn>) -> R
     }
 
     let row = stream.next().await?.unwrap();
-    let move_object: Move = row.get::<Node>("move").unwrap().try_into().unwrap();
+    // let move_object: Move = row.get::<Node>("move").unwrap().try_into().unwrap();
+    let game = get(&game_id).await?;
 
-    Ok(move_object)
+    Ok(game)
 }
 
 pub async fn delete(id: String) -> Result<()> {
