@@ -1,10 +1,11 @@
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useAuthUser } from "react-auth-kit";
-import { commentActions as Actions } from "@/providers/Comments/CommentsReducer";
+import { commentActions as Actions, commentActions } from "@/providers/Comments/CommentsReducer";
 import axios from "axios";
 import { useMqtt } from "@/providers/Mqtt/MqttProvider";
+import { useState, useEffect} from "react";
 
 const AddComment = () => {
   const {
@@ -12,27 +13,45 @@ const AddComment = () => {
     handleSubmit,
   } = useForm();
 
-  const { test } = useMqtt();
+  const { client, subscribe, unsubscribe } = useMqtt();
   const dispatch = useDispatch();
   const { id } = useParams();
-  const navigate = useNavigate
-  const auth = useAuthUser()
+  const navigate = useNavigate();
+  const auth = useAuthUser();
   const username = auth();
+
+  // sub and listen to comments topic on mqtt broker
+  useEffect(() => {
+    if(client) {
+        subscribe("comments")
+        subscribe("comments/delete")
+        client.on("message", (topic, payload) => {
+          if(topic === "comments") {
+            const data = JSON.parse(payload.toString());
+            dispatch(commentActions.Add(data))
+          }
+          else if(topic === "comments/delete") {
+            const data = payload.toString();
+            dispatch(commentActions.Delete(data))
+          }
+        })
+    }
+  }, [client])
 
   const onSubmit = (data) => {
     if (!username) return navigate("/login");
     const { title, content } = data;
-
-    axios.post(`http://localhost:8080/comments/${id}`, {
-      author: username,
+    const payload = {
       title,
-      content
-    }).then(res => {
-      dispatch(Actions.Add(res.data))
-      console.log(res.data)
+      content,
+      author: username
+    }
+
+    axios.post(`http://localhost:8080/games/game/${id}/comments`, payload).then(res => {
+      // dispatch(Actions.Add(res.data))
+      client.publish("comments", JSON.stringify(res.data))
     })
   };
-  
 
   return (
     <div className="add-comment">
@@ -47,10 +66,10 @@ const AddComment = () => {
             <p> Add comment </p>
           </div>
           <textarea {...register("content", { required: true, maxLength: 500 })} />
-          <button onClick={() => test()}>send ping mqtt</button>
         </div>
         <button className="big-button" type="submit"> Add comment </button>
       </form>
+      <button onClick={() => unsubscribe("beers")}>send ping mqtt</button>
     </div>
   );
 };
