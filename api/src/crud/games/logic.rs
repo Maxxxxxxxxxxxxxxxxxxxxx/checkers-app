@@ -89,7 +89,6 @@ impl From<GameConfig> for Game {
             black_side: cfg.black_side,
             current_color: "w".to_string(),
             turn: 1,
-            moves: Vec::<Move>::new(),
         }
     }
 }

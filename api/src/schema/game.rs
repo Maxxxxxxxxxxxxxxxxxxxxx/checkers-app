@@ -9,12 +9,11 @@ pub struct Game {
     pub current_color: String,
     pub turn: i32,
     pub id: String,
-    pub moves: Vec<Move>,
     pub pawns: Vec<Pawn>,
 }
 
 impl Game {
-    pub fn from_dbo(dbo: GameDBO, moves: Vec<Move>, pawns: Vec<Pawn>) -> Self {
+    pub fn from_dbo(dbo: GameDBO, pawns: Vec<Pawn>) -> Self {
         Self {
             name: dbo.name,
             white_side: dbo.white_side,
@@ -23,7 +22,6 @@ impl Game {
             current_color: dbo.current_color,
             turn: dbo.turn,
             id: dbo.id,
-            moves,
             pawns,
         }
     }
@@ -39,7 +37,6 @@ impl From<GameDBO> for Game {
             current_color: dbo.current_color,
             turn: dbo.turn,
             id: dbo.id,
-            moves: Vec::<Move>::new(),
             pawns: Vec::<Pawn>::new(),
         }
     }
