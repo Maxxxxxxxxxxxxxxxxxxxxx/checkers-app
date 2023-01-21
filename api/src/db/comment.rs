@@ -1,3 +1,5 @@
+use actix_web::HttpResponse;
+
 use super::*;
 
 pub async fn add(game_id: String, comment: Comment) -> Result<Comment> {
@@ -65,8 +67,56 @@ pub async fn get_id(comment_id: String) -> Result<Comment> {
     Ok(Comment::from_dbo(dbo, beers))
 }
 
+pub async fn delete(comment_id: String) -> Result<()> {
+    let graph = connect().await?;
+    let mut comment_stream = graph.run(
+        query("
+            MATCH (comment:Comment {id: $id})
+            OPTIONAL MATCH (comment)<-[r:BEER_OF]-(beer)
+            OPTIONAL MATCH (game)<-[gr:COMMENT_OF]-(comment)
+            DELETE r, gr, comment, beer
+        ")
+        .param("id", comment_id.clone())
+    ).await?;
+
+    log::info!("DELETED C");
+
+    Ok(())
+}
+
+async fn get_beer(comment_id: String, author: String) -> Result<()> {
+    let graph = connect().await?;
+    let mut stream = graph.execute(
+        query(
+            "MATCH (comment:Comment {id: $id})<-[:BEER_OF]-(beer:Beer { author: $author})
+            RETURN beer"
+        )
+        .param("id", comment_id.clone())
+        .param("author", author.clone())
+    ).await?;
+
+    let row = stream.next().await?;
+
+    match row {
+        Some(r) => {
+            if r.get::<Node>("beer").is_some() {
+                Ok(())
+            } else {
+                Err(neo4rs::Error::UnknownType("".to_string()))
+            }
+        },
+        None => Err(neo4rs::Error::UnknownType("".to_string()))
+    }
+
+}
+
 pub async fn give_beer(comment_id: String, author: String) -> Result<Beer> {
     let graph = connect().await?;
+    
+    if get_beer(comment_id.clone(), author.clone()).await.is_ok() {
+        return Err(neo4rs::Error::UnexpectedMessage("".to_string()))
+    }
+
     let new_beer = Beer::new(author);
 
     graph.run(
@@ -90,7 +140,7 @@ pub async fn of_game(id: String) -> Result<Vec<Comment>> {
         query("
             MATCH (game:Game { id: $id })
             OPTIONAL MATCH (comment:Comment)-[:COMMENT_OF]->(game)
-            OPTIONAL MATCH (beer:Beer)<-[:BEER_OF]-(comment)
+            OPTIONAL MATCH (beer:Beer)-[:BEER_OF]->(comment)
             RETURN game, comment, beer
         ")
         .param("id", id.clone())
@@ -113,7 +163,7 @@ pub async fn of_game(id: String) -> Result<Vec<Comment>> {
                         found.beers.push(b.try_into().unwrap())
                     }
                 }
-                // if game is not found, push all
+                // if comment is not found, push all
                 None => {
                     if let Some(b) = beer_node {
                         comment.beers.push(b.try_into().unwrap())
@@ -122,9 +172,73 @@ pub async fn of_game(id: String) -> Result<Vec<Comment>> {
                 }
             };
         }
-
-
     }
 
     Ok(comments)
 } 
+
+pub async fn edit(comment_id: String, req: AddComment) -> Result<Comment> {
+    let graph = connect().await?;
+    graph.run(
+        query("
+            MATCH (comment:Comment {id: $id})
+            SET comment.author = $author, comment.title = $title, comment.content = $content
+        ")
+        .param("author", req.author.clone())
+        .param("content", req.content.clone())
+        .param("title", req.title.clone())
+    ).await?;
+
+    let comment = get_id(comment_id).await?;
+    Ok(comment)
+}
+
+pub async fn count_all() -> Result<i64> {
+    let graph = connect().await?;
+    let mut stream = graph.execute(
+        query("
+            MATCH (comment:Comment)
+            RETURN count(comment) as count
+        ")
+    ).await?;
+
+    let row = stream.next().await?.unwrap();
+    let result = row.get::<i64>("count").unwrap();
+    Ok(result)
+}
+
+pub async fn count_for_game(id: String) -> Result<i64> {
+    let graph = connect().await?;
+    let mut stream = graph.execute(
+        query("
+            MATCH (game:Game {id: $id})
+            OPTIONAL MATCH (game)<-[:COMMENT_OF]-(comment:Comment)
+            RETURN count(comment) as count
+        ")
+        .param("id", id.clone())
+    ).await?;
+
+    let row = stream.next().await?.unwrap();
+    let result = row.get::<i64>("count").unwrap();
+    Ok(result)
+}
+
+pub async fn remove_beer(id: String, author: String) -> Result<()> {
+    let graph = connect().await?;
+
+    match get_beer(id.clone(), author.clone()).await {
+        Ok(_) => {
+            graph.run(
+                query("
+                    MATCH (comment:Comment {id: $id})
+                    MATCH (comment)<-[r:BEER_OF]-(beer:Beer { author: $author })
+                    DELETE r, beer
+                ")
+                .param("id", id.clone())
+                .param("author", author.clone())
+            ).await?;
+            Ok(())
+        },
+        Err(err) => Err(err)
+    }
+}
