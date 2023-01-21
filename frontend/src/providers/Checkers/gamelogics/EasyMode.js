@@ -9,6 +9,16 @@ const getPawnAtVector = (gamestate, vector) => {
   return p;
 };
 
+const moveOneTileBack = (vector) => {
+  const x = vector.x;
+  const y = vector.y;
+
+  const x2 = x > 0 ? x - 1 : x + 1
+  const y2 = y > 0 ? y - 1 : y + 1
+
+  return new Vector(x2, y2)
+}
+
 export class MovePawn {
   constructor(gamestate, pawn, x, y, playerColor) {
     this.playerColor = playerColor;
@@ -46,20 +56,39 @@ export class MovePawn {
   }
 
   validate = () => {
+    // check if game is still ongoing
+    if (this.gamestate.is_end) {
+      alert("Game is over! Can't move")
+      return false;
+    }
+
     // check if moved pawn belongs to player
-    console.log("validate (side / playerColor):", this.pawn.side, this.playerColor)
-    if (this.pawn.side != this.playerColor) return false;
+    // console.log("validate (side / playerColor):", this.pawn.side, this.playerColor)
+    if (this.pawn.side != this.playerColor) {
+      alert("Cannot move opponent's pawns!")
+      return false;
+    }
 
     // if move is other than 1 diagonal tile and not a kill
-    if (!this.absVec.equals(new Vector(1, 1)) && !this.isKill()) return false;
-
+    if (!this.absVec.equals(new Vector(1, 1)) && !this.isKill()) { 
+      alert("Illegal move!")
+      return false;
+    }
     // if move is to overlap with other pawn
     if (
       this.gamestate.pawns.find(
         (pawn) => pawn.pos_x === this.x && pawn.pos_y === this.y
       )
-    )
+    ) {
+      alert("Position already occupied!")
       return false;
+    }
+
+    // check if it's move initiator's turn
+    if (this.gamestate.current_color != this.playerColor) { 
+      alert(`Cannot move. Current turn: ${this.gamestate.current_color}`)
+      return false; 
+    }
 
     // if move is kill
     if (this.absVec.equals(new Vector(2, 2)) && this.isKill()) return true;
@@ -99,6 +128,77 @@ export class MovePawn {
   isKill = () => {
     // shift vector to enemy pos
     let shift = this.vec.clone().divS(2);
+
+    // calculate enemy pos
+    let enemyPos = new Vector(this.pawn.pos_x, this.pawn.pos_y);
+    enemyPos.add(shift);
+
+    if (this.absVec.equals(new Vector(2, 2))) {
+      let enemyPawn = this.gamestate.pawns.find((pawn) => {
+        let position = new Vector(pawn.pos_x, pawn.pos_y);
+        return position.equals(enemyPos) && pawn.side != this.pawn.side
+      });
+
+      return enemyPawn;
+    } else return false;
+  };
+}
+
+export class MoveQueen extends MovePawn {
+  validate = () => {
+    // check if game is still ongoing
+    if (this.gamestate.is_end) {
+      alert("Game is over! Can't move")
+      return false;
+    }
+
+    // check if moved pawn belongs to player
+    console.log("validate (side / playerColor):", this.pawn.side, this.playerColor)
+    if (this.pawn.side != this.playerColor) {
+      alert("Cannot move opponent's pawns!")
+      return false;
+    }
+
+    // // if move is other than 1 diagonal tile and not a kill
+    // if (!this.absVec.equals(new Vector(1, 1)) && !this.isKill()) { 
+    //   alert("Illegal move!")
+    //   return false;
+    // }
+
+    // check if move is diagonal
+    if (this.absVec.x != this.absVec.y) {
+      alert("Illegal move!")
+      return false;
+    }
+
+    // if move is to overlap with other pawn
+    if (
+      this.gamestate.pawns.find(
+        (pawn) => pawn.pos_x === this.x && pawn.pos_y === this.y
+      )
+    ) {
+      alert("Position already occupied!")
+      return false;
+    }
+
+    // check if it's move initiator's turn
+    if (this.gamestate.current_color != this.playerColor) { 
+      alert(`Cannot move. Current turn: ${this.gamestate.current_color}`)
+      return false; 
+    }
+
+    // if move is kill
+    if (this.isKill()) return true;
+
+    // if move is diagonal
+    if (this.absVec.x == this.absVec.y) {
+      return true;
+    }
+  };
+
+  isKill = () => {
+    // shift vector to enemy pos
+    let shift = moveOneTileBack(this.vec);
 
     // calculate enemy pos
     let enemyPos = new Vector(this.pawn.pos_x, this.pawn.pos_y);
