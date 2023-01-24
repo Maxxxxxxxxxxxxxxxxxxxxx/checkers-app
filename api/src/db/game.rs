@@ -89,7 +89,9 @@ pub async fn create(cfg: GameConfig) -> Result<Game> {
                 white_side: $white_side,
                 black_side: $black_side,
                 name: $name,
-                mode: $mode
+                mode: $mode,
+                is_end: false,
+                author: $author
             });",
             )
             .param("game_id", game_id.clone())
@@ -97,6 +99,7 @@ pub async fn create(cfg: GameConfig) -> Result<Game> {
             .param("black_side", cfg.black_side.clone())
             .param("name", cfg.name.clone())
             .param("mode", cfg.mode.clone())
+            .param("author", cfg.author.clone())
             .param("current_color", "w");
 
             let mut queries = pawns.clone().into_iter().map(|pawn| {
@@ -130,7 +133,6 @@ pub async fn add_move(m: Move, game_id: String, killed: Option<KilledPawn>) -> R
     // update game turn and current color
 
     let game = get(&game_id).await?;
-
     let new_color = || {
         if game.current_color == "w".to_string() {
             return "b".to_string()
@@ -207,4 +209,50 @@ pub async fn delete(id: String) -> Result<()> {
         Ok(game) => Err(neo4rs::Error::DeserializationError("Error deleting game".to_string())),
         Err(_) => Ok(())
     }
+}
+
+pub async fn promote_pawn(game_id: String, index: usize, side: String) -> Result<Pawn> {
+    let graph = connect().await?;
+
+    let mut stream = graph.execute(
+        query("
+            MATCH (pawn:Pawn { index: $index, side: $side})-[:PAWN_OF]->(g:Game {id: $game_id})
+            SET pawn.is_queen = true
+            RETURN pawn")
+        .param("game_id", game_id.clone())
+        .param("index", index.clone() as i64)
+        .param("side", side.clone())
+    ).await?;
+
+    if let Ok(Some(row)) = stream.next().await {
+        let node = row.get::<Node>("pawn");
+        return match node {
+            Some(n) => Ok(n.try_into().unwrap()),
+            None => Err(super::Error::new())
+        }
+    }
+
+    Err(super::Error::new())
+}
+
+pub async fn end_game(id: String /* winner: String */) -> Result<Game> {
+    let graph = connect().await?;
+    graph.run(
+        query("MATCH (game:Game {id: $id})
+        SET game.is_end = true")
+        .param("id", id.clone())
+    ).await?;
+
+    // graph.run(
+    //     query("
+    //         MATCH (user:User {username: $winner})
+    //         MATCH (game:Game {id: $id})
+    //         CREATE (user)-[:WON]->(game)
+    //     ")
+    //     .param("winner", winner.clone())
+    //     .param("id", id.clone())
+    // ).await?;
+
+    let game = get(&id).await?;
+    Ok(game)
 }
