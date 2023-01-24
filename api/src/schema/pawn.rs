@@ -43,3 +43,9 @@ impl TryFrom<Node> for Pawn {
         }
     }
 }
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct PromotePawn {
+    pub index: usize,
+    pub side: String
+}
