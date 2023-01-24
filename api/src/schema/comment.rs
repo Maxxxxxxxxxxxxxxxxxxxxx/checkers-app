@@ -52,6 +52,7 @@ pub struct Comment {
     pub beers: Vec<Beer>,
 }
 
+#[derive(Serialize, Deserialize, Debug)]
 pub struct CommentDBO {
     pub author: String,
     pub timestamp: u64,
