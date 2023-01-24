@@ -9,6 +9,10 @@ import View from "../View";
 export default function GamesListView() {
   let [games, setGames] = useState([]);
 
+  const [searchPattern, setSearchPattern] = useState(/.*/);
+  const setPattern = (string) =>
+    string ? setSearchPattern(new RegExp(string)) : setSearchPattern(/.*/);
+
   useEffect(() => {
     axios.get("http://localhost:8080/games").then((res) => {
       setGames(res.data);
@@ -16,11 +20,18 @@ export default function GamesListView() {
     });
   }, []);
 
+  const handleDeleteGame = (id) => axios
+    .delete(`http://localhost:8080/games/game/${id}`)
+    .then(res => {
+      setGames(games.filter(game => game.id != id))
+    });
+
   let children = games.map((gamestate) => {
-    return (
+    if (searchPattern.test(gamestate.name)) return (
       <GameWindow
         key={Math.floor(Math.random() * 7890000)}
         gamestate={gamestate}
+        handleDelete={handleDeleteGame}
       />
     );
   });
@@ -45,6 +56,16 @@ export default function GamesListView() {
                 </Typography>
               </Typography>
             </span>
+            <span className="toolbar__rightside">
+            <form onChange={(event) => setPattern(event.target.value)}>
+              <input
+                className="toolbar__search"
+                type="text"
+                name="search"
+                placeholder="Search"
+              />
+            </form>
+          </span>
           </Toolbar>
           <div className="list-view__games-list">
             { children }
