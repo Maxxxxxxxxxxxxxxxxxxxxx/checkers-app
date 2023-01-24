@@ -1,3 +1,6 @@
+use std::time::SystemTime;
+use std::time::UNIX_EPOCH;
+
 use actix_web::HttpResponse;
 
 use super::*;
@@ -179,16 +182,35 @@ pub async fn of_game(id: String) -> Result<Vec<Comment>> {
 
 pub async fn edit(comment_id: String, req: AddComment) -> Result<Comment> {
     let graph = connect().await?;
-    graph.run(
+    let timestamp = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap()
+        .as_secs();
+    let mut stream = graph.execute(
         query("
-            MATCH (comment:Comment {id: $id})
-            SET comment.author = $author, comment.title = $title, comment.content = $content
+            MATCH (comment:Comment {id: $id})<-(:BEER_OF)-(beer:Beer)
+            SET comment.author = $author, comment.title = $title, comment.content = $content, comment.timestamp = $timestamp
+            RETURN comment, beer
         ")
         .param("author", req.author.clone())
         .param("content", req.content.clone())
         .param("title", req.title.clone())
+        .param("id", comment_id.clone())
+        .param("timestamp", timestamp.clone() as i64)
     ).await?;
 
+    let edited: CommentDBO = stream.next()
+        .await?
+        .unwrap()
+        .get::<Node>("comment")
+        .unwrap()
+        .try_into()
+        .unwrap();
+
+    // let mut c = Comment::from_dbo(edited, Vec::new());
+
+    log::info!("Comment DBO getted: {:?}", edited);
+    
     let comment = get_id(comment_id).await?;
     Ok(comment)
 }
