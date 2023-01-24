@@ -1,6 +1,11 @@
 import { MovePawn, MoveQueen } from "./gamelogics/EasyMode";
 import axios from "axios";
 
+const checkEnd = (gamestate) => {
+  if (gamestate.pawns.filter(p => p.side === "w").each(p => p.is_dead)) return true
+  if (gamestate.pawns.filter(p => p.side === "b").each(p => p.is_dead)) return true
+}
+
 // Easy mode reducer
 const GamestateReducer = (state, action) => {
   switch (action.type) {
@@ -21,7 +26,38 @@ const GamestateReducer = (state, action) => {
             action.playerColor
           );
 
-      console.log("iskill: ", move.isKill());
+      const checkEligibleForPromotion = () => {
+        // if pawn is black starting at bottom and ends up on top boundary
+        if (
+          action.pawn.side === "b" &&
+          state.black_side == "bottom" &&
+          action.y == 0
+        )
+          return true;
+        // if pawn is black starting at top and ends up on bottom boundary
+        if (
+          action.pawn.side === "w" &&
+          state.white_side == "top" &&
+          action.y == 0
+        )
+          return true;
+        // if pawn is white starting at top and ends up on bottom boundary
+        if (
+          action.pawn.side === "w" &&
+          state.white_side == "top" &&
+          action.y == 7
+        )
+          return true;
+        // if pawn is white starting at bottom and ends up on top boundary
+        if (
+          action.pawn.side === "b" &&
+          state.black_side == "bottom" &&
+          action.y == 7
+        )
+          return true;
+      };
+
+      console.log("promo:", checkEligibleForPromotion());
 
       // update the pawn state, searches pawn by index and side
       let newPawnState = state.pawns.map((pawn) => {
@@ -29,48 +65,12 @@ const GamestateReducer = (state, action) => {
           pawn.index === action.pawn.index &&
           pawn.side === action.pawn.side
         ) {
-          const promoted = {
+          // return just pawn with updated position
+          return {
             ...pawn,
-            is_queen: true,
             pos_x: action.x,
             pos_y: action.y,
           };
-
-          // if pawn is black starting at bottom and ends up on top boundary
-          if (action.pawn.side === "b" && 
-              state.black_side == "top" && 
-              action.y == 0
-          )
-            return promoted;
-          // if pawn is black starting at top and ends up on bottom boundary
-          if (
-            action.pawn.side === "w" &&
-            state.white_side == "bottom" &&
-            action.y == 0
-          )
-            return promoted;
-          // if pawn is white starting at top and ends up on bottom boundary
-          if (action.pawn.side === "w" && 
-              state.white_side == "top" && 
-              action.y == 7
-          )
-            return promoted;
-          // if pawn is white starting at bottom and ends up on top boundary
-          if (
-            action.pawn.side === "b" &&
-            state.black_side == "bottom" &&
-            action.y == 7
-          )
-            return promoted;
-          // by default, return just pawn with updated position
-          else {
-            console.log("No promo");
-            return {
-              ...pawn,
-              pos_x: action.x,
-              pos_y: action.y,
-            };
-          }
         } else return pawn;
       });
 
@@ -87,17 +87,40 @@ const GamestateReducer = (state, action) => {
         });
       }
 
-      console.log(JSON.stringify(MovePawn.Serialize(move)));
+      // console.log(JSON.stringify(MovePawn.Serialize(move)));
 
       // if move valid, put request to backend and return new state
       if (move.validate()) {
         let body = MovePawn.Serialize(move);
-        // console.log("put body:", body);
+
+        // check if pawn ends up on boundary, and send promote request
+        if (checkEligibleForPromotion()) {
+          let { side, index } = action.pawn;
+          // send the promote request
+          axios
+            .put(`http://localhost:8080/games/game/${state.id}/promote`, {
+              side,
+              index,
+            })
+            .then((res) => {
+              console.log("Pawn promoted!", res.data);
+              // after promote req succeeds, update the gamestate and broadcast over mqtt
+              axios
+                .put(`http://localhost:8080/games/game/${state.id}`, body)
+                .then((res) => {
+                  action.publish(res.data);
+                });
+            });
+
+          return {
+            ...state,
+            pawns: newPawnState,
+          };
+        }
 
         axios
           .put(`http://localhost:8080/games/game/${state.id}`, body)
           .then((res) => {
-            console.log("PUT successful!", res.data);
             action.publish(res.data);
           });
 
@@ -108,12 +131,10 @@ const GamestateReducer = (state, action) => {
       } else return state;
 
     case "SET":
-      console.log("Gamestate set", action.newState);
       return action.newState;
 
     case "END":
-      console.log(`Game ended! Winner: ${action.winner}`);
-      return action.state; // todo: return gamestate with "isEnd" set to true
+      return state;
 
     default:
       return state;

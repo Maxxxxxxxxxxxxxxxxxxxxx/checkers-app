@@ -12,7 +12,7 @@ export const set = (newState) => ({
   newState,
 });
 
-export const end = (winner) => ({
+export const end = (publish) => ({
   type: 'SET',
-  winner,
+  publish,
 });
