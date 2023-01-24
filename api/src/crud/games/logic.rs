@@ -36,6 +36,7 @@ pub struct GameConfig {
     pub black_side: String,
     pub name: String,
     pub mode: String,
+    pub author: String,
 }
 
 #[allow(dead_code)]
@@ -56,6 +57,10 @@ impl GameConfig {
         self.black_side = side.to_string();
         self
     }
+    pub fn author(mut self, author: &str) -> Self {
+        self.author = author.to_string();
+        self
+    }
     pub fn build(self) -> Result<Self, String> {
         // todo: add error on bad args
         Ok(self)
@@ -69,6 +74,7 @@ impl Default for GameConfig {
             white_side: "bottom".into(),
             name: "Game".into(),
             mode: "easy".into(),
+            author: "admin".into(),
         }
     }
 }
@@ -76,11 +82,13 @@ impl Default for GameConfig {
 impl From<GameConfig> for Game {
     fn from(cfg: GameConfig) -> Self {
         let pawns = [
-            create_pawns("white", &cfg.white_side),
-            create_pawns("black", &cfg.black_side),
+            create_pawns("w", &cfg.white_side),
+            create_pawns("b", &cfg.black_side),
         ]
         .concat();
         Self {
+            author: cfg.author,
+            is_end: false,
             id: Uuid::new_v4().to_string(),
             name: cfg.name,
             mode: cfg.mode,

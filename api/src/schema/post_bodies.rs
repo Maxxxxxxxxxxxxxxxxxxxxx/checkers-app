@@ -12,6 +12,7 @@ pub struct NewGameRequest {
     pub black: String,
     pub mode: String,
     pub name: String,
+    pub author: String,
 }
 
 #[derive(Deserialize, Serialize)]
