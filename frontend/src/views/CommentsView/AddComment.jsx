@@ -21,11 +21,15 @@ const AddComment = () => {
   const username = auth();
 
   // sub and listen to comments topic on mqtt broker
+  // set handlers for all mqtt messages across the CommentsView
   useEffect(() => {
     if(client) {
         subscribe("comments")
         subscribe("comments/delete")
+        subscribe("comments/edit")
+
         client.on("message", (topic, payload) => {
+          console.log("RECEIVED MESSAGE ON TOPIC", topic, payload.toString());
           if(topic === "comments") {
             const data = JSON.parse(payload.toString());
             dispatch(commentActions.Add(data))
@@ -34,13 +38,21 @@ const AddComment = () => {
             const data = payload.toString();
             dispatch(commentActions.Delete(data))
           }
+          else if(topic === "comments/edit") {
+            const data = JSON.parse(payload.toString());
+            dispatch(commentActions.Edit(data))
+          }
         })
     }
   }, [client])
 
   const onSubmit = (data) => {
-    if (!username) return navigate("/login");
     const { title, content } = data;
+
+    if(!username) return navigate("/login");
+    if(title.length <= 1) return alert("Title must be longer than one character!")
+    if(content.length <= 3) return alert("Content must be at least 3 characters long!")
+
     const payload = {
       title,
       content,
@@ -51,25 +63,26 @@ const AddComment = () => {
       // dispatch(Actions.Add(res.data))
       client.publish("comments", JSON.stringify(res.data))
     })
+
+    document.getElementById('add-comment').reset();
   };
 
   return (
     <div className="add-comment">
-      <form className="add-comment__form" onSubmit={handleSubmit(onSubmit)}>
+      <form className="add-comment__form" onSubmit={handleSubmit(onSubmit)} id="add-comment">
         <div className="add-comment__container">
           <div className="add-comment__head">
             <input
               type="text"
               placeholder="title"
-              {...register("title", { required: true, maxLength: 30 })}
+              {...register("title", { required: false, maxLength: 30 })}
             />
             <p> Add comment </p>
           </div>
-          <textarea {...register("content", { required: true, maxLength: 500 })} />
+          <textarea {...register("content", { required: false })} />
         </div>
         <button className="big-button" type="submit"> Add comment </button>
       </form>
-      <button onClick={() => unsubscribe("beers")}>send ping mqtt</button>
     </div>
   );
 };
