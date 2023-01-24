@@ -204,13 +204,13 @@ export class MoveQueen extends MovePawn {
     let enemyPos = new Vector(this.pawn.pos_x, this.pawn.pos_y);
     enemyPos.add(shift);
 
-    if (this.absVec.equals(new Vector(2, 2))) {
-      let enemyPawn = this.gamestate.pawns.find((pawn) => {
-        let position = new Vector(pawn.pos_x, pawn.pos_y);
-        return position.equals(enemyPos) && pawn.side != this.pawn.side
-      });
+    console.log("Enemy pos:", enemyPos)
 
-      return enemyPawn;
-    } else return false;
+    let enemyPawn = this.gamestate.pawns.find((pawn) => {
+      let position = new Vector(pawn.pos_x, pawn.pos_y);
+      return position.equals(enemyPos) && pawn.side != this.pawn.side
+    });
+
+    return enemyPawn;
   };
 }
