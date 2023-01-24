@@ -9,6 +9,7 @@ export default function Field({ x, y, gamestate }) {
         src={pawn.side === "b" ? "/pawn_black.svg" : "/pawn_white.svg"}
         alt=""
         className="preview__sprite"
+        onClick={() => console.log(pawn)}
       />
     </div>
   ) : (
