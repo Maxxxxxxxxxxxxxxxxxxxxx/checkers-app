@@ -10,17 +10,30 @@ import "@/styles/ChatTab/ChatTab.css";
 import { useState } from "react";
 import { useChat } from "@/providers/Chat/ChatContext";
 import Message from "./Message";
+import { useAuthUser } from 'react-auth-kit';
 
 export default function ChatTab({ room }) {
   let [msg, setMsg] = useState("");
   let { messageHistory, sendMessage } = useChat();
+  let auth = useAuthUser();
 
   let onSubmit = async (event) => {
-    event.preventDefault();
-    setMsg(event.target.msg.value);
-    console.log(messageHistory);
-    sendMessage(event.target.msg.value);
-    document.getElementById('form').reset();
+    if(auth()) {
+      event.preventDefault();
+      setMsg(event.target.msg.value);
+      console.log(messageHistory);
+      let msgObj = {
+        author: auth(),
+        content: event.target.msg.value
+      }
+
+      sendMessage(`${auth()}: ${event.target.msg.value}`);
+      // sendMessage(JSON.stringify(msgObj));
+      document.getElementById('form').reset();
+    } else { 
+      alert("Log in to use chat!") 
+      document.getElementById('form').reset();
+    }
   }
 
   let handleChange = (event) => setMsg(event.target.value);
