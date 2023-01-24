@@ -12,11 +12,37 @@
     display: flex;
     justify-content: space-between;
     max-width: 100%;
+    gap: 2rem;
+    &__edit-content {
+        @extend .comment__content;
+        background: $bg-grey-darker-2;
+        border: none;
+        resize: none;
+        padding: 0.4rem;
+        font-size:1rem;
+        width:100%;
+    }
+    &__edit-title {
+        @extend .comment__title;
+        background-color: $bg-grey-darker-2;
+        border: none;
+        padding: 0.4rem;
+        width: 100%;
+    }
+    &__buttons {
+        display: flex;
+        gap: 1rem;
+    }
     &__rightside {
         display: flex;
         flex-direction: column;
         gap: 3rem;
-        align-content: flex-end;
+        // align-content: flex-end;
+    }
+    &__rightside--buttons {
+        // justify-content: flex-end;
+        justify-content: space-between;
+        align-items: flex-end;
     }
     &__title {
         font-weight: bolder;

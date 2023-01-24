@@ -116,6 +116,7 @@ $bg-grey-darker-2: rgb(30,30,25);
     align-items: center;
     display: flex;
     justify-content: space-between;
+    gap: 1rem;
     &__route {
         font-weight: 1000;
     }
@@ -123,6 +124,7 @@ $bg-grey-darker-2: rgb(30,30,25);
         display: flex;
         align-content: center;
         align-items: center;
+        gap: 1rem;
     }
     &__search {
         background-color: $bg-grey-darker-2;

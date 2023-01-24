@@ -12,6 +12,18 @@
     gap: 1rem;
     flex: 2;
     width: fit-content;
+    &__select-group {
+        display: flex;
+        gap: 0.4rem;
+        flex-direction: column;
+    }
+    &__selector {
+        border: none;
+        font-size: 1rem;
+        padding: 0.5rem;
+        background-color: $bg-grey-darker-2;
+        color: gray;
+    }
     &__container {
         display: flex;
         gap: 1rem;
@@ -23,8 +35,11 @@
         @include coolBoxShadow($bg-grey-darker-2);
         background-color: $bg-grey-darker-1;
         border-radius: 0.4rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
         flex:2;
-        padding: 1rem;
+        padding: 1rem;;
     }
     &__textfield {
         border: none;
