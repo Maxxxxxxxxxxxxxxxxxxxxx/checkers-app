@@ -44,6 +44,26 @@ const CommentReducer = createSlice({
       return {...state, data: newdata}
     },
 
+    // Sort: (state, action) => {
+    //   let sorted = state.data.sort((a, b) => {
+    //     console.log(a, b)
+    //     if(action.payload === "newest") {
+    //       if (a.timestamp > b.timestamp) return -1
+    //       else return 1
+    //     }
+    //     else if (action.payload === "oldest") {
+    //       if (a.timestamp > b.timestamp) return 1
+    //       else return -1
+    //     }
+    //     else if (action.payload === "beers") {
+    //       if (a.beers.length > b.beers.length) return 1
+    //       else return -1
+    //     }
+    //   });
+
+    //   return { ...state, data: sorted }
+    // },
+
     Edit: (state, action) => {
       const newState = state.data.map((comment) => {
         if (comment.id == action.payload.id) {
