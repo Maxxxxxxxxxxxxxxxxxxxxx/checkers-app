@@ -31,13 +31,16 @@ pub async fn count_all() -> HttpResponse {
     }
 }
 
-#[put("/comments/{comment_id}")]
+#[put("/comments/comment/{comment_id}")]
 pub async fn edit(req: HttpRequest, payload: Json<AddComment>) -> HttpResponse {
     let cid = req.match_info().query("comment_id");
     let addcomment = payload.into_inner();
 
     match db::comment::edit(cid.to_string(), addcomment).await {
-        Ok(c) => ResponseType::Ok(c).get_response(),
+        Ok(c) => { 
+            log::info!("Edited comment state: {:?}", &c);
+            ResponseType::Ok(c).get_response() 
+        },
         Err(_) => ResponseType::NotFound("Failed to edit comment!").get_response()
     }
 }

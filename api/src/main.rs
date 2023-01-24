@@ -35,7 +35,7 @@ async fn main() -> std::io::Result<()> {
     .unwrap();
 
     HttpServer::new(move || {
-        let cors = Cors::permissive(); // temporary
+        let cors = Cors::permissive();
 
         App::new()
             .service(chat_route::room)
@@ -49,6 +49,8 @@ async fn main() -> std::io::Result<()> {
             .service(game_route::put_move)
             .service(game_route::preview)
             .service(game_route::delete)
+            .service(game_route::promote)
+            .service(game_route::end_game)
             // users CRUD routes
             .service(user_route::all_users)
             .service(user_route::user_info)

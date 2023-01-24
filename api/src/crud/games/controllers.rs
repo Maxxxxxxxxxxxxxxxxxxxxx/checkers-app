@@ -30,11 +30,12 @@ pub async fn new_game(data: web::Json<NewGameRequest>) -> HttpResponse {
         .white_at(&data.white)
         .black_at(&data.black)
         .mode(&data.mode)
-        .name(&data.name);
+        .name(&data.name)
+        .author(&data.author);
 
     match db::game::create(config).await {
         Ok(game) => ResponseType::Created(game).get_response(),
-        Err(_) => ResponseType::BadRequest(NotFoundMessage::new("Bad request!")).get_response(),
+        Err(_) => ResponseType::NotFound(NotFoundMessage::new("Error!")).get_response(),
     }
 }
 
@@ -53,7 +54,8 @@ pub async fn preview(data: web::Json<NewGameRequest>) -> HttpResponse {
         .white_at(&data.white)
         .black_at(&data.black)
         .mode(&data.mode)
-        .name(&data.name);
+        .name(&data.name)
+        .author(&data.author);
 
     let game = Game::from(config);
 
@@ -70,3 +72,25 @@ pub async fn delete(req: HttpRequest) -> HttpResponse {
     }
 }
 
+#[put("/games/game/{game_id}/promote")]
+pub async fn promote(req: HttpRequest, payload: web::Json<PromotePawn>) -> HttpResponse {
+    let id = req.match_info().query("game_id").to_string();
+
+    log::info!("promote pawn for {}{}", &payload.side, &payload.index);
+
+    match db::game::promote_pawn(id, payload.index.to_owned(), payload.side.to_owned()).await {
+        Ok(p) => ResponseType::Ok(p).get_response(),
+        Err(_) => ResponseType::NotFound("Pawn not found!").get_response()
+    }
+}
+
+#[put("/games/game/{game_id}/end")]
+pub async fn end_game(req: HttpRequest) -> HttpResponse {
+    let id = req.match_info().query("game_id").to_string();
+    // let winner = req.match_info().query("winner").to_string();
+
+    match db::game::end_game(id /*winner*/).await {
+        Ok(p) => ResponseType::Ok(p).get_response(),
+        Err(_) => ResponseType::NotFound("Pawn not found!").get_response()
+    }
+}
