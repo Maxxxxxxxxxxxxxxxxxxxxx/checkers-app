@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Typography, Toolbar, IconButton } from "@mui/material/index";
 import { Menu } from "@mui/icons-material/index";
-import AddIcon from '@mui/icons-material/Add';
+import AddIcon from "@mui/icons-material/Add";
 import "@/styles/CommentsView/CommentsView.css";
 import View from "../View";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,12 +18,28 @@ export default function CommentsView() {
   let dispatch = useDispatch();
   let { id } = useParams();
   let comments = useSelector((state) => state.comments);
-  let [gameName, setGameName] = useState(""); 
+  let [gameName, setGameName] = useState("");
+  let [sorting, setSorting] = useState("newest");
+  console.log(comments.data);
+
+  const [searchPattern, setSearchPattern] = useState(/.*/);
+
+  const handleChangeSorting = (event) => {
+    console.log(event.target.value);
+    setSorting(event.target.value);
+  }
+
+  const setPattern = (string) =>
+    string ? setSearchPattern(new RegExp(string)) : setSearchPattern(/.*/);
+
+  // useEffect(() => {
+  //   dispatch(Actions.Sort(sorting))
+  // }, [sorting])
 
   useEffect(() => {
-    axios.get(`http://localhost:8080/games/game/${id}`)
-      .then(res => setGameName(res.data.name))
-
+    axios
+      .get(`http://localhost:8080/games/game/${id}`)
+      .then((res) => setGameName(res.data.name));
     dispatch(getComments(id));
   }, []);
 
@@ -39,30 +55,49 @@ export default function CommentsView() {
               color="inherit"
               component="div"
             >
-              Comments ({ gameName })
+              Comments ({gameName})
               <Typography variant="p" color="gray" component="div">
-                ({ comments ? comments.data.length : "?" })
+                ({comments ? comments.data.length : "?"})
               </Typography>
             </Typography>
           </span>
           <span className="toolbar__rightside">
-            <IconButton sx={{color: "white"}} aria-label="Add comment">
-              <AddIcon></AddIcon>
-            </IconButton>
-            <form action="">
-              <input className="toolbar__search" type="text" name="search" placeholder="Search" />
+            {/* <select
+              onChange={(e) => handleChangeSorting(e)}
+              className="newgame__selector"
+            >
+              <option value="newest">Newest to oldest</option>
+              <option value="oldest">Oldest to newest</option>
+              <option value="beers">By beers</option>
+            </select> */}
+            <form onChange={(event) => setPattern(event.target.value)}>
+              <input
+                className="toolbar__search"
+                type="text"
+                name="search"
+                placeholder="Search"
+              />
             </form>
           </span>
         </Toolbar>
         <section className="comments">
           <AddComment />
           {!comments.loading
-            ? comments.data.map((comment) => (
-                <Comment
-                  key={Math.floor(Math.random() * 100000)}
-                  state={comment}
-                ></Comment>
-              ))
+            ? comments.data
+                .map((comment) => {
+                  console.log(comments.data)
+                  if (
+                    searchPattern.test(comment.title) ||
+                    searchPattern.test(comment.content) ||
+                    searchPattern.test(comment.author)
+                  )
+                    return (
+                      <Comment
+                        key={Math.floor(Math.random() * 100000)}
+                        state={comment}
+                      ></Comment>
+                    );
+                })
             : "Loading..."}
         </section>
       </div>
