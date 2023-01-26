@@ -85,9 +85,11 @@ pub async fn delete(req: HttpRequest) -> HttpResponse {
     }
 }
 
-#[put("/user/users/{username}")]
+#[put("/user/users/edit/{username}")]
 pub async fn update(req: HttpRequest, new_data: web::Json<AuthRequest>) -> HttpResponse {
     let username = req.match_info().query("username").to_string();
+
+    dbg!(&new_data);
     
     match db::user::update_user(username, new_data.into_inner()).await {
         Ok(usr) => ResponseType::Ok(usr).get_response(),

@@ -58,6 +58,7 @@ async fn main() -> std::io::Result<()> {
             .service(user_route::register)
             .service(user_route::login)
             .service(user_route::delete)
+            .service(user_route::update)
             // comments CRUD routes
             .service(comment_route::add)
             .service(comment_route::count_all)

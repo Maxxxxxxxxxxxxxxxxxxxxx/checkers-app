@@ -199,7 +199,7 @@ pub async fn delete(id: String) -> Result<()> {
         query(
             "
             MATCH (game:Game { id: $id })<-[r]-(n)
-            DELETE game, n, r
+            DETACH DELETE r, game, n
             "
         )
         .param("id", id.clone())

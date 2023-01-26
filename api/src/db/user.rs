@@ -141,8 +141,7 @@ pub async fn update_user(username: String, req: AuthRequest) -> Result<User> {
     let graph = connect().await?;
     let new_hash = hash_password(req.password);
     let new_username = req.username;
-
-    graph.run(
+    let mut stream = graph.execute(
         query("
             MATCH (user:User { username: $username })
             SET user.username = $new_username, user.pass_hash = $new_hash
@@ -153,10 +152,15 @@ pub async fn update_user(username: String, req: AuthRequest) -> Result<User> {
         .param("new_hash", new_hash.clone())
     ).await?;
 
-    let getted_user = get_creds(username).await?;
-    if getted_user.pass_hash == new_hash && getted_user.username == new_username {
-        Ok(getted_user)
-    } else {
-        Err(neo4rs::Error::AuthenticationError("Hash check failed".to_string()))
-    }
+    let row = stream.next().await?.unwrap();
+    let user: User = row.get::<Node>("user").unwrap().try_into().unwrap();
+
+    dbg!(&user);
+
+    // let getted_user = get_creds(new_username).await?;
+    // if getted_user.pass_hash == new_hash && getted_user.username == new_username {
+    Ok(user)
+    // } else {
+    //     Err(neo4rs::Error::AuthenticationError("Hash check failed".to_string()))
+    // }
 }

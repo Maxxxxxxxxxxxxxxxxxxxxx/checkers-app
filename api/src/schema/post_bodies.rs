@@ -35,7 +35,7 @@ pub struct AddBeer {
     pub author: String,
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Debug)]
 pub struct AuthRequest {
     pub username: String,
     pub password: String,
