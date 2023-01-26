@@ -14,6 +14,14 @@ export default function GameWindow({ gamestate, handleDelete }) {
 
   let navigate = useNavigate();
 
+  const isAuth = () => {
+    if (gamestate && auth()) {
+      if(auth() === "admin") return true;
+      if(auth() === gamestate.author) return true;
+      return (gamestate && auth()) && auth() === gamestate.author
+    }
+  }
+
   useEffect(() => {
     axios
       .get(`http://localhost:8080/games/game/${gamestate.id}/comments`)
@@ -47,7 +55,7 @@ export default function GameWindow({ gamestate, handleDelete }) {
             </button>
           </div>
           <div className="element__options">
-            { (gamestate && auth()) && auth() === gamestate.author ? (
+            { isAuth() ? (
               <button className="small-button" onClick={() => handleDelete(gamestate.id)}>
                 Delete
               </button>

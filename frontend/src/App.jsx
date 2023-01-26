@@ -14,6 +14,7 @@ import { Provider } from 'react-redux';
 import CommentReducer from "./providers/Comments/CommentsReducer";
 import { configureStore } from "@reduxjs/toolkit";
 import MqttProvider from "./providers/Mqtt/MqttProvider";
+import ProfileView from "./views/ProfileView/ProfileView";
 
 function App() {
   return (
@@ -35,6 +36,11 @@ function App() {
       <Route path={"/newgame"} element={
         <RequireAuth loginPath={'/login'}>
           <NewGameView />
+        </RequireAuth>
+      } />
+      <Route path={"/profile"} element={
+        <RequireAuth loginPath={'/login'}>
+          <ProfileView />
         </RequireAuth>
       } />
       <Route path={"/register"} element={<RegisterView />} />

@@ -128,12 +128,12 @@ export default function Comment({ state }) {
           <span className="beer__amount">{state.beers.length}</span>
         </div>
         <div className="comment__buttons">
-          {state.author === auth() && (
+          {(state.author === auth() || auth() === "admin") && (
             <button className="small-button" onClick={() => handleDelete()}>
               Delete
             </button>
           )}
-          {state.author === auth() && (
+          {(state.author === auth() || auth() === "admin") && (
             <button
               className="small-button"
               onClick={() => (isEdit ? submitEdit() : setEdit(true))}

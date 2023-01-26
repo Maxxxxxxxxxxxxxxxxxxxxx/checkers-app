@@ -73,6 +73,7 @@ export default function Sidebar({ children }) {
               <IconButton
                   aria-label="user"
                   className="sidebar__icon-button"
+                  onClick={() => navigate("/profile")}
                 >
                   <LogoutIcon
                     sx={{ color: "grey" }}
@@ -153,6 +154,7 @@ export default function Sidebar({ children }) {
                 <IconButton
                   aria-label="register"
                   className="sidebar__icon-button"
+                  onClick={() => navigate("/profile")}
                 >
                   <AccountCircleIcon
                     sx={{ color: "white" }}
