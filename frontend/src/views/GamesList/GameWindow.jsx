@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuthUser } from "react-auth-kit";
+import KeycloakService from "@/services/KeycloakService";
 
 export default function GameWindow({ gamestate, handleDelete }) {
   let linkBlack = `/game?id=${gamestate.id}&player=b`;
@@ -16,7 +17,7 @@ export default function GameWindow({ gamestate, handleDelete }) {
 
   const isAuth = () => {
     if (gamestate && auth()) {
-      if (auth() === "admin") return true;
+      if (KeycloakService.isAdmin()) return true;
       if (auth() === gamestate.author) return true;
       return gamestate && auth() && auth() === gamestate.author;
     }

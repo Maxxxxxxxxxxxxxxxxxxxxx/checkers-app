@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Toolbar, IconButton, Menu, Typography } from "@mui/material/";
 import { useAuthUser } from "react-auth-kit";
 import axios from "axios";
+import KeycloakService from "@/services/KeycloakService";
 
 export default function ProfileView() {
   const nav = useNavigate();
@@ -12,15 +13,17 @@ export default function ProfileView() {
   const auth = useAuthUser();
 
   const act = (data) => {
-    if(auth() === "admin") return alert("Can't modify admin credentials!")
+    if (KeycloakService.isAdmin())
+      return alert("Can't modify admin credentials!");
 
-    axios.put(`http://localhost:8080/user/users/edit/${auth()}`, data)
-      .then(res => {
+    axios
+      .put(`http://localhost:8081/user/users/edit/${auth()}`, data)
+      .then((res) => {
         signOut();
         nav("/login");
       })
-      .catch(err => alert("Failed to modify user credentials!"))
-  }
+      .catch((err) => alert("Failed to modify user credentials!"));
+  };
 
   return (
     <View>
