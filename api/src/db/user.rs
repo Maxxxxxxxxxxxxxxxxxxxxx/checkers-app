@@ -127,7 +127,7 @@ pub async fn login(username: String, password: String) -> Result<String> {
     let graph = connect().await?;
     let hashed = hash_password(password);
     let user_data = get_creds(username.clone()).await?;
-    
+
     if hashed == user_data.pass_hash {
         return Ok(username);
     } else {
@@ -141,16 +141,20 @@ pub async fn update_user(username: String, req: AuthRequest) -> Result<User> {
     let graph = connect().await?;
     let new_hash = hash_password(req.password);
     let new_username = req.username;
-    let mut stream = graph.execute(
-        query("
+    let mut stream = graph
+        .execute(
+            query(
+                "
             MATCH (user:User { username: $username })
             SET user.username = $new_username, user.pass_hash = $new_hash
             RETURN user
-        ")
-        .param("username", username.clone())
-        .param("new_username", new_username.clone())
-        .param("new_hash", new_hash.clone())
-    ).await?;
+        ",
+            )
+            .param("username", username.clone())
+            .param("new_username", new_username.clone())
+            .param("new_hash", new_hash.clone()),
+        )
+        .await?;
 
     let row = stream.next().await?.unwrap();
     let user: User = row.get::<Node>("user").unwrap().try_into().unwrap();

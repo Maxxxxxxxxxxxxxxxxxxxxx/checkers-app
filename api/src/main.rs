@@ -3,11 +3,12 @@ use std::str::FromStr;
 use crate::chat::*;
 use actix::Actor;
 use actix_cors::Cors;
+use actix_web::http::header;
 use actix_web::web::Data;
 use actix_web::{App, HttpServer};
+use crud::comments::controllers as comment_route;
 use crud::games::controllers as game_route;
 use crud::users::controllers as user_route;
-use crud::comments::controllers as comment_route;
 use env_logger;
 use uuid::Uuid;
 
@@ -37,11 +38,17 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         let cors = Cors::permissive();
 
+        // let cors = Cors::default()
+        //     .allowed_origin("http://localhost:5173/")
+        //     .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
+        //     .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT])
+        //     .allowed_header(header::CONTENT_TYPE)
+        //     .max_age(3600);
+
         App::new()
             .service(chat_route::room)
             .service(chat_route::global)
             .app_data(Data::new(chat_server.clone()))
-            .wrap(cors)
             // games CRUD routes
             .service(game_route::new_game)
             .service(game_route::get_game)
@@ -67,8 +74,9 @@ async fn main() -> std::io::Result<()> {
             .service(comment_route::edit)
             .service(comment_route::give_beer)
             .service(comment_route::remove_beer)
+            .wrap(cors)
     })
-    .bind(("127.0.0.1", 8080))?
+    .bind(("127.0.0.1", 8081))?
     .run()
     .await
 }
