@@ -6,6 +6,7 @@ import { useAuthUser } from "react-auth-kit";
 import { useState, useLayoutEffect } from "react";
 import { useMqtt } from "@/providers/Mqtt/MqttProvider";
 import axios from "axios";
+import KeycloakService from "@/services/KeycloakService";
 
 export default function Comment({ state }) {
   const [isBeerGiven, setBeerGiven] = useState(false);
@@ -33,7 +34,7 @@ export default function Comment({ state }) {
 
   const giveBeer = () => {
     axios
-      .post(`http://localhost:8080/comments/comment/${state.id}/beer/${auth()}`)
+      .post(`http://localhost:8081/comments/comment/${state.id}/beer/${auth()}`)
       .then((res) => {
         console.log("New beer: ", res.data);
         dispatch(Actions.GiveBeer({ beer: res.data, id: state.id }));
@@ -44,7 +45,7 @@ export default function Comment({ state }) {
   const removeBeer = () => {
     axios
       .delete(
-        `http://localhost:8080/comments/comment/${state.id}/beer/${auth()}`
+        `http://localhost:8081/comments/comment/${state.id}/beer/${auth()}`
       )
       .then((res) => {
         console.log("Deleted beer", res.data);
@@ -56,29 +57,32 @@ export default function Comment({ state }) {
   const handleBeerClick = () => (isBeerGiven ? removeBeer() : giveBeer());
 
   const submitEdit = () => {
-    axios.put(`http://localhost:8080/comments/comment/${state.id}`, {
-      author: auth(),
-      title: editState.title,
-      content: editState.content
-    })
-    .then(res => {
-      client.publish("comments/edit", JSON.stringify({
-        ...state,
-        title: res.data.title,
-        content: res.data.content
-      }))
-      setEdit(false)
-    })
-    .catch(err => {
-      alert("Connection error! Can't edit comment!")
-      setEdit(false)
-    })
-    
+    axios
+      .put(`http://localhost:8081/comments/comment/${state.id}`, {
+        author: auth(),
+        title: editState.title,
+        content: editState.content,
+      })
+      .then((res) => {
+        client.publish(
+          "comments/edit",
+          JSON.stringify({
+            ...state,
+            title: res.data.title,
+            content: res.data.content,
+          })
+        );
+        setEdit(false);
+      })
+      .catch((err) => {
+        alert("Connection error! Can't edit comment!");
+        setEdit(false);
+      });
   };
 
   const handleDelete = () =>
     axios
-      .delete(`http://localhost:8080/comments/comment/${state.id}`)
+      .delete(`http://localhost:8081/comments/comment/${state.id}`)
       .then((res) => {
         console.log("Deleted comment");
         // dispatch(Actions.Delete(state.id))
@@ -128,12 +132,12 @@ export default function Comment({ state }) {
           <span className="beer__amount">{state.beers.length}</span>
         </div>
         <div className="comment__buttons">
-          {(state.author === auth() || auth() === "admin") && (
+          {(state.author === auth() || KeycloakService.isAdmin()) && (
             <button className="small-button" onClick={() => handleDelete()}>
               Delete
             </button>
           )}
-          {(state.author === auth() || auth() === "admin") && (
+          {(state.author === auth() || KeycloakService.isAdmin()) && (
             <button
               className="small-button"
               onClick={() => (isEdit ? submitEdit() : setEdit(true))}

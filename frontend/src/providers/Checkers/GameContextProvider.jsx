@@ -19,27 +19,27 @@ export default function GameContextProvider({ children }) {
   const [gamestate, dispatch] = useReducer(GamestateReducer, { pawns: [] });
   const { client, subscribe } = useMqtt();
   const mqttTopic = `game/${params.get("id")}`;
-  
+
   useEffect(() => {
-    if(client) {
+    if (client) {
       subscribe(mqttTopic);
 
       client.on("message", (topic, payload) => {
-        if(topic === mqttTopic) { 
-          let newGamestate = JSON.parse(payload)
-          // console.log("Received game mqtt msg", newGamestate); 
-          dispatch(Actions.set(newGamestate))
+        if (topic === mqttTopic) {
+          let newGamestate = JSON.parse(payload);
+          // console.log("Received game mqtt msg", newGamestate);
+          dispatch(Actions.set(newGamestate));
         }
-      })
+      });
     }
-  }, [client])
+  }, [client]);
 
   const publishGamestate = (state) => {
-    if(client) {
+    if (client) {
       // console.log("Published gamestate:", gamestate);
       client.publish(mqttTopic, JSON.stringify(state));
     }
-  }
+  };
 
   // moveParams: { pawn: [PAWN OBJECT], dest: [x,y] }
   const [moveParams, setMoveParams] = useState({});
@@ -57,7 +57,7 @@ export default function GameContextProvider({ children }) {
     moveParams.pawn
       ? setMoveParams({ ...moveParams, dest: [x, y] })
       : undefined;
-  
+
   // clears moveParams
   const clearParams = () => setMoveParams({});
 
@@ -66,7 +66,13 @@ export default function GameContextProvider({ children }) {
       // dispatch the move to GamestateReducer
 
       dispatch(
-        Actions.move(moveParams.pawn, moveParams.dest[0], moveParams.dest[1], playerColor, publishGamestate)
+        Actions.move(
+          moveParams.pawn,
+          moveParams.dest[0],
+          moveParams.dest[1],
+          playerColor,
+          publishGamestate
+        )
       );
       clearParams();
     }
@@ -74,7 +80,7 @@ export default function GameContextProvider({ children }) {
 
   // fetch current gamestate from api
   useEffect(() => {
-    axios.get(`http://localhost:8080/games/game/${gameId}`).then((res) => {
+    axios.get(`http://localhost:8081/games/game/${gameId}`).then((res) => {
       dispatch(Actions.set(res.data));
       console.log(res.data);
     });

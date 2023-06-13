@@ -12,21 +12,24 @@ export default function RegisterView() {
   const navigate = useNavigate();
 
   const login = async (loginData) => {
-    axios.put("http://localhost:8080/user/login", loginData)
-      .then(loginResponse => {
-        if(signIn({
-          token: loginResponse.data.token,
-          expiresIn: 360,
-          tokenType: "Bearer",
-          authState: loginData.username
-        })) {
-          navigate("/home")
+    axios
+      .put("http://localhost:8081/user/login", loginData)
+      .then((loginResponse) => {
+        if (
+          signIn({
+            token: loginResponse.data.token,
+            expiresIn: 360,
+            tokenType: "Bearer",
+            authState: loginData.username,
+          })
+        ) {
+          navigate("/home");
         } else {
-          alert("Sign in failed!")
+          alert("Sign in failed!");
         }
       });
-  }
-  
+  };
+
   return (
     <View>
       <div className="login">
@@ -37,7 +40,11 @@ export default function RegisterView() {
         >
           Login
         </Typography>
-        <Form action={(data) => {console.log("data",data), login(data)}}></Form>
+        <Form
+          action={(data) => {
+            console.log("data", data), login(data);
+          }}
+        ></Form>
       </div>
     </View>
   );

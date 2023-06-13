@@ -2,9 +2,11 @@ import { MovePawn, MoveQueen } from "./gamelogics/EasyMode";
 import axios from "axios";
 
 const checkEnd = (gamestate) => {
-  if (gamestate.pawns.filter(p => p.side === "w").each(p => p.is_dead)) return true
-  if (gamestate.pawns.filter(p => p.side === "b").each(p => p.is_dead)) return true
-}
+  if (gamestate.pawns.filter((p) => p.side === "w").each((p) => p.is_dead))
+    return true;
+  if (gamestate.pawns.filter((p) => p.side === "b").each((p) => p.is_dead))
+    return true;
+};
 
 // Easy mode reducer
 const GamestateReducer = (state, action) => {
@@ -98,7 +100,7 @@ const GamestateReducer = (state, action) => {
           let { side, index } = action.pawn;
           // send the promote request
           axios
-            .put(`http://localhost:8080/games/game/${state.id}/promote`, {
+            .put(`http://localhost:8081/games/game/${state.id}/promote`, {
               side,
               index,
             })
@@ -106,7 +108,7 @@ const GamestateReducer = (state, action) => {
               console.log("Pawn promoted!", res.data);
               // after promote req succeeds, update the gamestate and broadcast over mqtt
               axios
-                .put(`http://localhost:8080/games/game/${state.id}`, body)
+                .put(`http://localhost:8081/games/game/${state.id}`, body)
                 .then((res) => {
                   action.publish(res.data);
                 });
@@ -119,7 +121,7 @@ const GamestateReducer = (state, action) => {
         }
 
         axios
-          .put(`http://localhost:8080/games/game/${state.id}`, body)
+          .put(`http://localhost:8081/games/game/${state.id}`, body)
           .then((res) => {
             action.publish(res.data);
           });

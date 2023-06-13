@@ -22,23 +22,19 @@ export default function NewGameView() {
   } = useForm();
   const onSubmit = (data) => {
     axios
-      .post("http://localhost:8080/games/new_game", {
+      .post("http://localhost:8081/games/new_game", {
         author: auth(),
         mode: data.mode ? data.mode : "easy",
         white: data.topPos === "w" ? "top" : "bottom",
         black: data.topPos === "b" ? "top" : "bottom",
         name: data.name ? data.name : `${auth()}'s game`,
       })
-      .then((res) =>
-        navigate(
-          `/game?id=${res.data.id}&player=${data.playAs}`
-        )
-      );
+      .then((res) => navigate(`/game?id=${res.data.id}&player=${data.playAs}`));
   };
 
   useLayoutEffect(() => {
     axios
-      .put("http://localhost:8080/games/preview", {
+      .put("http://localhost:8081/games/preview", {
         author: auth(),
         name: `${auth()}'s game`,
         white: "top",

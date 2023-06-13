@@ -12,13 +12,14 @@ export default function RegisterView() {
   const navigate = useNavigate();
 
   const registerUser = async (loginData) => {
-    axios.post("http://localhost:8080/user/register", loginData)
-      .then(registerRes => {
-        navigate("/login")
+    axios
+      .post("http://localhost:8081/user/register", loginData)
+      .then((registerRes) => {
+        navigate("/login");
       })
-      .catch(err => {
-        alert("User already exists!")
-      })
+      .catch((err) => {
+        alert("User already exists!");
+      });
   };
 
   return (
@@ -31,7 +32,11 @@ export default function RegisterView() {
         >
           Register
         </Typography>
-        <Form action={(data) => {console.log("data",data), registerUser(data)}}></Form>
+        <Form
+          action={(data) => {
+            console.log("data", data), registerUser(data);
+          }}
+        ></Form>
       </div>
     </View>
   );

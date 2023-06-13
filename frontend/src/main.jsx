@@ -1,38 +1,43 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
 
-import { BrowserRouter } from 'react-router-dom';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import SidebarContextProvider from './providers/Sidebar/SidebarProvider';
-import Sidebar from './views/Sidebar';
-import ChatProvider from './providers/Chat/ChatContext';
-import { AuthProvider } from 'react-auth-kit'
+import { BrowserRouter } from "react-router-dom";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import SidebarContextProvider from "./providers/Sidebar/SidebarProvider";
+import Sidebar from "./views/Sidebar";
+import ChatProvider from "./providers/Chat/ChatContext";
+import { AuthProvider } from "react-auth-kit";
+
+import KeycloakService from "./services/KeycloakService";
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: 'rgba(255, 255, 255, 0.87)',
+      main: "rgba(255, 255, 255, 0.87)",
     },
   },
 });
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <AuthProvider 
-    authType="cookie"
-    authName="auth"
-    cookieDomain={window.location.hostname}
-  >
-    <BrowserRouter>
-      <ThemeProvider theme={theme}>
-        <SidebarContextProvider>
+const renderApp = () =>
+  ReactDOM.createRoot(document.getElementById("root")).render(
+    <AuthProvider
+      authType="cookie"
+      authName="auth"
+      cookieDomain={window.location.hostname}
+    >
+      <BrowserRouter>
+        <ThemeProvider theme={theme}>
+          <SidebarContextProvider>
             <ChatProvider>
               <Sidebar>
-                <App /> 
+                <App />
               </Sidebar>
             </ChatProvider>
-        </SidebarContextProvider>
-      </ThemeProvider>
-    </BrowserRouter>
-  </AuthProvider>
-)
+          </SidebarContextProvider>
+        </ThemeProvider>
+      </BrowserRouter>
+    </AuthProvider>
+  );
+
+KeycloakService.initKeycloak(renderApp);

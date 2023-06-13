@@ -16,15 +16,15 @@ export default function GameWindow({ gamestate, handleDelete }) {
 
   const isAuth = () => {
     if (gamestate && auth()) {
-      if(auth() === "admin") return true;
-      if(auth() === gamestate.author) return true;
-      return (gamestate && auth()) && auth() === gamestate.author
+      if (auth() === "admin") return true;
+      if (auth() === gamestate.author) return true;
+      return gamestate && auth() && auth() === gamestate.author;
     }
-  }
+  };
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8080/games/game/${gamestate.id}/comments`)
+      .get(`http://localhost:8081/games/game/${gamestate.id}/comments`)
       .then((res) => setComments(res.data));
   }, []);
 
@@ -55,8 +55,11 @@ export default function GameWindow({ gamestate, handleDelete }) {
             </button>
           </div>
           <div className="element__options">
-            { isAuth() ? (
-              <button className="small-button" onClick={() => handleDelete(gamestate.id)}>
+            {isAuth() ? (
+              <button
+                className="small-button"
+                onClick={() => handleDelete(gamestate.id)}
+              >
                 Delete
               </button>
             ) : (

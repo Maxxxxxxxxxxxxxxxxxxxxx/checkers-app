@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment} from "react";
+import { useState, useEffect, Fragment } from "react";
 import { Typography, Toolbar } from "@mui/material/index";
 import { Menu } from "@mui/icons-material/index";
 import "@/styles/GamesList/GamesList.css";
@@ -14,26 +14,26 @@ export default function GamesListView() {
     string ? setSearchPattern(new RegExp(string)) : setSearchPattern(/.*/);
 
   useEffect(() => {
-    axios.get("http://localhost:8080/games").then((res) => {
+    axios.get("http://localhost:8081/games").then((res) => {
       setGames(res.data);
       console.log(res.data);
     });
   }, []);
 
-  const handleDeleteGame = (id) => axios
-    .delete(`http://localhost:8080/games/game/${id}`)
-    .then(res => {
-      setGames(games.filter(game => game.id != id))
+  const handleDeleteGame = (id) =>
+    axios.delete(`http://localhost:8081/games/game/${id}`).then((res) => {
+      setGames(games.filter((game) => game.id != id));
     });
 
   let children = games.map((gamestate) => {
-    if (searchPattern.test(gamestate.name)) return (
-      <GameWindow
-        key={Math.floor(Math.random() * 7890000)}
-        gamestate={gamestate}
-        handleDelete={handleDeleteGame}
-      />
-    );
+    if (searchPattern.test(gamestate.name))
+      return (
+        <GameWindow
+          key={Math.floor(Math.random() * 7890000)}
+          gamestate={gamestate}
+          handleDelete={handleDeleteGame}
+        />
+      );
   });
 
   return (
@@ -52,24 +52,22 @@ export default function GamesListView() {
               >
                 Games
                 <Typography variant="p" color="gray" component="div">
-                  { games ? `(${games.length})` : "(0)" }
+                  {games ? `(${games.length})` : "(0)"}
                 </Typography>
               </Typography>
             </span>
             <span className="toolbar__rightside">
-            <form onChange={(event) => setPattern(event.target.value)}>
-              <input
-                className="toolbar__search"
-                type="text"
-                name="search"
-                placeholder="Search"
-              />
-            </form>
-          </span>
+              <form onChange={(event) => setPattern(event.target.value)}>
+                <input
+                  className="toolbar__search"
+                  type="text"
+                  name="search"
+                  placeholder="Search"
+                />
+              </form>
+            </span>
           </Toolbar>
-          <div className="list-view__games-list">
-            { children }
-          </div>
+          <div className="list-view__games-list">{children}</div>
         </div>
       </View>
     </Fragment>

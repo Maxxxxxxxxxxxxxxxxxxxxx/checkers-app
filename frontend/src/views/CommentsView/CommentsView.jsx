@@ -27,7 +27,7 @@ export default function CommentsView() {
   const handleChangeSorting = (event) => {
     console.log(event.target.value);
     setSorting(event.target.value);
-  }
+  };
 
   const setPattern = (string) =>
     string ? setSearchPattern(new RegExp(string)) : setSearchPattern(/.*/);
@@ -38,7 +38,7 @@ export default function CommentsView() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8080/games/game/${id}`)
+      .get(`http://localhost:8081/games/game/${id}`)
       .then((res) => setGameName(res.data.name));
     dispatch(getComments(id));
   }, []);
@@ -83,21 +83,20 @@ export default function CommentsView() {
         <section className="comments">
           <AddComment />
           {!comments.loading
-            ? comments.data
-                .map((comment) => {
-                  console.log(comments.data)
-                  if (
-                    searchPattern.test(comment.title) ||
-                    searchPattern.test(comment.content) ||
-                    searchPattern.test(comment.author)
-                  )
-                    return (
-                      <Comment
-                        key={Math.floor(Math.random() * 100000)}
-                        state={comment}
-                      ></Comment>
-                    );
-                })
+            ? comments.data.map((comment) => {
+                console.log(comments.data);
+                if (
+                  searchPattern.test(comment.title) ||
+                  searchPattern.test(comment.content) ||
+                  searchPattern.test(comment.author)
+                )
+                  return (
+                    <Comment
+                      key={Math.floor(Math.random() * 100000)}
+                      state={comment}
+                    ></Comment>
+                  );
+              })
             : "Loading..."}
         </section>
       </div>
