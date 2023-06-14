@@ -2,10 +2,12 @@
 
 Wymagane programy:
 
-rustc 1.70-nightly \
-cargo \
+rust z toolchainem 1.70-nightly \
 mosquitto \
-docker
+docker \
+yarn \
+\
+Wszystkie informacje nt instalacji Rusta i odpowiedniego toolchaina znajdziesz tutaj: https://www.rust-lang.org/tools/install \
 
 ### Odpalenie apki
 
