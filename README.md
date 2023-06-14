@@ -9,6 +9,8 @@ docker
 
 ### Odpalenie apki
 
+#### PO ODPALENIU KEYCLOAKA NALEŻY ZAIMPORTOWAĆ DANE Z JSONA
+
 1. Odpalamy keycloaka przez docker-compose up
 2. ```docker run -dp 7474:7474 -p 7687:7687 --env NEO4J_AUTH=neo4j/neo neo4j:4.4.16``` - uruchamiamy neo4j
 3. w katalogu ```api``` odpalamy komendę ```cargo run```, aby odpalić api
