@@ -7,7 +7,7 @@ mosquitto \
 docker \
 yarn \
 \
-Wszystkie informacje nt instalacji Rusta i odpowiedniego toolchaina znajdziesz tutaj: https://www.rust-lang.org/tools/install \
+Wszystkie informacje nt instalacji Rusta i odpowiedniego toolchaina znajdują się tutaj: https://www.rust-lang.org/tools/install \
 
 ### Odpalenie apki
 
